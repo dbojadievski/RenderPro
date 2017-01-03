@@ -10,7 +10,7 @@
 
     var camera;
 
-    var scene                                   = new renderPro.graphics.scene.Scene ( );
+    var scene                                   = new renderPro.data.scene.Scene ( );
 
     var effects                 = [ ];
     var renderables             = 
@@ -356,7 +356,7 @@
             return isContained;
         };
 
-        function processModel ( currModel, parentNode, renderables )
+        function processModel ( currModel, renderables )
         {
             for ( var currChildIndex = 0; currChildIndex < currModel.children.length; currChildIndex++ )
                 processModel ( currModel[ currChildIndex ], renderables );
@@ -375,12 +375,10 @@
                 * Note(Dino):
                 * We need to separate renderable objects into transparent and opaque.
                 */
-                var sceneNode               = new renderPro.data.scene.SceneNode ( parentNode );
-                sceneNode.transform         = currModel.transform;
-                sceneNode.renderable        = currRenderable;
-                parentNode.children.push ( sceneNode );
 
-                var renderableInstance      = new renderPro.graphics.rendering.RenderableInstance ( sceneNode.renderable, sceneNode.transform );
+                var sceneNode               = new renderPro.data.scene.SceneNode ( null );
+                sceneNode.transform         = currModel.transform;
+                var renderableInstance      = new renderPro.graphics.rendering.RenderableInstance ( currRenderable, sceneNode );
 
                 if ( currRenderable.state === renderPro.graphics.core.State.TRANSPARENT )
                     renderables.transparent.push ( renderableInstance );
@@ -390,12 +388,12 @@
         }
 
         for ( var currModelIdx = 0; currModelIdx < models.length; currModelIdx++ )
-            processModel ( models[ currModelIdx ], scene, renderables );
+            processModel ( models[ currModelIdx ], renderables );
 
 
         /* Let's just inspect the scene graph. */
         console.log ( scene );
-        
+
         /* Then we sort renderables by the following parameters:
         *  - shaders
         *  - diffuse textures
@@ -501,7 +499,8 @@
                         { 
                             var renderableInstance      = byTexture.value[ currRenderableIdx ];
                             var renderable              = renderableInstance.renderable;
-                            setUniforms( renderable, renderableInstance.transform );
+                            var computedTransform       = renderableInstance.sceneNode.computeTransform ( );
+                            setUniforms( renderable, computedTransform );
                             renderable.drawWithoutStateChanges ( currentEffect, gl );
                             ++drawCalls;
                         }
@@ -537,7 +536,7 @@
                         { 
                             var renderableInstance      = byTexture.value[ currRenderableIdx ];
                             var renderable              = renderableInstance.renderable;
-                            setUniforms( renderable, renderableInstance.transform );
+                            setUniforms( renderable, renderableInstance.sceneNode.transform );
                             renderable.drawWithoutStateChanges ( currentEffect, gl );
                             ++drawCalls;
                         }

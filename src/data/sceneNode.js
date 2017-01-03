@@ -16,6 +16,7 @@
     
     SceneNode.prototype.addChild    = function sceneNode_addChild ( child )
     {
+        Application.Debug.assert ( child instanceof SceneNode, "Invalid argument: arg 'child' not an instance of SceneNode." );
         this.children.push ( child );
         this.child.parent           = this;
     };
@@ -32,6 +33,22 @@
         this.transform.rotateY ( this.transform, this.prePYR[ 1 ] );
         this.transform.rotateZ ( this.transform, this.prePYR[ 0 ] );
         this.transform.translate ( this.transform, this.preXYZ );
+    };
+
+    SceneNode.prototype.computeTransform = function sceneNode_computeTransform ( ) 
+    {
+        var finalTransform          = mat4.create ( );
+        mat4.identity ( finalTransform );
+        mat4.multiply ( finalTransform, this.transform );
+        
+        var parent                  = this.parent;
+        while ( parent !== null )
+        {
+            mat.multiply( finalTransform, parent.transform );
+            // parent                  = parent.parent;
+        }
+        
+        return finalTransform;
     };
 
     /*

@@ -1,9 +1,9 @@
 ( function ( ) 
 {
-    function RenderableInstance ( renderable, transform )
+    function RenderableInstance ( renderable, sceneNode )
     {
         this.renderable             = renderable;
-        this.transform              = transform;
+        this.sceneNode              = sceneNode;
     }
 
     renderPro.graphics.rendering.RenderableInstance = RenderableInstance;
