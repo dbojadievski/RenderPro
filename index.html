@@ -140,14 +140,15 @@
         
         <!--Data structures -->
         <script src="src\data\kvp.js"></script>
+        <script src="src\data\sceneNode.js"></script>
         <script src="src\data\linkedList.js"></script>
         
         <!-- Utils and tools. -->
         <script src="src\utils\assert.js"></script>
         <script src="src\math\gl-matrix.js"></script> <!-- Old, non-SSE version. -->
         <script src="src\math\mathUtils.js"></script>
-        <script src="objectLoader.js"></script>
-        <script src="objToMeshConverter.js"></script>
+        <script src="src\utils\objectLoader.js"></script>
+        <script src="src\utils\objToMeshConverter.js"></script>
         <script src="src\math\matrixStack.js"></script>
 
         <!-- Core OpenGL. -->
@@ -165,19 +166,13 @@
 
         <!-- Basic rendering constructs. -->
         <script src="effect.js"></script>
-        <script src="lights.js"></script>
-        <script src="camera.js"></script>
+        <script src="src\graphics\scene\lights.js"></script>
+        <script src="src\graphics\scene\camera.js"></script>
         <script src="src\graphics\gl\renderable.js"></script>
         <script src="src\graphics\rendering\renderableInstance.js"></script>
 
-        <!-- Non-essential rendering constructs. -->
-        <script src="sceneNode.js"></script>
-    
-        <!-- Data. -->
-        <script src="src\scene\sceneNode.js"></script>
-
         <!-- Example content. -->
-        <script src="basic-materials.js"></script>
+        <script src="assets\materials\basic-materials.js"></script>
 
         <!-- Entry point. -->
         <script src="main.js"></script>

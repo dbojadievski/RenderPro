@@ -21,5 +21,5 @@
         return viewMatrix;
     };
 
-    renderPro.graphics.Camera       = Camera;
+    renderPro.graphics.scene.Camera       = Camera;
  } ) ( );

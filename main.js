@@ -6,11 +6,11 @@
     var lastFrameTime;
 
     var pMatrix                                 = mat4.create ( );
-    var viewMatrix                               = mat4.create ( );
+    var viewMatrix                              = mat4.create ( );
 
     var camera;
 
-    var scene                   = new renderPro.graphics.scene.Scene ( );
+    var scene                                   = new renderPro.graphics.scene.Scene ( );
 
     var effects                 = [ ];
     var renderables             = 
@@ -54,7 +54,7 @@
 
 
     var origin                  = [ 0, 0, 0 ];
-    var cameraPosition          = [ 0.0, 0.0, 0.0];
+    var cameraPosition          = [ 0.0, 0.0, 0.0 ];
     var cameralookAtDirection;
 
     var worldDirection          =
@@ -85,9 +85,9 @@
     {
         try 
         {
-            gl                  = canvas.getContext( "experimental-webgl" );
-            gl.viewportWidth    = canvas.width;
-            gl.viewportHeight   = canvas.height;
+            gl                              = canvas.getContext( "experimental-webgl" );
+            gl.viewportWidth                = canvas.width;
+            gl.viewportHeight               = canvas.height;
 
             /* 
             * Note(Dino):
@@ -249,6 +249,19 @@
 
             return [ x, y, z ];
         }
+
+        function generateRotation ( )
+        {
+            var min                             = 0.0;
+            var max                             = 359.0;
+
+            var x                               = getRandomInRange ( min, max );
+            var y                               = getRandomInRange ( min, max );
+            var z                               = getRandomInRange ( min, max );
+
+            return [ x, y, z ];
+        }
+
         var vertices                            = 
         [
             // Front face
@@ -311,6 +324,11 @@
             mat4.identity ( generatedTransform );
             mat4.translate ( generatedTransform, translation );
 
+            var rotation                        = generateRotation ( );
+            mat4.rotateX ( generatedTransform, rotation[ 0 ] );
+            mat4.rotateY ( generatedTransform, rotation[ 1 ] );
+            mat4.rotateZ ( generatedTransform, rotation[ 2 ] );
+
             var generatedRenderable             = getRandomInRange ( 1, 2 ) % 2 == 0 ? squareRenderable: redSquareRenderable;
             var generatedModel                  = new renderPro.graphics.core.Model ( [ generatedRenderable ], generatedTransform, null )
             models.push ( generatedModel );
@@ -357,7 +375,7 @@
                 * Note(Dino):
                 * We need to separate renderable objects into transparent and opaque.
                 */
-                var sceneNode               = new renderPro.graphics.scene.SceneNode ( parentNode );
+                var sceneNode               = new renderPro.data.scene.SceneNode ( parentNode );
                 sceneNode.transform         = currModel.transform;
                 sceneNode.renderable        = currRenderable;
                 parentNode.children.push ( sceneNode );
@@ -371,12 +389,13 @@
             }
         }
 
-        scene.transform                         = mat4.create ( );
-        mat4.identity ( scene.transform );
-        
         for ( var currModelIdx = 0; currModelIdx < models.length; currModelIdx++ )
             processModel ( models[ currModelIdx ], scene, renderables );
 
+
+        /* Let's just inspect the scene graph. */
+        console.log ( scene );
+        
         /* Then we sort renderables by the following parameters:
         *  - shaders
         *  - diffuse textures
@@ -420,7 +439,7 @@
         
         cameraPosition                          = [ 0.0, 0.0, 0.0 ];
         cameralookAtDirection                   = [ 0.0, 0.0, - 1.0 ];
-        camera                                  = new renderPro.graphics.Camera ( cameraPosition, cameralookAtDirection  );
+        camera                                  = new renderPro.graphics.scene.Camera ( cameraPosition, cameralookAtDirection  );
         viewMatrix                              = camera.getViewMatrix ( [ 0.0, 1.0, 0.0 ] );
     }
 
