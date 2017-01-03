@@ -3,6 +3,9 @@
     var gl;
     var currentEffect;
     var timer;
+    var drawCalls                           = 0;
+    var programSwitches                     = 0;
+    var textureSwitches                     = 0;
     var lastFrameTime;
 
     var pMatrix                                 = mat4.create ( );
@@ -444,9 +447,9 @@
     function drawScene ( ) 
     {
         timer                                   = Date.now ( );
-        var drawCalls                           = 0;
-        var programSwitches                     = 0;
-        var textureSwitches                     = 0;
+        drawCalls                               = 0;
+        programSwitches                         = 0;
+        textureSwitches                         = 0;
         gl.viewport ( 0, 0, gl.viewportWidth, gl.viewportHeight );
         gl.clear ( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
 
@@ -546,10 +549,10 @@
         }
 
         lastFrameTime                           = ( Date.now ( ) - timer );
-        lblPerformance.innerHTML                = "<b> " + lastFrameTime + "</b> ms.\n"
-                                                + "<b>" + programSwitches + "</b> program switches.\n"
-                                                + "<b>" + textureSwitches + "</b> texture switches.\n"
-                                                + "<b>" + drawCalls + "</b> draw calls.\n"
+        lblPerformance.innerHTML                = lastFrameTime + "ms.\n"
+                                                + programSwitches + " program switches.\n"
+                                                + textureSwitches + "texture switches.\n"
+                                                + drawCalls + "draw calls.\n"
                                                 + renderer + ".\n";
     }
 
