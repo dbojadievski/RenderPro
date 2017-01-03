@@ -16,7 +16,7 @@
         if ( Texture._currentTextureID == undefined )
             Texture._currentTextureID   = 1;
         this.textureID                  = Texture._currentTextureID;
-        document.body.appendChild ( this.image ); /* Uncomment to view texture for debugging. */ 
+        // document.body.appendChild ( this.image ); /* Uncomment to view texture for debugging. */ 
     }
 
     Texture.prototype.unload            = function texture_unload ( )
