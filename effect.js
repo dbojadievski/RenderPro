@@ -27,5 +27,5 @@
         gl.useProgram ( this.programPointer );
     };
 
-    renderPro.graphics.Effect       = Effect;
+    renderPro.graphics.Effect    = Effect;
 } ) ( );

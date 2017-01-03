@@ -9,6 +9,7 @@
         this.prePYR                 = vec3.fromValues ( 0.0, 0.0, 0.0 );
         this.transform              = mat4.create ( );
         mat4.identity ( this.transform );
+        this.cachedTransform        =mat4.create ( );
 
         if ( parent instanceof SceneNode )
             parent.addChild ( this );
@@ -18,7 +19,7 @@
     {
         Application.Debug.assert ( child instanceof SceneNode, "Invalid argument: arg 'child' not an instance of SceneNode." );
         this.children.push ( child );
-        this.child.parent           = this;
+        child.parent                = this;
     };
 
     /*
@@ -29,10 +30,18 @@
      */
     SceneNode.prototype.updateLocal = function sceneNode_updateLocal ( )
     {
-        this.transform.rotateX ( this.transform, this.prePYR[ 2 ] );
-        this.transform.rotateY ( this.transform, this.prePYR[ 1 ] );
-        this.transform.rotateZ ( this.transform, this.prePYR[ 0 ] );
-        this.transform.translate ( this.transform, this.preXYZ );
+        mat4.rotateX ( this.transform, this.prePYR[ 2 ] );
+        mat4.rotateY ( this.transform, this.prePYR[ 1 ] );
+        mat4.rotateZ ( this.transform, this.prePYR[ 0 ] );
+        mat4.translate ( this.transform, this.preXYZ );
+        this.prePYR[ 0 ]            = 0.0;
+        this.prePYR[ 1 ]            = 0.0;
+        this.prePYR[ 2 ]            = 0.0;
+        this.preXYZ[ 0 ]            = 0.0;
+        this.preXYZ[ 1 ]            = 0.0;
+        this.preXYZ[ 2 ]            = 0.0;
+
+        this.cachedTransform        = this.computeTransform ( );
     };
 
     SceneNode.prototype.computeTransform = function sceneNode_computeTransform ( ) 
@@ -44,8 +53,8 @@
         var parent                  = this.parent;
         while ( parent !== null )
         {
-            mat.multiply( finalTransform, parent.transform );
-            // parent                  = parent.parent;
+            mat4.multiply( finalTransform, parent.transform );
+            parent                  = parent.parent;
         }
         
         return finalTransform;
@@ -58,7 +67,7 @@
     SceneNode.prototype.updateAll = function sceneNode_updateAll ( )
     {
         this.updateLocal ( );
-        for ( var currChildIdx = 0; currChildIdx < this.children.length; this.currChildIdx++ )
+        for ( var currChildIdx = 0; currChildIdx < this.children.length; currChildIdx++ )
             this.children[ currChildIdx ].updateAll ( );       
     };
 

@@ -1,3 +1,4 @@
+var publicScene;
 ( function ( ) 
 {
     var gl;
@@ -8,76 +9,52 @@
     var textureSwitches                     = 0;
     var lastFrameTime;
 
-    var pMatrix                                 = mat4.create ( );
-    var viewMatrix                              = mat4.create ( );
+    var pMatrix                             = mat4.create ( );
+    var viewMatrix                          = mat4.create ( );
 
     var camera;
 
-    var scene                                   = new renderPro.data.scene.Scene ( );
-
-    var effects                 = [ ];
-    var renderables             = 
+    var scene;
+    var effects                             = [ ];
+    var renderables                         = 
     {
-        opaque:                 [ ],
-        transparent:            [ ]
+        opaque:                             [ ],
+        transparent:                        [ ]
     };
 
-    var sortedRenderables       = 
+    var sortedRenderables                   = 
     {
-        opaque:                 new Dictionary ( ),
-        transparent:            new Dictionary ( )
+        opaque:                             new Dictionary ( ),
+        transparent:                        new Dictionary ( )
     };
 
-    var textures                = [ ];
-    var models                  = [ ];
-    var lights                  = 
-    {
-        pointLights: 
-        [ 
-            new renderPro.graphics.scene.lighting.PointLight 
-            (
-                [ 0.0, 0.0, 0.0 ], // Position
-                [ 1.0, 0.0, 0.0 ], // Ambient
-                [ 0.0, 0.0, 0.0 ], // Diffuse
-                [ 0.0, 0.0, 0.0 ], // Specular,
-                0.0, 0.0, 0.0 // Constant, linear and exponential attenuations.
-            ) 
-        ],
-        directionalLights:
-        [
-            new renderPro.graphics.scene.lighting.DirectionalLight
-            (
-                [ 0, 0, -1 ], // Direction
-                [ 1.0, 1.0, 0.0, 1.0 ], // Ambient
-                [ 255.0, 255.0, 255.0, 1.0 ], // Diffuse
-                [ 0.0, 0.0, 1.0, 1.0 ] // Specular
-            )
-        ]
-    }
+    var textures                            = [ ];
+    var models                              = [ ];
 
 
-    var origin                  = [ 0, 0, 0 ];
-    var cameraPosition          = [ 0.0, 0.0, 0.0 ];
+
+    var origin                              = [ 0, 0, 0 ];
+    var cameraPosition                      = [ 0.0, 0.0, 0.0 ];
     var cameralookAtDirection;
 
-    var worldDirection          =
+    var worldDirection                      =
     {
-        RIGHT:                  [ 1.0, 0.0, 0.0 ],
-        UP:                     [ 0.0, 1.0, 0.0 ],
-        FORWARD:                [ 0.0, 0.0, 1.0 ]
+        RIGHT:                              [ 1.0, 0.0, 0.0 ],
+        UP:                                 [ 0.0, 1.0, 0.0 ],
+        FORWARD:                            [ 0.0, 0.0, 1.0 ]
     };
 
 
-    var lblPerformance          = document.getElementById ( 'lblPerformance' );
-    var renderer;               // GPU string.
-    renderables.hasRenderable   = function ( renderableID )
+    var lblPerformance                      = document.getElementById ( 'lblPerformance' );
+    var renderer;                           // GPU string.
+    renderables.hasRenderable               = function ( renderableID )
     {
-        var isContained         = false;
+        var isContained                     = false;
         
         for ( var renderable in this )
             if ( renderable.renderableID ===  renderableID )
             {
-                isContained     = true;
+                isContained                 = true;
                 break;
             }
         
@@ -198,6 +175,53 @@
         currentEffect                                       = mainEffect;
     }
 
+    function initLights ( scene ) 
+    {
+        var lights                                          = 
+        {
+            pointLights: 
+            [ 
+                new renderPro.graphics.scene.lighting.PointLight 
+                (
+                    [ 0.0, 0.0, 0.0 ], // Position
+                    [ 1.0, 0.0, 0.0 ], // Ambient
+                    [ 0.0, 0.0, 0.0 ], // Diffuse
+                    [ 0.0, 0.0, 0.0 ], // Specular,
+                    0.0, 0.0, 0.0 // Constant, linear and exponential attenuations.
+                ) 
+            ],
+            directionalLights:
+            [
+                new renderPro.graphics.scene.lighting.DirectionalLight
+                (
+                    [ 0, 0, -1 ], // Direction
+                    [ 1.0, 1.0, 0.0, 1.0 ], // Ambient
+                    [ 255.0, 255.0, 255.0, 1.0 ], // Diffuse
+                    [ 0.0, 0.0, 1.0, 1.0 ] // Specular
+                )
+            ],
+            spotLights: 
+            [
+
+            ]
+        }
+
+        for ( var currLightIdx = 0; currLightIdx < lights.pointLights.length; currLightIdx++ )
+            scene.addLight ( lights.pointLights[ currLightIdx ] );
+
+        for ( var currLightIdx = 0; currLightIdx < lights.directionalLights.length; currLightIdx++ )
+            scene.addLight ( lights.directionalLights[ currLightIdx ] );
+
+        for ( var currLightIdx = 0; currLightIdx < lights.spotLights.length; currLightIdx++ )
+            scene.addLight ( lights.spotLights[ currLightIdx ] );
+    }
+
+    function initScene ( )
+    {
+        scene                                               = new renderPro.data.scene.Scene ( );
+        initLights ( scene );
+    }
+
     function initTextures ( )
     {
         var currTex                                         = new renderPro.graphics.core.Texture ( "assets\\textures\\crate.gif", gl );
@@ -220,9 +244,9 @@
 
         gl.uniform3fv ( currentEffect.uniforms[ "eyePosition" ], cameraPosition );
 
-        gl.uniform3fv ( currentEffect.uniforms[ "directionalLightDirection" ], lights.directionalLights[ 0 ].direction );
-        gl.uniform4fv ( currentEffect.uniforms[ "directionalLightAmbient" ], lights.directionalLights[ 0 ].ambient );
-        gl.uniform4fv ( currentEffect.uniforms[ "directionalLightSpecular"], lights.directionalLights[ 0 ].specular );
+        gl.uniform3fv ( currentEffect.uniforms[ "directionalLightDirection" ], scene.lights.directionalLights[ 0 ].direction );
+        gl.uniform4fv ( currentEffect.uniforms[ "directionalLightAmbient" ], scene.lights.directionalLights[ 0 ].ambient );
+        gl.uniform4fv ( currentEffect.uniforms[ "directionalLightSpecular"], scene.lights.directionalLights[ 0 ].specular );
 
         gl.activeTexture ( gl.TEXTURE0 );
         gl.bindTexture ( gl.TEXTURE_2D, renderable.texture.innerTexture.texture );
@@ -319,7 +343,7 @@
         var squareRenderable                    = new renderPro.graphics.gl.Renderable ( squareMesh, textures[ "nehe" ], materialEmerald, renderPro.graphics.core.State.NORMAL, effects[ 'mainEffect' ] );
         var redSquareRenderable                 = new renderPro.graphics.gl.Renderable ( squareMesh, textures[ "crate" ], materialRuby, renderPro.graphics.core.State.NORMAL, effects[ "mainEffect" ] );
 
-        var numModels                           = 5000;
+        var numModels                           = 150;
         for ( var i = 0; i < numModels; i++ )
         {
             var translation                     = generateTranslation ( );
@@ -359,10 +383,10 @@
             return isContained;
         };
 
-        function processModel ( currModel, renderables )
+        function processModel ( currModel, renderables, parentNode )
         {
             for ( var currChildIndex = 0; currChildIndex < currModel.children.length; currChildIndex++ )
-                processModel ( currModel[ currChildIndex ], renderables );
+                processModel ( currModel[ currChildIndex ], currModel[ currChildIndex ].renderables , parentNode );
 
             for ( var currRenderableIdx = 0; currRenderableIdx < currModel.renderables.length; currRenderableIdx++ )
             {
@@ -382,6 +406,7 @@
                 var sceneNode               = new renderPro.data.scene.SceneNode ( null );
                 sceneNode.transform         = currModel.transform;
                 var renderableInstance      = new renderPro.graphics.rendering.RenderableInstance ( currRenderable, sceneNode );
+                parentNode.addChild ( sceneNode );
 
                 if ( currRenderable.state === renderPro.graphics.core.State.TRANSPARENT )
                     renderables.transparent.push ( renderableInstance );
@@ -391,11 +416,20 @@
         }
 
         for ( var currModelIdx = 0; currModelIdx < models.length; currModelIdx++ )
-            processModel ( models[ currModelIdx ], renderables );
-
+            processModel ( models[ currModelIdx ], renderables, scene.nodes );
 
         /* Let's just inspect the scene graph. */
-        console.log ( scene );
+
+        /* 
+         * Note(Dino):
+         * Computing absolute positions from the scene graph isn't all that expensive, but we'd still prefer avoiding it.
+         * To this end, every scene node has its own cached position, which reflects its calculated absolute position.
+         * This information is updated every time the 'update' function is called.
+         * We can use this information during render time, but do keep in mind that it may become stale.
+         * Take care to update it whenever appropriate.
+         * 
+         */
+       scene.nodes.updateAll ( );
 
         /* Then we sort renderables by the following parameters:
         *  - shaders
@@ -432,6 +466,7 @@
         }
 
         renderableSorterExperimental ( renderables.opaque, sortedRenderables.opaque );
+
     }
 
     function initCamera ( )
@@ -503,7 +538,7 @@
                             var renderableInstance      = byTexture.value[ currRenderableIdx ];
                             var renderable              = renderableInstance.renderable;
                             // var computedTransform       = renderableInstance.sceneNode.computeTransform ( );
-                            setUniforms( renderable, renderableInstance.sceneNode.transform );
+                            setUniforms( renderable, renderableInstance.sceneNode.cachedTransform );
                             renderable.drawWithoutStateChanges ( currentEffect, gl );
                             ++drawCalls;
                         }
@@ -539,7 +574,7 @@
                         { 
                             var renderableInstance      = byTexture.value[ currRenderableIdx ];
                             var renderable              = renderableInstance.renderable;
-                            setUniforms( renderable, renderableInstance.sceneNode.transform );
+                            setUniforms( renderable, renderableInstance.sceneNode.cachedTransform );
                             renderable.drawWithoutStateChanges ( currentEffect, gl );
                             ++drawCalls;
                         }
@@ -549,11 +584,11 @@
         }
 
         lastFrameTime                           = ( Date.now ( ) - timer );
-        lblPerformance.innerHTML                = lastFrameTime + "ms.\n"
-                                                + programSwitches + " program switches.\n"
-                                                + textureSwitches + "texture switches.\n"
-                                                + drawCalls + "draw calls.\n"
-                                                + renderer + ".\n";
+        lblPerformance.innerHTML                = lastFrameTime + " ms, "
+                                                + programSwitches + " program switches, "
+                                                + textureSwitches + " texture switches, "
+                                                + drawCalls + " draw calls on "
+                                                + renderer;
     }
 
     function initWebGL ( ) 
@@ -562,6 +597,7 @@
         initGL ( canvas );
         initTextures ( );
         initShaders ( );
+        initScene ( );
         initBuffers ( );
         initCamera ( );
         gl.clearColor ( 0.0, 0.0, 0.0, 1.0 );
