@@ -316,7 +316,7 @@
         var squareRenderable                    = new renderPro.graphics.gl.Renderable ( squareMesh, textures[ "nehe" ], materialEmerald, renderPro.graphics.core.State.NORMAL, effects[ 'mainEffect' ] );
         var redSquareRenderable                 = new renderPro.graphics.gl.Renderable ( squareMesh, textures[ "crate" ], materialRuby, renderPro.graphics.core.State.NORMAL, effects[ "mainEffect" ] );
 
-        var numModels                           = 6000;
+        var numModels                           = 5000;
         for ( var i = 0; i < numModels; i++ )
         {
             var translation                     = generateTranslation ( );
