@@ -499,8 +499,8 @@
                         { 
                             var renderableInstance      = byTexture.value[ currRenderableIdx ];
                             var renderable              = renderableInstance.renderable;
-                            var computedTransform       = renderableInstance.sceneNode.computeTransform ( );
-                            setUniforms( renderable, computedTransform );
+                            // var computedTransform       = renderableInstance.sceneNode.computeTransform ( );
+                            setUniforms( renderable, renderableInstance.sceneNode.transform );
                             renderable.drawWithoutStateChanges ( currentEffect, gl );
                             ++drawCalls;
                         }
