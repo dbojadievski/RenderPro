@@ -83,7 +83,7 @@
 
             uniform directionalLight uDirectionalLight;
 
-            varying vec2 vTextCoord;
+            varying highp vec2 vTextCoord;
             uniform material uMaterial;
             uniform sampler2D uSampler;
             varying vec3 vVertexNormal;
@@ -106,7 +106,7 @@
                 vec4 diffuseColor       = texture2D ( uSampler, vec2 ( vTextCoord.s, vTextCoord.t ) );
                 vec4 lightContribution  = directionalLightColor ( vVertexNormal, diffuseColor, uDirectionalLight );
                 gl_FragColor            = lightContribution + diffuseColor;
-                // gl_FragColor            = diffuseColor; // Uncomment to preview diffuse texture only.  
+                gl_FragColor            = diffuseColor; // Uncomment to preview diffuse texture only.  
                 // gl_FragColor            = lightContribution; // Uncomment to preview light colour only.
             }
         </script>
@@ -120,7 +120,7 @@
             uniform mat4 uPMatrix;
             uniform mat4 uMMatrix;
 
-            varying vec2 vTextCoord;
+            varying highp vec2 vTextCoord;
             varying vec3 vVertexNormal;            
             
             void main(void) 

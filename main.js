@@ -170,7 +170,8 @@ var publicScene;
         gl.enableVertexAttribArray ( mainEffect.attributes[ "vertexNormal" ] );
         gl.enableVertexAttribArray ( mainEffect.attributes[ "vertexPosition" ] );
         gl.enableVertexAttribArray ( mainEffect.attributes[ "vertexTextureCoordinate" ] );
-        
+
+
         mainEffect.use ( gl );
         currentEffect                                       = mainEffect;
     }
@@ -298,34 +299,34 @@ var publicScene;
             new renderPro.graphics.core.Vertex ( [ -1.0, 1.0, 1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] ),
 
             // Back face
-            new renderPro.graphics.core.Vertex ( [ -1.0, -1.0, -1.0 ], [ 1.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ -1.0,  1.0, -1.0 ], [ 1.0, 1.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0,  1.0, -1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0, -1.0, -1.0 ], [ 0.0, 0.0 ], [ 0, 0, 0 ] ),
+            new renderPro.graphics.core.Vertex ( [ -1.0, -1.0, -1.0 ], [ 0.0, 0.0 ], [ 0, 0, 0 ] ),
+            new renderPro.graphics.core.Vertex ( [ -1.0,  1.0, -1.0 ], [ 1.0, 0.0 ], [ 0, 0, 0 ] ),
+            new renderPro.graphics.core.Vertex ( [ 1.0,  1.0, -1.0 ], [ 1.0, 1.0 ], [ 0, 0, 0 ] ),
+            new renderPro.graphics.core.Vertex ( [ 1.0, -1.0, -1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] ),
 
             // The top face
-            new renderPro.graphics.core.Vertex ( [ -1.0,  1.0, -1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ -1.0,  1.0,  1.0 ], [ 0.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0,  1.0,  1.0 ], [ 1.0, 0.0 ], [ 0, 0, 0 ] ),
+            new renderPro.graphics.core.Vertex ( [ -1.0,  1.0, -1.0 ], [ 0.0, 0.0 ], [ 0, 0, 0 ] ),
+            new renderPro.graphics.core.Vertex ( [ -1.0,  1.0,  1.0 ], [ 1.0, 0.0 ], [ 0, 0, 0 ] ),
+            new renderPro.graphics.core.Vertex ( [ 1.0,  1.0,  1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] ),
             new renderPro.graphics.core.Vertex ( [ 1.0,  1.0, -1.0 ], [ 1.0, 1.0 ], [ 0, 0, 0 ] ),
 
             // The bottom face.
-            new renderPro.graphics.core.Vertex ( [ -1.0, -1.0, -1.0 ], [ 1.0, 1.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0, -1.0, -1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0, -1.0,  1.0 ], [ 0.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ -1.0, -1.0,  1.0 ], [ 1.0, 0.0 ], [ 0, 0, 0 ] ),
+            new renderPro.graphics.core.Vertex ( [ -1.0, -1.0, -1.0 ], [ 0.0, 0.0 ], [ 0, 0, 0 ] ),
+            new renderPro.graphics.core.Vertex ( [ 1.0, -1.0, -1.0 ], [ 1.0, 0.0 ], [ 0, 0, 0 ] ),
+            new renderPro.graphics.core.Vertex ( [ 1.0, -1.0,  1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] ),
+            new renderPro.graphics.core.Vertex ( [ -1.0, -1.0,  1.0 ], [ 1.0, 1.0 ], [ 0, 0, 0 ] ),
 
             // The right face.
-            new renderPro.graphics.core.Vertex ( [ 1.0, -1.0, -1.0 ], [ 1.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0,  1.0, -1.0 ], [ 1.0, 1.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0,  1.0,  1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0, -1.0,  1.0 ], [ 0.0, 0.0 ], [ 0, 0, 0 ] ),
+            new renderPro.graphics.core.Vertex ( [ 1.0, -1.0, -1.0 ], [ 0.0, 0.0 ], [ 0, 0, 0 ] ),
+            new renderPro.graphics.core.Vertex ( [ 1.0,  1.0, -1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] ),
+            new renderPro.graphics.core.Vertex ( [ 1.0,  1.0,  1.0 ], [ 1.0, 0.0 ], [ 0, 0, 0 ] ),
+            new renderPro.graphics.core.Vertex ( [ 1.0, -1.0,  1.0 ], [ 1.0, 1.0 ], [ 0, 0, 0 ] ),
 
             // The Left face.
             new renderPro.graphics.core.Vertex ( [ -1.0, -1.0, -1.0 ], [ 0.0, 0.0 ], [ 0, 0, 0 ] ),
             new renderPro.graphics.core.Vertex ( [ -1.0, -1.0,  1.0 ], [ 1.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ -1.0,  1.0,  1.0 ], [ 1.0, 1.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ -1.0,  1.0, -1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] )
+            new renderPro.graphics.core.Vertex ( [ -1.0,  1.0,  1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] ),
+            new renderPro.graphics.core.Vertex ( [ -1.0,  1.0, -1.0 ], [ 1.0, 1.0 ], [ 0, 0, 0 ] )
         ];
 
         var cubeVertexIndices                   = 
@@ -600,7 +601,7 @@ var publicScene;
         initScene ( );
         initBuffers ( );
         initCamera ( );
-        gl.clearColor ( 0.0, 0.0, 0.0, 1.0 );
+        gl.clearColor ( 1.0, 1.0, 1.0, 1.0 );
         gl.enable ( gl.DEPTH_TEST );
 
         (function animloop()

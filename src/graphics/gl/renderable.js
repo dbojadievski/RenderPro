@@ -29,8 +29,8 @@
             positions.push ( this.mesh.vertices[ currVertexIdx ].position[ 1 ] );
             positions.push ( this.mesh.vertices[ currVertexIdx ].position[ 2 ] );
 
-            textureCoordinates.push ( this.mesh.vertices[ currVertexIdx ].position[ 0 ] );
-            textureCoordinates.push ( this.mesh.vertices[ currVertexIdx ].position[ 1 ] );
+            textureCoordinates.push ( this.mesh.vertices[ currVertexIdx ].uv[ 0 ] );
+            textureCoordinates.push ( this.mesh.vertices[ currVertexIdx ].uv[ 1 ] );
 
             normals.push ( this.mesh.vertices[ currVertexIdx ].normal[ 0 ] );
             normals.push ( this.mesh.vertices[ currVertexIdx ].normal[ 1 ] );
@@ -61,7 +61,7 @@
         if ( this.mesh.vertices[ 0 ].uv != undefined )
         {
             gl.bindBuffer ( gl.ARRAY_BUFFER, this.uvBuffer.pointer );
-            gl.vertexAttribPointer ( shaderProgram.attributes["vertexTextureCoordinate"], 2, gl.UNSIGNED_SHORT, false, 0, 0 );
+            gl.vertexAttribPointer ( shaderProgram.attributes["vertexTextureCoordinate"], 2, gl.FLOAT, false, 0, 0 );
         }
         else
             gl.enableVertexAttribArray ( shaderProgram.attributes[ "vertexTextureCoordinate" ] );
@@ -81,12 +81,13 @@
     Renderable.prototype.drawWithoutStateChanges = function renderable_drawWithoutStateChanges ( shaderProgram, gl )
     {
         gl.bindBuffer ( gl.ARRAY_BUFFER, this.vertexBuffer.pointer );
-        gl.vertexAttribPointer ( shaderProgram.attributes[ "vertexPosition" ], this.mesh.vertexSize, gl.FLOAT, false, 0, 0 );
+        gl.vertexAttribPointer ( shaderProgram.attributes[ "vertexPosition" ], 3, gl.FLOAT, false, 0, 0 );
 
         if ( this.mesh.vertices[ 0 ].uv != undefined )
         {
+            console.log ("Drawing with text coords!");
             gl.bindBuffer ( gl.ARRAY_BUFFER, this.uvBuffer.pointer );
-            gl.vertexAttribPointer ( shaderProgram.attributes["vertexTextureCoordinate"], 2, gl.UNSIGNED_SHORT, false, 0, 0 );
+            gl.vertexAttribPointer ( shaderProgram.attributes["vertexTextureCoordinate"], 2, gl.FLOAT, false, 0, 0 );
         }
         else
             gl.enableVertexAttribArray ( shaderProgram.attributes[ "vertexTextureCoordinate" ] );
