@@ -31,8 +31,6 @@ var publicScene;
     var textures                            = [ ];
     var models                              = [ ];
 
-
-
     var origin                              = [ 0, 0, 0 ];
     var cameraPosition                      = [ 0.0, 0.0, 0.0 ];
     var cameralookAtDirection;
@@ -228,7 +226,7 @@ var publicScene;
         var currTex                                         = new renderPro.graphics.core.Texture ( "assets\\textures\\crate.gif", gl );
         textures[ 'crate' ]                                 = currTex;
 
-        currTex                                             = new renderPro.graphics.core.Texture ( "assets\\textures\\nehe.gif", gl );
+        currTex                                             = new renderPro.graphics.core.Texture ( "assets\\textures\\water.png", gl );
         textures[ 'nehe' ]                                  = currTex;
     }
 
@@ -259,6 +257,12 @@ var publicScene;
 
     function initBuffers ( ) 
     {
+        var str2        = my_cube_2;
+        var objModels   = renderPro.importers.loadGeometryFromObjectFile ( str2 );
+        console.log ( objModels );
+
+        var mtls        = renderPro.importers.loadMaterialFromMaterialFile ( my_material );
+        console.log ( mtls );
 
         function generateTranslation ( ) 
         {
@@ -590,6 +594,8 @@ var publicScene;
                                                 + textureSwitches + " texture switches, "
                                                 + drawCalls + " draw calls on "
                                                 + renderer;
+
+
     }
 
     function initWebGL ( ) 

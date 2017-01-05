@@ -1,6 +1,10 @@
 /* We're going to be using this as the core namespace for all relevant types and functions. */
 var renderPro           = 
 {
+    importers:
+    {
+
+    },
     graphics: 
     {
         gl: { },
@@ -16,5 +20,12 @@ var renderPro           =
         scene: { }
     },
     math: { },
-    dataStructures: { }
+    dataStructures: { },
+    utils:
+    {
+        text:
+        {
+            wavefront: { }
+        }
+    }
 };

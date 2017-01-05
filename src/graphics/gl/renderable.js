@@ -85,7 +85,6 @@
 
         if ( this.mesh.vertices[ 0 ].uv != undefined )
         {
-            console.log ("Drawing with text coords!");
             gl.bindBuffer ( gl.ARRAY_BUFFER, this.uvBuffer.pointer );
             gl.vertexAttribPointer ( shaderProgram.attributes["vertexTextureCoordinate"], 2, gl.FLOAT, false, 0, 0 );
         }
