@@ -22,3 +22,11 @@ var materialRuby        = new renderPro.graphics.core.Material
     [ 0.727811, 0.626959, 0.626959, 1.0 ],
     0.6
 );
+
+var materialWhite = new renderPro.graphics.core.Material
+(
+    [ 1.0, 1.0, 1.0, 1.0 ],
+    [ 1.0, 1.0, 1.0, 1.0 ],
+    [ 1.0, 1.0, 1.0, 1.0 ],
+    1.0
+);

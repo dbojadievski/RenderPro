@@ -75,6 +75,8 @@
         gl.bindBuffer ( gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer.pointer );
         gl.drawElements ( gl.TRIANGLES, this.mesh.indices.length, gl.UNSIGNED_SHORT, 0 );
 
+        // gl.bindBuffer ( gl.ARRAY_BUFFER, this.vertexBuffer.pointer );
+        // gl.drawArrays ( gl.TRIANGLES, 0, this.mesh.indices.length );
         gl.bindBuffer ( gl.ARRAY_BUFFER, null );
     };
 
@@ -96,6 +98,26 @@
 
         gl.bindBuffer ( gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer.pointer );
         gl.drawElements ( gl.TRIANGLES, this.mesh.indices.length, gl.UNSIGNED_SHORT, 0 );
+
+        gl.bindBuffer ( gl.ARRAY_BUFFER, null );
+    };
+
+    Renderable.prototype.drawUnindexed = function renderable_drawUnindexed ( shaderProgram , gl )
+    {
+        gl.bindBuffer ( gl.ARRAY_BUFFER, this.vertexBuffer.pointer );
+        gl.vertexAttribPointer ( shaderProgram.attributes[ "vertexPosition" ], 3, gl.FLOAT, false, 0, 0 );
+
+        if ( this.mesh.vertices[ 0 ].uv != undefined )
+        {
+            gl.bindBuffer ( gl.ARRAY_BUFFER, this.uvBuffer.pointer );
+            gl.vertexAttribPointer ( shaderProgram.attributes["vertexTextureCoordinate"], 2, gl.FLOAT, false, 0, 0 );
+        }
+        else
+            gl.enableVertexAttribArray ( shaderProgram.attributes[ "vertexTextureCoordinate" ] );
+        
+        gl.bindBuffer ( gl.ARRAY_BUFFER, this.normalBuffer.pointer );
+        gl.vertexAttribPointer ( shaderProgram.attributes[ "vertexNormal" ], 3, gl.UNSIGNED_SHORT, false, 0, 0 );
+        gl.drawArrays ( gl.TRIANGLES, 0, this.mesh.vertices.length );
 
         gl.bindBuffer ( gl.ARRAY_BUFFER, null );
     };

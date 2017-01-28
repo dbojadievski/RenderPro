@@ -1,0 +1,9 @@
+newmtl olive
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+ Ks 1.0 1.0 1.0
+Ns 36.0
+d 1.0
+map_Kd -o 0.0 0.0 0.0 crate.gif
+map_Ks -s 0.0 1.0 crate.gif
+bump -imfchan r -bm 2 -texres 256 -mm 1 1 nehe.gif

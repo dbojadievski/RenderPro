@@ -6,10 +6,10 @@
 
         this.image                      = new Image ( );
         this.image.crossOrigin          = "";
-        this.innerTexture               = new renderPro.graphics.gl.Texture ( renderPro.graphics.gl.context );
+        this.innerTexture               = new renderPro.graphics.gl.Texture ( );
         this.image.onload               = function texture_loaded ( ) 
         { 
-            self.innerTexture.load ( self.image, renderPro.graphics.gl.context );
+            self.innerTexture.load ( self.image );
         };
         this.image.src                  = src;
 
@@ -21,7 +21,7 @@
 
     Texture.prototype.unload            = function texture_unload ( )
     {
-        self.innerTexture.unload ( renderPro.graphics.gl.context );
+        self.innerTexture.unload (  );
     };
 
     renderPro.graphics.core.Texture     = Texture;

@@ -549,4 +549,169 @@ var parseFloatExtended;
     }
 
     renderPro.importers.loadMaterialFromMaterialFile = loadMaterialFromString;
+
+
+    /* * * * * * * * * * * * * * * * * */
+    /*            Unit tests           */
+    /*                                 */
+    /* * * * * * * * * * * * * * * * * */
+
+    function parseSingleFloatUnitTest ( )
+    {
+        var isTestSuccessful         = true;
+        
+        var input                    = "12.0";
+        var expectedOutput           = 12.0;
+        var realizedOutput           = wavefront.parseSingleFloat ( [ input ], 0  );
+        Application.Debug.assert ( isTestSuccessful &= ( expectedOutput === realizedOutput ), "Unit test failed: conversion improper." );
+
+        input                        = "12";
+        realizedOutput               = wavefront.parseSingleFloat ( [ input ], 0 );
+        Application.Debug.assert ( isTestSuccessful &= ( expectedOutput === realizedOutput ), "Unit test failed: conversion improper." );
+
+        input                        = "12.";
+        realizedOutput               = wavefront.parseSingleFloat ( [ input ], 0 );
+        Application.Debug.assert ( isTestSuccessful &= ( expectedOutput === realizedOutput ), "Unit test failed: conversion improper." );
+
+        input                        = "-12.0";
+        expectedOutput               = - 12.0;
+        realizedOutput               = wavefront.parseSingleFloat ( [ input ], 0 );
+        Application.Debug.assert ( isTestSuccessful &= ( expectedOutput === realizedOutput ), "Unit test failed: conversion improper." );
+
+        input                        = "0.12";
+        expectedOutput               = 0.12;
+        realizedOutput               = wavefront.parseSingleFloat ( [ input ], 0 );
+        Application.Debug.assert ( isTestSuccessful &= ( expectedOutput === realizedOutput ), "Unit test failed: conversion improper." );
+
+        Application.Debug.assert ( isTestSuccessful );
+        return isTestSuccessful;
+    }
+
+    function parseSingleIntUnitTest ( )
+    {
+        var isTestSuccessful        = true;
+
+        var input                   = "12";
+        var expectedOutput          = 12;
+        var realizedOutput          = wavefront.parseSingleInt ( [ input ], 0 );
+        Application.Debug.assert ( isTestSuccessful &= ( expectedOutput === realizedOutput ), "Unit test failed: conversion improper." );
+
+        input                       = "12.0";
+        realizedOutput              = wavefront.parseSingleInt ( [ input ], 0 );
+        Application.Debug.assert ( isTestSuccessful &= ( expectedOutput === realizedOutput ), "Unit test failed: conversion improper." );
+
+        input                       = "-12";
+        expectedOutput              = -12;
+        realizedOutput              = wavefront.parseSingleInt ( [ input ], 0 );
+        Application.Debug.assert ( isTestSuccessful &= ( expectedOutput === realizedOutput ), "Unit test failed: conversion improper." );
+
+        Application.Debug.assert ( isTestSuccessful );
+        return isTestSuccessful;
+    }
+
+    function parseRGBUnitTest ( )
+    {
+        var isTestSuccessful        = true;
+
+        var input                   = [ "1.0", "1.0", "1.0" ];
+        var expectedOutput          = { red: 1.0, green: 1.0, blue: 1.0 };
+        var realizedOutput          = wavefront.parseRGB ( input, 0 );
+        Application.Debug.assert ( isTestSuccessful &= colourComparer ( expectedOutput, realizedOutput ) );
+
+        Application.Debug.assert ( isTestSuccessful );
+        return isTestSuccessful;
+    }
+
+    function parseTextureMapUnitTest ( )
+    {
+        var isTestSuccessful        = true;
+        
+        var inputString             = "bump -imfchan r -bm 2 -texres 256 -mm 1 1 nehe.gif";
+        var input                   = inputString.split ( ' ' );
+
+        var realizedOutput          = parseTextureMap ( input, 1 );
+        
+        isTestSuccessful            &= ( realizedOutput != null );
+        Application.Debug.assert ( isTestSuccessful, "Test failed: map not parsed." );
+        
+        isTestSuccessful            &= ( realizedOutput.base == 1 );
+        Application.Debug.assert  ( isTestSuccessful, "Base value invalid." );
+        
+        isTestSuccessful            &= ( realizedOutput.gain == 1.0 );    
+        Application.Debug.assert ( isTestSuccessful, "Gain value invalid." );
+
+        isTestSuccessful            &= ( realizedOutput.blendU == true );
+        Application.Debug.assert ( isTestSuccessful, "BlendU value invalid." );
+
+        isTestSuccessful            &= ( realizedOutput.blendV == true );
+        Application.Debug.assert ( isTestSuccessful, "BlendV value invalid." );
+
+        isTestSuccessful            &= ( realizedOutput.clamp == false );
+        Application.Debug.assert ( isTestSuccessful, "Clamp value invalid." );
+
+        isTestSuccessful            &= ( realizedOutput.channel == "r" );
+        Application.Debug.assert ( isTestSuccessful, "Channel value invalid." );
+        
+        isTestSuccessful            &= ( realizedOutput.bumpMultiplier == 2.0 );
+        Application.Debug.assert ( isTestSuccessful, "Bump multiplier value invalid." );
+
+        isTestSuccessful            &= ( realizedOutput.boostMipMapSharpness == 0 );
+        Application.Debug.assert ( isTestSuccessful, "boostMipMapSharpness invalid." );
+
+        isTestSuccessful            &= ( realizedOutput.name == "nehe.gif" );
+        Application.Debug.assert ( isTestSuccessful, "Texture map name invalid." );
+
+        Application.Debug.assert ( isTestSuccessful );
+        return isTestSuccessful;
+    }
+
+    function loadMaterialFromStringUnitTest ( )
+    {
+        var isTestSuccessful        = true;
+
+        var string                  = "newmtl crate_material\n Ka 1.0 1.0 1.0\n Kd 1.0 1.0 1.0\n Ks 1.0 1.0 1.0\n Ns 36.0\n map_Kd crate.gif\n";
+        
+        var defaultColour           = { red: 1.0, green: 1.0, blue: 1.0 };
+        var material                = loadMaterialFromString ( string )[ 0 ];
+        
+        isTestSuccessful            &= ( material !== null );
+        Application.Debug.assert ( isTestSuccessful, "Material not parsed." );
+
+        isTestSuccessful            &=  ( material.name === "crate_material" );
+        Application.Debug.assert ( isTestSuccessful, "Material name invalid." );
+
+        isTestSuccessful            &= ( colourComparer ( material.ambient, defaultColour ) );
+        Application.Debug.assert ( isTestSuccessful, "Material ambient colour invalid." );
+
+        isTestSuccessful            &= ( colourComparer ( material.diffuse, defaultColour ) );
+        Application.Debug.assert ( isTestSuccessful, "Material diffuse colour invalid." );
+
+        isTestSuccessful            &= ( colourComparer ( material.specular, defaultColour ) );
+        Application.Debug.assert ( isTestSuccessful, "Material specular colour invalid." );
+
+        isTestSuccessful            &= ( material.shininess === 36 );
+        Application.Debug.assert ( isTestSuccessful, "Material shininess invalid." );
+
+        isTestSuccessful            &= ( material.diffuseMap != undefined );
+        Application.Debug.assert ( isTestSuccessful, "Material diffuse texture map missing." );
+
+        isTestSuccessful            &= ( material.diffuseMap.name == "crate.gif" );
+        Application.Debug.assert ( isTestSuccessful, "Material diffuse texture map path invalid." );
+
+        Application.Debug.assert ( isTestSuccessful, "Test failed!" );
+        return isTestSuccessful;
+    }
+
+    ( function testRunner ( ) 
+    {
+        var testSuccessful          = true;
+
+        testSuccessful              &= parseSingleFloatUnitTest ( );
+        testSuccessful              &= parseSingleIntUnitTest ( );
+        testSuccessful              &= parseRGBUnitTest ( );
+        testSuccessful              &= parseTextureMapUnitTest ( );
+        testSuccessful              &= loadMaterialFromStringUnitTest ( );
+
+        Application.Debug.assert ( testSuccessful );
+     } ) ( ); /// META(Build): test runner.
 } ) ( );

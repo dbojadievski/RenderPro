@@ -17,7 +17,7 @@
         Application.Debug.assert ( tokens !== null && tokens !== undefined, "Param not supplied." );
         Application.Debug.assert ( tokens instanceof Array, "Param not of type 'Array'." );
 
-        var colour              =  { };
+        var colour                  =  { };
         if ( tokens.length >= ( startIdx + 3 ) )
         {
             var red               = tokens[ startIdx ];
@@ -79,7 +79,7 @@
             int                 = Number ( candidate );
             /* Is there a next word? If so, does it contain anything but a comment? */
             if ( tokens.length > ( startIdx + 1 ) )
-                int             = ( tokens[ startIdx + 1 ].charAt ( 0 ) === '#' ) ? int : NaN;
+                int             = parseInt( tokens[ startIdx + 1 ].charAt ( 0 ) === '#' ) ? int : NaN;
         }
 
         return int;

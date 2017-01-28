@@ -1,7 +1,9 @@
 ( function ( ) 
 {
-    function Texture ( gl ) 
+
+    function Texture ( ) 
     {
+        var gl                                      =  renderPro.graphics.gl.context;
         this.texture                                = gl.createTexture ( );
 
         if ( Texture._currentTextureID == undefined )
@@ -9,8 +11,9 @@
         this.textureID                              = Texture._currentTextureID++;
     }
 
-    Texture.prototype.load                          = function texture_load ( image, gl )
+    Texture.prototype.load                          = function texture_load ( image  )
     {
+        var gl                                      =  renderPro.graphics.gl.context;
         gl.bindTexture ( gl.TEXTURE_2D, this.texture );
         gl.texImage2D ( gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image );
         gl.pixelStorei ( gl.UNPACK_FLIP_Y_WEBGL, true );
@@ -19,8 +22,9 @@
         gl.bindTexture ( gl.TEXTURE_2D, null );
     };
 
-    Texture.prototype.unload                        = function texture_unload ( gl )
+    Texture.prototype.unload                        = function texture_unload ( )
     {
+        var gl                                      =  renderPro.graphics.gl.context;
         gl.deleteTexture ( this.texture );
     };
 

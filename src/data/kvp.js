@@ -57,4 +57,9 @@ Dictionary.prototype.getByKey = function dictionary_getByKey ( key )
 Dictionary.prototype.push   = function dictionary_push ( kvp )
 {
     this.content.push ( kvp );
+};
+
+Dictionary.prototype.length = function dictionary_length ( )
+{
+    return this.content.length;
 }

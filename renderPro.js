@@ -17,7 +17,13 @@ var renderPro           =
     },
     data:
     {
-        scene: { }
+        scene: { },
+        resources:
+        {
+            textures: [ ],
+            materials: [ ],
+            meshes: []
+        }
     },
     math: { },
     dataStructures: { },
