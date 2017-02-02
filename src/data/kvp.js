@@ -63,3 +63,9 @@ Dictionary.prototype.length = function dictionary_length ( )
 {
     return this.content.length;
 }
+
+Dictionary.prototype.iterate = function dictionary_iterate ( callback )
+{
+    for ( var currIdx = 0; currIdx < this.content.length; currIdx++ )
+        callback ( this.content[ currIdx ] );
+}

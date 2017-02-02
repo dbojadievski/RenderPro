@@ -301,6 +301,7 @@ var publicScene;
          * Otherwise, all faces sharing a material comprise a renderable.
          */
 
+
         for ( var currModelIdx in exportableScenes.models )
         {
             var model                       = exportableScenes.models[ currModelIdx ];
@@ -309,24 +310,47 @@ var publicScene;
             {
                 var faceMaterial            = model.faces[ faceIdx ].material;
                 if ( !materialMap.hasKey ( faceMaterial.materialID ) )
-                    materialMap.push ( new KeyValuePair ( faceMaterial.materialID, faceMaterial ) );
+                    materialMap.push ( new KeyValuePair ( faceMaterial.materialID, [ ] ) );
+                var facesByMaterial = materialMap.getByKey ( faceMaterial.materialID );
+                facesByMaterial.push ( model.faces[ faceIdx ] );
+                
             }
 
-            if ( materialMap.length ( ) === 1 )
+            function processFaceGroup ( faceGroup )
             {
-                var vertexArray             = [ ];
-                for ( var faceIdx = 0; faceIdx < model.faces.length; faceIdx++ )
-                {
-                    var face                = model.faces[ faceIdx ];
-                    for ( var vertexIdx = 0; vertexIdx < face.vertices.length; vertexIdx++ )
-                        vertexArray.push ( new renderPro.graphics.core.Vertex ( face.vertices[ vertexIdx ].position, face.vertices[ vertexIdx ].textureCoordinates, face.vertices[ vertexIdx ].normal )  );
+                console.log ( faceGroup );
+                var vertexPositions         = [ ];
+                var vertexNormals           = [ ];
+                var vertexUVs               = [ ];
 
+                for ( var faceIdx = 0; faceIdx < faceGroup.value.length; faceIdx++ )
+                {
+                    var face                = faceGroup.value[ faceIdx ];
+                    for ( var vertexIdx = 0; vertexIdx < face.vertices.length; vertexIdx++ )
+                    {
+
+                    }
+                    console.log ( face );
                 }
-                var usedMaterial            = model.faces[ 0 ].material;
-                var __mesh                  = new renderPro.graphics.core.Mesh ( vertexArray, 3, [ ], 0 );
-                var renderable              = new renderPro.graphics.gl.Renderable ( __mesh, usedMaterial.diffuseMap.texture, usedMaterial, renderPro.graphics.core.State.NORMAL, effects[ 'mainEffect' ] );
-                exportableScenes.renderables.push ( renderable );
             }
+            /* NOTE(Dino): Separate by model, and not just by material ID. */
+            materialMap.iterate (  processFaceGroup );
+
+            // if ( materialMap.length ( ) === 1 )
+            // {
+            //     var vertexArray             = [ ];
+            //     for ( var faceIdx = 0; faceIdx < model.faces.length; faceIdx++ )
+            //     {
+            //         var face                = model.faces[ faceIdx ];
+            //         for ( var vertexIdx = 0; vertexIdx < face.vertices.length; vertexIdx++ )
+            //             vertexArray.push ( new renderPro.graphics.core.Vertex ( face.vertices[ vertexIdx ].position, face.vertices[ vertexIdx ].textureCoordinates, face.vertices[ vertexIdx ].normal )  );
+
+            //     }
+            //     var usedMaterial            = model.faces[ 0 ].material;
+            //     var __mesh                  = new renderPro.graphics.core.Mesh ( vertexArray, 3, [ ], 0 );
+            //     var renderable              = new renderPro.graphics.gl.Renderable ( __mesh, usedMaterial.diffuseMap.texture, usedMaterial, renderPro.graphics.core.State.NORMAL, effects[ 'mainEffect' ] );
+            //     exportableScenes.renderables.push ( renderable );
+            // }
         }
 
         console.log ( exportableScenes );

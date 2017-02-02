@@ -30,13 +30,25 @@
             this.material           = null;
         }
 
+        function FaceDescriptor ( )
+        {
+
+        }
+
+        function VertexDescriptor ( v, vt, vn )
+        {
+            this.v                  = v;
+            this.vt                 = vt;
+            this.vn                 = vn;
+        }
+
         function Vertex ( )
         {
             this.normal             = null;
             this.position           = null;
             this.textureCoordinates = null;
             
-            this.index              = null;
+            this.vertexDescriptor   = null;
         }
 
         function Model ( name )
@@ -136,14 +148,14 @@
                     /* Faces. */
                     var parts                   = currLine.split ( ' ' );
                     parts                       = parts.slice ( 1 );
+                    var face                    = new ExportableFace ( );
+                    face.push                   = function ( vertex ) 
+                    { 
+                        face.vertices.push ( vertex ); 
+                    };
                     for ( var partIdx = 0; partIdx < parts.length; partIdx++ )
                     {
                         var part                = parts[ partIdx ];
-                        var face                = new ExportableFace ( );
-                        face.push               = function ( vertex ) 
-                        { 
-                            face.vertices.push ( vertex ); 
-                        };
 
                         if ( part.includes ( "//" ) )
                         {
@@ -162,12 +174,17 @@
                             
                             var vn                                  = parseInt ( tokens[ 1 ] );
                             vn                                      = ( vn > 0 ? vn : ( currNormalIdx - vn ) );
+                            
+                            var vertexDescriptor                    = new VertexDescriptor ( v, null, vn );
 
                             var exportableVertex                    = new ExportableVertex ( );
                             exportableVertex.position               = currModel.vertices[ v - 1 ];
                             exportableVertex.textureCoordinates     = null;
                             exportableVertex.normal                 = currModel.normals[ vn - 1 ];
+                            exportableVertex.vertexDescriptor       = vertexDescriptor;
+                            
                             face.push ( exportableVertex );
+
                         }
                         else if ( part.includes( '/' ) )
                         {
@@ -183,11 +200,15 @@
                             
                             var vn                                  = parseInt ( tokens[ 2 ] );
                             vn                                      = ( vn > 0 ? vn : ( currNormalIdx - vn ) );
+                            
+                            var vertexDescriptor                    = new VertexDescriptor ( v, vt, vn );
 
                             var exportableVertex                    = new ExportableVertex ( );
                             exportableVertex.position               = currModel.vertices[ v - 1 ];
                             exportableVertex.textureCoordinates     = currModel.textureCoordinates[ vt - 1 ];
                             exportableVertex.normal                 = currModel.normals[ vn - 1 ];
+                            exportableVertex.vertexDescriptor       = vertexDescriptor;
+                            
                             face.push ( exportableVertex );
                         }
                         else
@@ -198,14 +219,16 @@
                                 var idx                             = parseInt ( parts[ currVertFace ] );
                                 idx                                 = ( idx > 0 ? idx : ( currVertexIdx = idx ) );
                                 
+                                var vertexDescriptor                = new VertexDescriptor ( idx, null, null );
+
                                 var vertex                          = currModel.vertices[ idx - 1 ];
                                 var exportableVertex                = new Vertex ( );
                                 exportableVertex.position           = [ ];
-                                exportableVertex.index              = idx;
-
+                                exportableVertex.vertexDescriptor   = vertexDescriptor;
+                                
                                 for ( var vertexCoordIdx = 0; vertexCoordIdx < vertex.length; vertexCoordIdx++ )
                                     exportableVertex.position.push ( parseFloat ( vertex[ vertexCoordIdx ] ) );                 
-
+                                
                                 face.push ( exportableVertex );
                             }
                         }
