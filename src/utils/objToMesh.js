@@ -18,6 +18,8 @@
             this.name               = name;
             this.faces              = [ ];
             this.vertices           = [ ];
+            this.normals            = [];
+            this.textureCoordinates = [ ];
             this.groups             = [ ];
             this.numMaterials       = 0;
         }
@@ -36,6 +38,7 @@
             
             this.index              = null;
         }
+
         function Model ( name )
         {
             this.name               = name;
@@ -57,7 +60,10 @@
         var isInGroup               = false;
         var currGroup               = null;
         var currGroups              = [ ];
+        var currUVIdx               = 0;
         var currVertexIdx           = 0;
+        var currNormalIdx           = 0;
+
         for ( var currLineIdx       = 0; currLineIdx < lines.length; currLineIdx++ )
         {
             var currLine            = lines[ currLineIdx ].trim ( );
@@ -92,7 +98,7 @@
                     switch ( currLine.charAt ( 1 ) )
                     {
                         case " ":
-                        currVertexIdx++;
+                            currVertexIdx++;
                             var parts   = currLine.split ( ' ', 4 );
                             parts       = parts.slice ( 1 );
                             Application.Debug.assert ( currModel !== null, "OBJ file invalid." );
@@ -102,6 +108,7 @@
                             currModel.vertices.push ( vertexPosition );
                             break;
                         case "t":
+                            currUVIdx++;
                             var parts   = currLine.split ( ' ', 4 );
                             parts       = parts.slice ( 1 );
                             Application.Debug.assert ( currModel !== null, "OBJ file invalid." );
@@ -111,6 +118,7 @@
                             currModel.textureCoordinates.push ( texCoords );
                             break;
                         case "n":
+                            currNormalIdx++;
                             var parts   = currLine.split ( ' ', 4 );
                             parts       = parts.slice ( 1 );
                             Application.Debug.assert ( currModel !== null, "OBJ file invalid." );
@@ -126,65 +134,96 @@
                 else if ( currLine.charAt ( 0 ) === 'f' )
                 {
                     /* Faces. */
-                    var parts               = currLine.split ( ' ' );
-                    parts                   = parts.slice ( 1 );
-                    var part                = parts[ 0 ];
-                    var face                = [ ];
-                    if ( part.includes ( "//" ) )
+                    var parts                   = currLine.split ( ' ' );
+                    parts                       = parts.slice ( 1 );
+                    for ( var partIdx = 0; partIdx < parts.length; partIdx++ )
                     {
-                        /* 
-                         * The face does include specific information about normals. 
-                         * NOTE(Dino): 
-                         * Do keep in mind that a texture coordinate is missing!
-                         * The appropriate result is 'null'.
-                         */
-                        /* TODO(Dino): Find an example of this type of model. */
-                        var tokens          = part.split ( "//" );
-                        var v               = parseInt ( tokens[ 0 ] );
-                        var vn              = parseInt ( tokens[ 1 ] );
+                        var part                = parts[ partIdx ];
+                        var face                = new ExportableFace ( );
+                        face.push               = function ( vertex ) 
+                        { 
+                            face.vertices.push ( vertex ); 
+                        };
 
-                        var exportableVertex                    = new ExportableVertex ( );
-                        exportableVertex.position               = currModel.vertices[ v + 1 ];
-                        exportableVertex.textureCoordinates     = null;
-                        exportableVertex.normal                 = currModel.normals[ vn + 1 ];
-                    }
-                    else if ( part.includes( '/' ) )
-                    {
-                        /* The face includes specific information about texturing and normals. */
-                    }
-                    else
-                    {
-                        Application.Debug.assert ( currModel !== null, "OBJ file invalid." );
-                        for ( var currVertFace = 0; currVertFace < parts.length; currVertFace++ )
+                        if ( part.includes ( "//" ) )
                         {
-                            var idx         = parseInt ( parts[ currVertFace ] );
-                            var vertex      = currModel.vertices[ idx - 1 ];
-                            var vert        = new Vertex ( );
-                            vert.position   = [ ];
-                            vert.index      = idx;
-                            for ( var vertexCoordIdx = 0; vertexCoordIdx < vertex.length; vertexCoordIdx++ )
+                            /* 
+                            * The face does include specific information about normals. 
+                            * NOTE(Dino): 
+                            * Do keep in mind that a texture coordinate is missing!
+                            * The appropriate result is 'null'.
+                            */
+                            /* TODO(Dino): Find an example of this type of model. */
+                            var tokens                              = part.split ( "//" );
+                            Application.Debug.assert ( tokens.length == 2, "Parts invalid." );
+                            
+                            var v                                   = parseInt ( tokens[ 0 ] );
+                            v                                       = ( v > 0 ? v : ( currVertexIdx - v ) );
+                            
+                            var vn                                  = parseInt ( tokens[ 1 ] );
+                            vn                                      = ( vn > 0 ? vn : ( currNormalIdx - vn ) );
+
+                            var exportableVertex                    = new ExportableVertex ( );
+                            exportableVertex.position               = currModel.vertices[ v - 1 ];
+                            exportableVertex.textureCoordinates     = null;
+                            exportableVertex.normal                 = currModel.normals[ vn - 1 ];
+                            face.push ( exportableVertex );
+                        }
+                        else if ( part.includes( '/' ) )
+                        {
+                            /* The face includes specific information about texturing and normals. */
+                            var tokens                              = part.split ( "/" );
+                            Application.Debug.assert ( tokens.length == 3, "String invalid." );
+                            
+                            var v                                   = parseInt ( tokens[ 0 ] );
+                            v                                       = ( v > 0 ? v : ( currVertexIdx - v ) );
+
+                            var vt                                  = parseInt ( tokens[ 1 ] );
+                            vt                                      = ( vt > 0 ? vt : ( currUVIdx - vt ) );
+                            
+                            var vn                                  = parseInt ( tokens[ 2 ] );
+                            vn                                      = ( vn > 0 ? vn : ( currNormalIdx - vn ) );
+
+                            var exportableVertex                    = new ExportableVertex ( );
+                            exportableVertex.position               = currModel.vertices[ v - 1 ];
+                            exportableVertex.textureCoordinates     = currModel.textureCoordinates[ vt - 1 ];
+                            exportableVertex.normal                 = currModel.normals[ vn - 1 ];
+                            face.push ( exportableVertex );
+                        }
+                        else
+                        {
+                            Application.Debug.assert ( currModel !== null, "OBJ file invalid." );
+                            for ( var currVertFace = 0; currVertFace < parts.length; currVertFace++ )
                             {
-                                vert.position.push ( parseFloat ( vertex[ vertexCoordIdx ] ) );                 
+                                var idx                             = parseInt ( parts[ currVertFace ] );
+                                idx                                 = ( idx > 0 ? idx : ( currVertexIdx = idx ) );
+                                
+                                var vertex                          = currModel.vertices[ idx - 1 ];
+                                var exportableVertex                = new Vertex ( );
+                                exportableVertex.position           = [ ];
+                                exportableVertex.index              = idx;
+
+                                for ( var vertexCoordIdx = 0; vertexCoordIdx < vertex.length; vertexCoordIdx++ )
+                                    exportableVertex.position.push ( parseFloat ( vertex[ vertexCoordIdx ] ) );                 
+
+                                face.push ( exportableVertex );
                             }
-                            face.push ( vert );
                         }
-                        currModel.faces.push ( face );
-                    }
 
-                    /* Is this face a part of a group? */
-                    if ( isInGroup )
-                    {
-                        // currGroup.value.push ( face );
-                        for ( var currGroupIdx = 0; currGroupIdx < currGroups.length; currGroupIdx++ )
+                        /* Is this face a part of a group? */
+                        if ( isInGroup )
                         {
-                            currGroups[ currGroupIdx ].value.push ( face );
+                            for ( var currGroupIdx = 0; currGroupIdx < currGroups.length; currGroupIdx++ )
+                                currGroups[ currGroupIdx ].value.push ( face );
                         }
+
+                        /* Is there a material specified, or are we rolling unstyled? */
+                        if ( currMaterial !== null )
+                            face.material    = currMaterial;
+
                     }
 
-                    /* Is there a material specified, or are we rolling unstyled? */
-                    if ( currMaterial !== null )
-                        face.material        = currMaterial;
-
+                    currModel.faces.push ( face );
                 }
                 else if ( currLine.startsWith ( 'usemtl' ) )
                 {
@@ -193,13 +232,20 @@
                     currMaterial             = mtlName;
                     currModel.numMaterials++;
                 }
+                else if ( currLine.startsWith ( 'mtllib' ) )
+                {
+                    var parts                = currLine.split ( ' ' );
+                    Application.Debug.assert ( parts.length == 2 );
+                    continue; // NOTE(Dino): I'm not sure how to handle material libraries over here, on the web.
+
+                }
                 else if ( currLine.charAt ( 0 ) == 'o' )
                 {
                     Application.Debug.assert ( currLine.charAt ( 1 ) === ' ', "OBJ file invalid" );
                     var name                 = currLine.split ( ' ', 2 )[ 1 ].trim ( );
                     if ( currModel !== null )
                         models.push ( currModel );
-                    currModel                = new Model ( name );
+                    currModel                = new ExportableModel ( name );
                 }
                 else if ( currLine.charAt ( 0 ) == 'g' )
                 /* TODO(Dino): Multiple groups may be declared at once. */
@@ -214,12 +260,12 @@
                     
                     for ( var currPartIdx = 1; currPartIdx < parts.length; currPartIdx++ )
                     {
-                        var __name       = parts[ currPartIdx ];
-                        var isGroupFound = false;
+                        var __name          = parts[ currPartIdx ];
+                        var isGroupFound    = false;
                         for ( var currGroupIdx = 0; currGroupIdx < currModel.groups.length; currGroupIdx++ )
                         if ( currModel.groups[ currGroupIdx ].key === groupName )
                         {
-                            isGroupFound = true;
+                            isGroupFound    = true;
                             currGroups.push ( currModel.groups ( currGroupIdx ) );
                             break;
                         }
@@ -247,55 +293,22 @@
                             currModel.groups.push ( currGroups[ currGroupIdx ] );
                     }
                 }
+                else if ( currLine.charAt ( 0 ) == 's' )
+                /* NOTE(Dino): this controls smooth shading across polygons, e.g per-fragment shading. Accepted values are 'on' and 'off'. */
+                {
+
+                }
                 else
+                {
                     Application.Debug.assert ( false, "OBJ file invalid." );
+                }
             }
         }
 
         if ( currModel !== null )
             models.push ( currModel );
         
-
-        for ( var modelIdx = 0; modelIdx < models.length; modelIdx++ )
-        {
-            var currModel                               = models[ modelIdx ];
-            var exportableModel                         = new ExportableModel ( currModel.name );
-            for ( var verticeIdx = 0; verticeIdx < currModel.vertices.length; verticeIdx++ )
-            {
-                var exportableVertex                    = new ExportableVertex ( );
-                exportableVertex.position               = currModel.vertices[ verticeIdx ];
-                if ( currModel.normals.length > verticeIdx )
-                    exportableVertex.normal             = currModel.normals[ verticeIdx ];
-                if ( currModel.textureCoordinates.length > verticeIdx )
-                    exportableVertex.textureCoordinates = currModel.textureCoordinates[ verticeIdx ];
-                exportableModel.vertices.push ( exportableVertex );
-            }
-
-            for ( var faceIdx = 0; faceIdx < currModel.faces.length; faceIdx++ )
-            {
-                var face                    = currModel.faces[ faceIdx ];
-                var exportableFace          = new ExportableFace ( );
-                for ( var currVertexIdx = 0; currVertexIdx < face.length; currVertexIdx++ )
-                {
-                    var vertexIdx           = face[ currVertexIdx ].index;
-                    var vertexToPush        = exportableModel.vertices[ vertexIdx - 1 ];
-                    vertexToPush.index      = vertexIdx;
-                    exportableFace.vertices.push ( vertexToPush );
-                }
-                exportableFace.material     = face.material;
-                exportableModel.faces.push ( exportableFace );
-            }
-
-            for ( var groupIdx = 0; groupIdx < currModel.groups.length; groupIdx++ )
-            {
-                exportableModel.groups.push ( currModel.groups[ groupIdx ] );
-            }
-
-            exportableModel.numMaterials    = currModel.numMaterials;
-            exportableModels.push ( exportableModel );
-        }
-        
-        return exportableModels;
+        return models;
     }
 
     /* * * * * * * * * * * * * * * * * */
@@ -306,120 +319,19 @@
     {
         var isTestSuccessful                = true;
 
-
-
-        var content                         = ""
-                                            + "o my_cube_2.obj\n"
-                                            + "g crate box\n"
-                                            + "usemtl crate_material\n"
-                                            + "#front face\n"
-                                            + "v -1.000000 -1.00000 1.000000\n"
-                                            + "v 1.000000 -1.000000 1.000000\n"
-                                            + "v 1.000000 1.000000 1.000000\n"
-                                            + "v -1.000000 1.000000 1.000000\n"
-                                            + "#back face\n"
-                                            + "v -1.000000 -1.000000 -1.000000\n"
-                                            + "v -1.000000 1.000000 -1.000000\n"
-                                            + "v 1.000000 1.000000 -1.000000\n"
-                                            + "v 1.000000 -1.000000 -1.000000\n"
-                                            + "#top face\n"
-                                            + "v -1.000000 1.000000 -1.000000\n"
-                                            + "v -1.000000 1.000000 1.000000\n"
-                                            + "v 1.000000 1.000000 1.000000\n"
-                                            + "v 1.000000 1.000000 -1.000000\n"
-                                            + "#bottom face\n"
-                                            + "v -1.000000 -1.000000 -1.000000\n"
-                                            + "v 1.000000 -1.000000 -1.000000\n"
-                                            + "v 1.000000 -1.000000 1.000000\n"
-                                            + "v -1.000000 -1.000000 1.000000\n"
-                                            + "#right face\n"
-                                            + "v 1.000000 -1.000000 -1.000000\n"
-                                            + "v 1.000000 1.000000 -1.000000\n"
-                                            + "v 1.000000 1.000000 1.000000\n"
-                                            + "v 1.000000 -1.000000 1.000000\n"
-                                            + "#left face\n"
-                                            + "v -1.000000 -1.000000 -1.000000\n"
-                                            + "v -1.000000 -1.000000 1.000000\n"
-                                            + "v -1.000000 1.000000 1.000000\n"
-                                            + "v -1.000000 1.000000 -1.000000\n"
-                                            + "#front face\n"
-                                            + "vt 0.0 0.0\n"
-                                            + "vt 1.0 0.0\n"
-                                            + "vt 1.0 1.0\n"
-                                            + "vt 0.0 1.0\n"
-                                            + "#back face\n"
-                                            + "vt 0.0 0.0\n"
-                                            + "vt 1.0 0.0\n"
-                                            + "vt 1.0 1.0\n"
-                                            + "vt 0.0 1.0\n"
-                                            +"#top face\n"
-                                            + "vt 0.0 0.0\n"
-                                            + "vt 1.0 0.0\n"
-                                            + "vt 1.0 1.0\n"
-                                            + "vt 0.0 1.0\n"
-                                            + "#bottom face\n"
-                                            + "vt 0.0 0.0\n"
-                                            + "vt 1.0 0.0\n"
-                                            + "vt 1.0 1.0\n"
-                                            + "vt 0.0 1.0\n"
-                                            + "#right face\n"
-                                            + "vt 0.0 0.0\n"
-                                            + "vt 1.0 0.0\n"
-                                            + "vt 1.0 1.0\n"
-                                            + "vt 0.0 1.0\n"
-                                            + "#left face\n"
-                                            + "vt 0.0 0.0\n"
-                                            + "vt 1.0 0.0\n"
-                                            + "vt 1.0 1.0\n"
-                                            + "vt 0.0 1.0\n"
-                                            + "#front face\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "#back face\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "#top face\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "#bottom face\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "#left face\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "#right face\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "vn 0.0 0.0 0.0\n"
-                                            + "f 1 2 3 4\n"
-                                            + "f 5 6 7 8\n"
-                                            + "f 9 10 11 12\n"
-                                            + "f 13 14 15 16\n"
-                                            + "f 17 18 19 20\n"
-                                            + "f 21 22 23 24\n"
-                                            ;
-
-        var parsed                          = loadObjFromString ( content );
+        var parsed                          = loadObjFromString ( spacker.untitled );
         isTestSuccessful                    &= ( parsed !== null && parsed.length == 1 );
         Application.Debug.assert ( isTestSuccessful, "Obj file not loaded." );
         parsed                              = parsed[ 0 ];
 
-        isTestSuccessful                    &= ( parsed.vertices.length == 24 );
+        isTestSuccessful                    &= ( parsed.vertices.length == 8 );
         Application.Debug.assert ( isTestSuccessful, "Model vertex count incorrect." );
 
-        isTestSuccessful                    &= ( parsed.faces.length == 6 );
+        isTestSuccessful                    &= ( parsed.faces.length == 12 );
         Application.Debug.assert ( isTestSuccessful, "Model face count incorrect." );
+
+        isTestSuccessful                    &= ( parsed.normals.length == 6 );
+        Application.Debug.assert ( isTestSuccessful, "Model normal count incorrect." );
 
         Application.Debug.assert ( isTestSuccessful, "Test failed: loadObjFromStringUnitTest." );
 

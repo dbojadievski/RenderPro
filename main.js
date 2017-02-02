@@ -265,35 +265,6 @@ var publicScene;
             exportableScenes.materials.push ( coreMtl );
         }
 
-        /* NOTE(Dino): Moving away from explicit mesh declaration to an .obj format. */
-        // for ( var currMeshIdx = 0; currMeshIdx < assets.meshes.length; currMeshIdx++ )
-        // {
-        //     var currMesh                    = assets.meshes[ currMeshIdx ];
-        //     var vertices                    = [ ];
-        //     var indices                     = [ ];
-        //     for ( var currVertexIdx = 0; currVertexIdx < currMesh.content.length; currVertexIdx++ )
-        //     {
-        //         var content                 = currMesh.content[ currVertexIdx ];
-                
-        //         content.uv[ 0 ]             = parseFloat ( content.uv[ 0 ] );
-        //         content.uv[ 1 ]             = parseFloat ( content.uv[ 1 ] );
-
-        //         content.normal[ 0 ]         = parseFloat ( content.normal[ 0 ] );
-        //         content.normal[ 1 ]         = parseFloat ( content.normal[ 1 ] );
-        //         content.normal[ 2 ]         = parseFloat ( content.normal[ 2 ] );
-
-        //         content.position[ 0 ]       = parseFloat ( content.position[ 0 ] );
-        //         content.position[ 1 ]       = parseFloat ( content.position[ 1 ] );
-        //         content.position[ 2 ]       = parseFloat ( content.position[ 2 ] );
-
-        //         var coreVertex              = new renderPro.graphics.core.Vertex ( content.position, content.uv, content.normal );
-        //         vertices.push ( coreVertex );
-        //     }
-        //     var coreMesh                    = new renderPro.graphics.core.Mesh ( vertices, 3, indices, 2 );
-        //     coreMesh.meshID                 = ( parseInt ( currMesh.id ) - 3000 );
-        //     meshes.push ( coreMesh );
-        // }
-
         for ( var currModelIdx = 0; currModelIdx < assets.models.length; currModelIdx++ )
         {
             var str                         = assets.models[ currModelIdx ].content;
