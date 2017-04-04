@@ -283,8 +283,10 @@ var publicScene;
                     }
                 }
                 exportableScenes.models.push ( subModel );
+                console.log ( exportableScenes.models );
             }
         }
+
 
 
         /* 
@@ -663,7 +665,6 @@ var publicScene;
         mat4.identity ( someTransform );
 
         var objModel                            = new renderPro.graphics.core.Model ( scenes.renderables, generatedTransform, null );
-        // models.push ( objModel );
         
         /* Note(Dino):
         * Here, we get prepared to start rendering.
