@@ -662,10 +662,6 @@ var publicScene;
         var someTransform                       = mat4.create ( );
         mat4.identity ( someTransform );
 
-        scenes.renderables[ 0 ].mesh.indices    = cubeVertexIndices;
-        scenes.renderables[ 0 ].mesh.indexSize  = 2;
-        scenes.renderables[ 0 ].mesh.indexCount = cubeVertexIndices.length;
-
         var objModel                            = new renderPro.graphics.core.Model ( scenes.renderables, generatedTransform, null );
         // models.push ( objModel );
         
