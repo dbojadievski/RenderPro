@@ -1,48 +1,54 @@
 /**
  * @author Dino Bojadjievski, Sourcery (@bojadjievski).
  */
+
+namespace renderPro {
+    export namespace math {
+        export class MatrixStack {
+            currentState: any
+            matrices: renderPro.dataStructures.LinkedList
+            constructor ( ) 
+            {
+                this.currentState           = mat4.create ( );
+                mat4.identity ( this.currentState );
+                this.matrices               = null;
+            }
+            push ( matrix )
+            {
+                let node : renderPro.dataStructures.LinkedList  = new renderPro.dataStructures.LinkedList ( matrix );
+                node.prev                   = this.matrices;
+                if ( this.matrices !==  null)
+                    this.matrices.next      = node;
+                this.matrices               = node;
+
+                mat4.multiply ( this.currentState, matrix );
+            }
+            pop ( ) 
+            {
+                var popped                  = this.matrices;
+                var inverse                 = mat4.inverse ( popped.data );
+                if ( inverse !== null )
+                /* Note(Dino): Remember that not all matrices are invertible! Reference Целаковски, Наум: Виша Математика 4 for more information.  */ 
+                {
+                    mat4.multiply ( this.currentState, inverse );
+                    this.matrices           = this.matrices.prev;
+                    if ( this.matrices !== null )
+                        this.matrices.next  = null;
+                    
+                    /* We need to mark up the removed transformation and its containing node for garbage collection. */
+                    popped.data             = null;
+                    popped.prev             = null;
+                    popped.next             = null;
+                }
+            };
+        }
+    }
+}
+
+/* Here follow the unit tests for this type. */
 ( function ( ) 
 {
-    function matrixStackExperimental ( ) 
-    {
-        this.currentState           = mat4.create ( );
-        mat4.identity ( this.currentState );
-        this.matrices               = null;
-    }
 
-    matrixStackExperimental.prototype.push = function matrixStackExperimental_push ( matrix )
-    {
-        var node                    = new renderPro.dataStructures.LinkedList ( matrix );
-        node.prev                   = this.matrices;
-        if ( this.matrices !==  null)
-            this.matrices.next      = node;
-        this.matrices               = node;
-
-        mat4.multiply ( this.currentState, matrix );
-    };
-
-    matrixStackExperimental.prototype.pop = function matrixStackExperimental_pop ( ) 
-    {
-        var popped                  = this.matrices;
-        var inverse                 = mat4.inverse ( popped.data );
-        if ( inverse !== null )
-        /* Note(Dino): Remember that not all matrices are invertible! Reference Целаковски, Наум: Виша Математика 4 for more information.  */ 
-        {
-            mat4.multiply ( this.currentState, inverse );
-            this.matrices           = this.matrices.prev;
-            if ( this.matrices !== null )
-                this.matrices.next  = null;
-            
-            /* We need to mark up the removed transformation and its containing node for garbage collection. */
-            popped.data             = null;
-            popped.prev             = null;
-            popped.next             = null;
-        }
-    };
-
-    renderPro.math.MatrixStack      = matrixStackExperimental;
-
-    /* Here follow the unit tests for this type. */
     ( function matrixStack_push_test ( )
     {
         var matrixStack             = new renderPro.math.MatrixStack ( );
@@ -103,7 +109,7 @@
         Application.Debug.assert ( matrixStack.matrices.data == translationX && matrixStack.matrices.next === null && matrixStack.matrices.prev == null, "Previous transform not reversed properly." );
         
         matrixStack.pop ( );
-        Application.Debug.assert ( matrixStack.matrices === null && matrixStack.currentState !== null );
+        Application.Debug.assert ( matrixStack.matrices === null && matrixStack.currentState !== null, "" );
     } ) ( );
 
 } ) ( );
