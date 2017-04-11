@@ -11,7 +11,7 @@ namespace renderPro {
                 }
                 getViewMatrix ( worldUp : any ) : any
                 {
-                    var viewMatrix              = mat4.create ( );
+                    var viewMatrix              =  renderPro.math.gl.Mat4.create ( );
                     
                     var lookAtPoint             = 
                     [ 
@@ -20,7 +20,7 @@ namespace renderPro {
                         this.position[ 2 ] + this.viewDirection[ 2 ] 
                     ];
 
-                    viewMatrix                  = mat4.lookAt ( mat4.create ( ), this.position, lookAtPoint, worldUp );
+                    viewMatrix                  =  renderPro.math.gl.Mat4.lookAt (  renderPro.math.gl.Mat4.create ( ), this.position, lookAtPoint, worldUp );
                     return viewMatrix;
                 };
 

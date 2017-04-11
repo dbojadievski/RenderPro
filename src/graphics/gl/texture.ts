@@ -5,9 +5,10 @@ namespace renderPro {
                 texture : any
                 textureID : number
                 static _currentTextureID : number
-                constructor ( ) 
+                gl : any
+                constructor ( gl : any = renderPro.graphics.gl.context) 
                 {
-                    var gl : any                             = renderPro.graphics.gl.context;
+                    this.gl = gl
                     this.texture                                = gl.createTexture ( );
 
                     if ( Texture._currentTextureID == undefined )
@@ -16,7 +17,7 @@ namespace renderPro {
                 }
                 load ( image  )
                 {
-                    var gl                                      =  renderPro.graphics.gl.context;
+                    let gl                                      =  this.gl;
                     gl.bindTexture ( gl.TEXTURE_2D, this.texture );
                     gl.texImage2D ( gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image );
                     gl.pixelStorei ( gl.UNPACK_FLIP_Y_WEBGL, true );
@@ -26,7 +27,7 @@ namespace renderPro {
                 }
                 unload ( )
                 {
-                    var gl                                      =  renderPro.graphics.gl.context;
+                    let gl                                      =  renderPro.graphics.gl.context;
                     gl.deleteTexture ( this.texture );
                 }
             }
