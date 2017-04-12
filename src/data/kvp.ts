@@ -1,22 +1,22 @@
-class KeyValuePair 
+class KeyValuePair<T,U> 
 {
-    key: any;
-    value: any;
-    constructor ( key : any, value : any )
+    key: T;
+    value: U;
+    constructor ( key : T, value : U )
     {
         this.key = key;
         this.value = value;
     }
 }
 
-class Dictionary 
+class Dictionary<T,U> 
 {
-    content : Array<any>;
+    content : Array<KeyValuePair<T,U>>;
     constructor ()
     {
-        this.content = new Array<any>();
+        this.content = new Array<KeyValuePair<T,U>>();
     }
-    hasKey ( key : any ) : boolean
+    hasKey ( key : T ) : boolean
     {
         let isKeyFound : boolean         = false;
         for ( let currKeyIdx : number   = 0; currKeyIdx < this.content.length; currKeyIdx++ )
@@ -30,7 +30,7 @@ class Dictionary
 
         return isKeyFound;
     }
-    hasValue ( value : any ) : boolean
+    hasValue ( value : U ) : boolean
     {
         let isValueFound : boolean        = false;
         for ( let currKeyIdx : number    = 0; currKeyIdx < this.content.length; currKeyIdx++ )
@@ -44,7 +44,7 @@ class Dictionary
 
         return isValueFound;
     }
-    getByKey ( key : any ) : any
+    getByKey ( key : T ) : any
     {
         let value : any                  = null;
         for ( let currKeyIdx : number    = 0; currKeyIdx < this.content.length; currKeyIdx++ )
@@ -58,7 +58,7 @@ class Dictionary
 
         return value;
     }
-    push ( kvp : KeyValuePair ) : void
+    push ( kvp : KeyValuePair<T,U> ) : void
     {
         this.content.push ( kvp );
     }

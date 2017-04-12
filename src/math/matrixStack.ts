@@ -6,7 +6,7 @@ namespace renderPro {
     export namespace math {
         export class MatrixStack {
             currentState: any
-            matrices: renderPro.dataStructures.LinkedList
+            matrices: renderPro.dataStructures.LinkedList<Float32Array>
             constructor ( ) 
             {
                 this.currentState           = mat4.create ( );
@@ -15,7 +15,7 @@ namespace renderPro {
             }
             push ( matrix )
             {
-                let node : renderPro.dataStructures.LinkedList  = new renderPro.dataStructures.LinkedList ( matrix );
+                let node : renderPro.dataStructures.LinkedList<Float32Array>  = new renderPro.dataStructures.LinkedList<Float32Array> ( matrix );
                 node.prev                   = this.matrices;
                 if ( this.matrices !==  null)
                     this.matrices.next      = node;

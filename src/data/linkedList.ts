@@ -1,19 +1,19 @@
 /** @author Dino Bojadjievski, Sourcery (@bojadjievski) */
 namespace renderPro { 
     export namespace dataStructures {
-        export class LinkedList {
-            data : any
-            prev : any
-            next : any
-            constructor ( data  : any )
+        export class LinkedList<T> {
+            data : T
+            prev : LinkedList<T>
+            next : LinkedList<T>
+            constructor ( data  : T )
             {
                 this.data                       = data;
                 this.prev                       = null;
                 this.next                       = null;
             }    
-            addChild ( node : any ) : void
+            addChild ( node : LinkedList<T> ) : void
             {
-                let oldnext : any            = this.next;
+                let oldnext : LinkedList<T>            = this.next;
                 this.next                    = node;
                 this.next.next               = oldnext;
                 this.next.prev               = this;
