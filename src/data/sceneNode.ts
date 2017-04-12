@@ -4,10 +4,10 @@ namespace renderPro {
             export class SceneNode {
                 parent: SceneNode
                 children: Array<SceneNode>
-                preXYZ: any
-                prePYR: any
-                transform: any
-                cachedTransform: any
+                preXYZ: Float32Array
+                prePYR: Float32Array
+                transform: Float32Array
+                cachedTransform: Float32Array
                 constructor ( parent : SceneNode )
                 {
                     this.parent                 = parent;
@@ -55,7 +55,7 @@ namespace renderPro {
                     mat4.identity ( finalTransform );
                     mat4.multiply ( finalTransform, finalTransform, this.transform );
                     
-                    let parent                  = this.parent;
+                    let parent : SceneNode      = this.parent;
                     while ( parent !== null )
                     {
                         mat4.multiply(  finalTransform, finalTransform, parent.transform );
@@ -67,7 +67,7 @@ namespace renderPro {
                 updateAll ( ) : void
                 {
                     this.updateLocal ( );
-                    for ( var currChildIdx = 0; currChildIdx < this.children.length; currChildIdx++ )
+                    for ( let currChildIdx = 0; currChildIdx < this.children.length; currChildIdx++ )
                         this.children[ currChildIdx ].updateAll ( );       
                 };
             }

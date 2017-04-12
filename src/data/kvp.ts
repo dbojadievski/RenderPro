@@ -4,8 +4,8 @@ class KeyValuePair<T,U>
     value: U;
     constructor ( key : T, value : U )
     {
-        this.key = key;
-        this.value = value;
+        this.key        = key;
+        this.value      = value;
     }
 }
 
@@ -18,12 +18,12 @@ class Dictionary<T,U>
     }
     hasKey ( key : T ) : boolean
     {
-        let isKeyFound : boolean         = false;
+        let isKeyFound : boolean        = false;
         for ( let currKeyIdx : number   = 0; currKeyIdx < this.content.length; currKeyIdx++ )
         {
             if ( this.content[ currKeyIdx ].key == key )
             {
-                isKeyFound      = true;
+                isKeyFound              = true;
                 break;
             }
         }
@@ -32,22 +32,22 @@ class Dictionary<T,U>
     }
     hasValue ( value : U ) : boolean
     {
-        let isValueFound : boolean        = false;
-        for ( let currKeyIdx : number    = 0; currKeyIdx < this.content.length; currKeyIdx++ )
+        let isValueFound : boolean      = false;
+        for ( let currKeyIdx : number   = 0; currKeyIdx < this.content.length; currKeyIdx++ )
         {
             if ( this.content[ currKeyIdx ].value === value )
             {
-                isValueFound    = true;
+                isValueFound            = true;
                 break;
             }
         }
 
         return isValueFound;
     }
-    getByKey ( key : T ) : any
+    getByKey ( key : T ) : U
     {
-        let value : any                  = null;
-        for ( let currKeyIdx : number    = 0; currKeyIdx < this.content.length; currKeyIdx++ )
+        let value : U                   = null;
+        for ( let currKeyIdx : number   = 0; currKeyIdx < this.content.length; currKeyIdx++ )
         {
             if ( this.content[ currKeyIdx ].key == key )
             {

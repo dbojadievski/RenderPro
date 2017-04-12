@@ -30,7 +30,7 @@ namespace renderPro {
                     this.renderableID           = Renderable._renderableIdentifier++;
                 }
 
-                bufferData ( gl: any )
+                bufferData ( gl: WebGLRenderingContext )
                 {
                     let positions : Array<any>              = new Array ( );
                     let textureCoordinates : Array<any>     = new Array ( );
@@ -65,7 +65,7 @@ namespace renderPro {
                     this.indexBuffer            = new renderPro.graphics.gl.ElementArrayBuffer ( gl );
                     this.indexBuffer.bufferData ( this.mesh.indices );
                 }
-                draw ( shaderProgram : any, gl : any ) : void
+                draw ( shaderProgram : any, gl : WebGLRenderingContext ) : void
                 {
                     gl.bindBuffer ( gl.ARRAY_BUFFER, this.vertexBuffer.pointer );
                     gl.vertexAttribPointer ( shaderProgram.attributes[ "vertexPosition" ], this.mesh.vertexSize, gl.FLOAT, false, 0, 0 );
@@ -91,7 +91,7 @@ namespace renderPro {
                     // gl.drawArrays ( gl.TRIANGLES, 0, this.mesh.indices.length );
                     gl.bindBuffer ( gl.ARRAY_BUFFER, null );
                 }
-                drawWithoutStateChanges ( shaderProgram : any, gl : any ) :  void
+                drawWithoutStateChanges ( shaderProgram : any, gl : WebGLRenderingContext ) :  void
                 {
                     gl.bindBuffer ( gl.ARRAY_BUFFER, this.vertexBuffer.pointer );
                     gl.vertexAttribPointer ( shaderProgram.attributes[ "vertexPosition" ], 3, gl.FLOAT, false, 0, 0 );
@@ -112,7 +112,7 @@ namespace renderPro {
 
                     gl.bindBuffer ( gl.ARRAY_BUFFER, null );
                 }
-                drawUnindexed ( shaderProgram : any, gl : any ) : void
+                drawUnindexed ( shaderProgram : any, gl : WebGLRenderingContext ) : void
                 {
                     gl.bindBuffer ( gl.ARRAY_BUFFER, this.vertexBuffer.pointer );
                     gl.vertexAttribPointer ( shaderProgram.attributes[ "vertexPosition" ], 3, gl.FLOAT, false, 0, 0 );

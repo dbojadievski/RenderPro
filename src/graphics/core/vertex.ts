@@ -2,10 +2,10 @@ namespace renderPro {
     export namespace graphics {
         export namespace core {
             export class Vertex {
-                position : Array<number>
-                uv : any
-                normal : Array<number>
-                constructor ( position : Array<number>, uv : any, normal: Array<number> ) 
+                position : Float32Array
+                uv : Float32Array
+                normal : Float32Array
+                constructor ( position : Float32Array, uv : Float32Array, normal: Float32Array) 
                 {
                     this.position           = position;
                     this.uv                 = uv;
@@ -26,7 +26,7 @@ namespace renderPro {
 
                     return size;
                 }
-                getBuffer ( ) : Array<any>
+                getBuffer ( ) : Array<any> 
                 {
                     let buffer : Array<any>             = [ ];
 

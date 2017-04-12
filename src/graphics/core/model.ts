@@ -3,12 +3,12 @@ namespace renderPro {
         export namespace core {
             export class Model {
                 renderables : Array<renderPro.graphics.gl.Renderable> // TODO: make renderable 
-                transform : any
+                transform : Float32Array
                 parent : Model
                 children : Array<Model>
                 modelID : number
                 static _currentModelID : number
-                constructor( renderables : Array<renderPro.graphics.gl.Renderable>, transform : any, parent : Model )
+                constructor( renderables : Array<renderPro.graphics.gl.Renderable>, transform : Float32Array, parent : Model )
                 {
                     this.renderables            = renderables;
                     this.transform              = transform;

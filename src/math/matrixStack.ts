@@ -5,7 +5,7 @@
 namespace renderPro {
     export namespace math {
         export class MatrixStack {
-            currentState: any
+            currentState: Float32Array
             matrices: renderPro.dataStructures.LinkedList<Float32Array>
             constructor ( ) 
             {
@@ -25,8 +25,8 @@ namespace renderPro {
             }
             pop ( ) 
             {
-                var popped                  = this.matrices;
-                var inverse                 = mat4.invert( new Float32Array(16), popped.data );
+                let popped                  = this.matrices;
+                let inverse                 = mat4.invert( new Float32Array(16), popped.data );
                 if ( inverse !== null )
                 /* Note(Dino): Remember that not all matrices are invertible! Reference Целаковски, Наум: Виша Математика 4 for more information.  */ 
                 {
@@ -51,20 +51,20 @@ namespace renderPro {
 
     ( function matrixStack_push_test ( )
     {
-        var matrixStack             = new renderPro.math.MatrixStack ( );
+        let matrixStack             = new renderPro.math.MatrixStack ( );
         
-        var translationX            = mat4.create ( );
+        let translationX            = mat4.create ( );
         mat4.identity ( translationX );
         mat4.translate ( translationX, translationX, new Float32Array([ 3, 0, 0 ]) );
         matrixStack.push ( translationX );
         
         
-        var translationY            = mat4.create ( );
+        let translationY            = mat4.create ( );
         mat4.identity ( translationY );
         mat4.translate ( translationY, translationY, new Float32Array([ 0, 5, 0 ]) );
         matrixStack.push ( translationY );
 
-        var translationZ            = mat4.create ( );
+        let translationZ            = mat4.create ( );
         mat4.identity ( translationZ );
         mat4.translate ( translationZ, translationZ, new Float32Array([ 0, 0, 7 ]) );
         matrixStack.push ( translationZ );
@@ -82,21 +82,21 @@ namespace renderPro {
 
     ( function matrixStack_pop_test ( ) 
     {
-        var matrixStack             = new renderPro.math.MatrixStack ( );
+        let matrixStack             = new renderPro.math.MatrixStack ( );
 
-        var translationX            = mat4.create ( );
+        let translationX : Float32Array           = mat4.create ( );
         mat4.identity ( translationX );
         mat4.translate ( translationX, translationX, new Float32Array([ 3.0, 0.0, 0.0 ]) );
         matrixStack.push ( translationX );
         Application.Debug.assert ( matrixStack.matrices.data == translationX, "Stack not created properly." );
 
-        var translationY            = mat4.create ( );
+        let translationY : Float32Array             = mat4.create ( );
         mat4.identity ( translationY );
         mat4.translate ( translationY, translationY, new Float32Array([ 0.0, 5.0, 0.0 ]) );
         matrixStack.push ( translationY );
         Application.Debug.assert ( matrixStack.matrices.data == translationY, "Stack not created properly." );
 
-        var translationZ = mat4.create ( );
+        let translationZ : Float32Array             = mat4.create ( );
         mat4.identity ( translationZ );
         mat4.translate ( translationZ, translationZ, new Float32Array([ 0.0, 0.0, 7.0 ]) );
         matrixStack.push ( translationZ );

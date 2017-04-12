@@ -2,18 +2,18 @@ namespace renderPro {
     export namespace graphics {
         export namespace scene {
             export class Camera {
-                position : any
-                viewDirection : any
-                constructor ( position : any, viewDirection : any )
+                position : Float32Array
+                viewDirection : Float32Array
+                constructor ( position : Float32Array, viewDirection : Float32Array )
                 {
                     this.position               = position;
                     this.viewDirection          = viewDirection;
                 }
-                getViewMatrix ( worldUp : any ) : Float32Array
+                getViewMatrix ( worldUp : Float32Array ) : Float32Array
                 {
-                    var viewMatrix              =  mat4.create ( );
+                    let viewMatrix              =  mat4.create ( );
                     
-                    var lookAtPoint             = new Float32Array (
+                    let lookAtPoint             = new Float32Array (
                     [ 
                         this.position[ 0 ] + this.viewDirection[ 0 ], 
                         this.position[ 1 ] + this.viewDirection[ 1 ],

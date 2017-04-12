@@ -13,12 +13,12 @@ namespace renderPro {
             }    
             addChild ( node : LinkedList<T> ) : void
             {
-                let oldnext : LinkedList<T>            = this.next;
-                this.next                    = node;
-                this.next.next               = oldnext;
-                this.next.prev               = this;
+                let oldnext : LinkedList<T> = this.next;
+                this.next                   = node;
+                this.next.next              = oldnext;
+                this.next.prev              = this;
                 if ( oldnext !== null )
-                    oldnext.prev             = this.next;
+                    oldnext.prev            = this.next;
             }
             removeChild ( ) : void
             {

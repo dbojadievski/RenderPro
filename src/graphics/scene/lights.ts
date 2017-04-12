@@ -3,12 +3,12 @@ namespace renderPro {
         export namespace scene {
             export namespace lighting {
                 export class DirectionalLight {
-                    direction : Array<number>
+                    direction : Float32Array
 
                     ambient : Array<number>
                     diffuse : Array<number>
                     specular : Array<number>
-                    constructor ( direction : Array<number>, ambient : Array<number>, diffuse : Array<number>, specular : Array<number> )
+                    constructor ( direction : Float32Array, ambient : Array<number>, diffuse : Array<number>, specular : Array<number> )
                     {
                         this.direction                  = direction;
                         
@@ -18,11 +18,11 @@ namespace renderPro {
                     }
                 }
                 export class PointLight {
-                    position : Array<number>
+                    position : Float32Array
                     ambient : Array<number>
                     diffuse : Array<number>
                     specular : Array<number>
-                    constructor ( position : Array<number>, ambient : Array<number>, diffuse : Array<number>, specular : Array<number>)
+                    constructor ( position : Float32Array, ambient : Array<number>, diffuse : Array<number>, specular : Array<number>)
                     {
                         this.position                   = position;
                         this.ambient                    = ambient;
@@ -31,7 +31,7 @@ namespace renderPro {
                     }
                 }
                 export class SpotLight {
-                    position : Array<number>
+                    position : Float32Array
 
                     ambient : Array<number>
                     diffuse : Array<number>
@@ -44,7 +44,7 @@ namespace renderPro {
                     spotExponent : any
                     spotCutoffAngle : any
                     constructor  ( 
-                        position : Array<number>, 
+                        position : Float32Array, 
                         ambient : Array<number>, diffuse : Array<number>, specular: Array<number>, 
                         spotDirection: Array<number>, spotExponent : any, spotCutoffAngle : any,
                         attenuation: any, computeDistanceAttenuation : any ) 

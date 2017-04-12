@@ -2,15 +2,14 @@ namespace renderPro {
     export namespace graphics {
         export namespace gl {
             export class Texture {
-                texture : any
+                texture :  WebGLTexture
                 textureID : number
                 static _currentTextureID : number
-                gl : any
-                constructor ( gl : any = renderPro.graphics.gl.context) 
+                gl : WebGLRenderingContext
+                constructor ( gl : WebGLRenderingContext = renderPro.graphics.gl.context) 
                 {
                     this.gl = gl
                     this.texture                                = gl.createTexture ( );
-
                     if ( Texture._currentTextureID == undefined )
                         Texture._currentTextureID               = 1;
                     this.textureID                              = Texture._currentTextureID++;

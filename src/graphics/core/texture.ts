@@ -8,7 +8,7 @@ namespace renderPro {
                 static _currentTextureID : number
                 constructor ( src : string )
                 {
-                    var self                        = this;
+                    let self : renderPro.graphics.core.Texture   = this;
 
                     this.image                      = new Image ( );
                     this.image.crossOrigin          = "";

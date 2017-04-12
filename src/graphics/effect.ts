@@ -3,12 +3,12 @@ namespace renderPro {
         export class Effect {
             uniforms: any
             attributes: any
-            vertexShader: any
-            fragmentShader: any
-            programPointer: any
+            vertexShader: WebGLShader
+            fragmentShader: WebGLShader
+            programPointer: WebGLProgram
             static currentEffectIdx: number
             effectID: number
-            constructor ( vertexShader : any, fragmentShader : any, gl : any )
+            constructor ( vertexShader : WebGLShader, fragmentShader : WebGLShader, gl : WebGLRenderingContext )
             {
                 this.uniforms               = [ ];
                 this.attributes             = [ ];
@@ -29,7 +29,7 @@ namespace renderPro {
                 gl.attachShader ( this.programPointer, this.fragmentShader );
                 gl.linkProgram ( this.programPointer );
             }
-            use ( gl : any )
+            use ( gl : WebGLRenderingContext )
             {
                 gl.useProgram ( this.programPointer );
             }
