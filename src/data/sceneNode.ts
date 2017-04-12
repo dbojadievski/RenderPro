@@ -13,11 +13,11 @@ namespace renderPro {
                     this.parent                 = parent;
                     this.children               = [ ];
 
-                    this.preXYZ                 = renderPro.math.gl.Vec3.fromValues ( 0.0, 0.0, 0.0 );
-                    this.prePYR                 = renderPro.math.gl.Vec3.fromValues ( 0.0, 0.0, 0.0 );
-                    this.transform              = renderPro.math.gl.Mat4.create();
-                    renderPro.math.gl.Mat4.identity ( this.transform );
-                    this.cachedTransform        = renderPro.math.gl.Mat4.create();
+                    this.preXYZ                 = vec3.fromValues ( 0.0, 0.0, 0.0 );
+                    this.prePYR                 = vec3.fromValues ( 0.0, 0.0, 0.0 );
+                    this.transform              = mat4.create();
+                    mat4.identity ( this.transform );
+                    this.cachedTransform        = mat4.create();
 
                     if ( parent instanceof SceneNode )
                         parent.addChild ( this );
@@ -36,10 +36,10 @@ namespace renderPro {
                 */
                 updateLocal ( ) : void
                 {
-                    renderPro.math.gl.Mat4.rotateX ( this.transform, this.prePYR[ 2 ] );
-                    renderPro.math.gl.Mat4.rotateY ( this.transform, this.prePYR[ 1 ] );
-                    renderPro.math.gl.Mat4.rotateZ ( this.transform, this.prePYR[ 0 ] );
-                    renderPro.math.gl.Mat4.translate ( this.transform, this.preXYZ );
+                    mat4.rotateX ( this.transform, this.transform, this.prePYR[ 2 ] );
+                    mat4.rotateY ( this.transform, this.transform, this.prePYR[ 1 ] );
+                    mat4.rotateZ ( this.transform, this.transform, this.prePYR[ 0 ] );
+                    mat4.translate ( this.transform, this.transform, this.preXYZ );
                     this.prePYR[ 0 ]            = 0.0;
                     this.prePYR[ 1 ]            = 0.0;
                     this.prePYR[ 2 ]            = 0.0;
@@ -49,16 +49,16 @@ namespace renderPro {
 
                     this.cachedTransform        = this.computeTransform ( );
                 }
-                computeTransform ( )  :  renderPro.math.gl.Mat4
+                computeTransform ( )  :  Float32Array
                 {
-                    let finalTransform          = renderPro.math.gl.Mat4.create ( );
-                    renderPro.math.gl.Mat4.identity ( finalTransform );
-                    renderPro.math.gl.Mat4.multiply ( finalTransform, this.transform );
+                    let finalTransform          = mat4.create ( );
+                    mat4.identity ( finalTransform );
+                    mat4.multiply ( finalTransform, finalTransform, this.transform );
                     
                     let parent                  = this.parent;
                     while ( parent !== null )
                     {
-                        renderPro.math.gl.Mat4.multiply( finalTransform, parent.transform );
+                        mat4.multiply(  finalTransform, finalTransform, parent.transform );
                         parent                  = parent.parent;
                     }
                     

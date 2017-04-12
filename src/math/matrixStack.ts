@@ -9,8 +9,8 @@ namespace renderPro {
             matrices: renderPro.dataStructures.LinkedList
             constructor ( ) 
             {
-                this.currentState           = renderPro.math.gl.Mat4.create ( );
-                renderPro.math.gl.Mat4.identity ( this.currentState );
+                this.currentState           = mat4.create ( );
+                mat4.identity ( this.currentState );
                 this.matrices               = null;
             }
             push ( matrix )
@@ -21,16 +21,16 @@ namespace renderPro {
                     this.matrices.next      = node;
                 this.matrices               = node;
 
-                renderPro.math.gl.Mat4.multiply ( this.currentState, matrix );
+                mat4.multiply ( this.currentState, this.currentState, matrix );
             }
             pop ( ) 
             {
                 var popped                  = this.matrices;
-                var inverse                 = renderPro.math.gl.Mat4.inverse ( popped.data );
+                var inverse                 = mat4.invert( new Float32Array(16), popped.data );
                 if ( inverse !== null )
                 /* Note(Dino): Remember that not all matrices are invertible! Reference Целаковски, Наум: Виша Математика 4 for more information.  */ 
                 {
-                    renderPro.math.gl.Mat4.multiply ( this.currentState, inverse );
+                    mat4.multiply ( this.currentState, this.currentState, inverse );
                     this.matrices           = this.matrices.prev;
                     if ( this.matrices !== null )
                         this.matrices.next  = null;
@@ -53,20 +53,20 @@ namespace renderPro {
     {
         var matrixStack             = new renderPro.math.MatrixStack ( );
         
-        var translationX            = renderPro.math.gl.Mat4.create ( );
-        renderPro.math.gl.Mat4.identity ( translationX );
-        renderPro.math.gl.Mat4.translate ( translationX, [ 3, 0, 0 ] );
+        var translationX            = mat4.create ( );
+        mat4.identity ( translationX );
+        mat4.translate ( translationX, translationX, new Float32Array([ 3, 0, 0 ]) );
         matrixStack.push ( translationX );
         
         
-        var translationY            = renderPro.math.gl.Mat4.create ( );
-        renderPro.math.gl.Mat4.identity ( translationY );
-        renderPro.math.gl.Mat4.translate ( translationY, [ 0, 5, 0 ] );
+        var translationY            = mat4.create ( );
+        mat4.identity ( translationY );
+        mat4.translate ( translationY, translationY, new Float32Array([ 0, 5, 0 ]) );
         matrixStack.push ( translationY );
 
-        var translationZ            = renderPro.math.gl.Mat4.create ( );
-        renderPro.math.gl.Mat4.identity ( translationZ );
-        renderPro.math.gl.Mat4.translate ( translationZ, [ 0, 0, 7 ] );
+        var translationZ            = mat4.create ( );
+        mat4.identity ( translationZ );
+        mat4.translate ( translationZ, translationZ, new Float32Array([ 0, 0, 7 ]) );
         matrixStack.push ( translationZ );
         
         Application.Debug.assert ( matrixStack.currentState[ 12 ] === 3, "Matrix stack current state not valid." );
@@ -84,21 +84,21 @@ namespace renderPro {
     {
         var matrixStack             = new renderPro.math.MatrixStack ( );
 
-        var translationX            = renderPro.math.gl.Mat4.create ( );
-        renderPro.math.gl.Mat4.identity ( translationX );
-        renderPro.math.gl.Mat4.translate ( translationX, [ 3.0, 0.0, 0.0 ] );
+        var translationX            = mat4.create ( );
+        mat4.identity ( translationX );
+        mat4.translate ( translationX, translationX, new Float32Array([ 3.0, 0.0, 0.0 ]) );
         matrixStack.push ( translationX );
         Application.Debug.assert ( matrixStack.matrices.data == translationX, "Stack not created properly." );
 
-        var translationY            = renderPro.math.gl.Mat4.create ( );
-        renderPro.math.gl.Mat4.identity ( translationY );
-        renderPro.math.gl.Mat4.translate ( translationY, [ 0.0, 5.0, 0.0 ] );
+        var translationY            = mat4.create ( );
+        mat4.identity ( translationY );
+        mat4.translate ( translationY, translationY, new Float32Array([ 0.0, 5.0, 0.0 ]) );
         matrixStack.push ( translationY );
         Application.Debug.assert ( matrixStack.matrices.data == translationY, "Stack not created properly." );
 
-        var translationZ = renderPro.math.gl.Mat4.create ( );
-        renderPro.math.gl.Mat4.identity ( translationZ );
-        renderPro.math.gl.Mat4.translate ( translationZ, [ 0.0, 0.0, 7.0 ] );
+        var translationZ = mat4.create ( );
+        mat4.identity ( translationZ );
+        mat4.translate ( translationZ, translationZ, new Float32Array([ 0.0, 0.0, 7.0 ]) );
         matrixStack.push ( translationZ );
         Application.Debug.assert ( matrixStack.matrices.data == translationZ, "Stack not created properly." );
         

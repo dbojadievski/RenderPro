@@ -648,12 +648,12 @@ var publicScene;
             var translation                     = generateTranslation ( );
             var generatedTransform              = mat4.create ( );
             mat4.identity ( generatedTransform );
-            mat4.translate ( generatedTransform, translation );
+            mat4.translate ( generatedTransform, generatedTransform, translation );
 
             var rotation                        = generateRotation ( );
-            mat4.rotateX ( generatedTransform, rotation[ 0 ] );
-            mat4.rotateY ( generatedTransform, rotation[ 1 ] );
-            mat4.rotateZ ( generatedTransform, rotation[ 2 ] );
+            mat4.rotateX ( generatedTransform, generatedTransform, rotation[ 0 ] );
+            mat4.rotateY ( generatedTransform, generatedTransform, rotation[ 1 ] );
+            mat4.rotateZ ( generatedTransform, generatedTransform, rotation[ 2 ] );
 
             var generatedRenderable             = getRandomInRange ( 1, 2 ) % 2 == 0 ? squareRenderable: redSquareRenderable;
             var generatedModel                  = new renderPro.graphics.core.Model ( [ generatedRenderable ], generatedTransform, null )
@@ -776,7 +776,7 @@ var publicScene;
 
     function initCamera ( )
     {
-        mat4.perspective ( 45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix );
+        mat4.perspective ( pMatrix , 45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0) ;
         
         cameraPosition                          = [ 0.0, 0.0, 0.0 ];
         cameralookAtDirection                   = [ 0.0, 0.0, - 1.0 ];
