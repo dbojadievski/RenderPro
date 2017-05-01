@@ -1,5 +1,7 @@
 namespace Application {
-    export namespace Debug {}
+    export namespace Debug {
+        export const IS_DEBUGGING_ENABLED : boolean = false;
+    }
     export namespace Environment {
         export namespace Path {
             export const Assets : string        = "assets\\"

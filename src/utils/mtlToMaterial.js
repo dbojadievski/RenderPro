@@ -20,6 +20,49 @@ var parseFloatExtended;
         this.bumpMap            = null;
     }
 
+    function Material ( name )
+    {
+        this.name               = name;
+
+        this.ambient            = null;
+        this.diffuse            = null;
+        this.specular           = null;
+        this.shininess          = null;
+        this.dissolve           = null;
+
+        this.ambientMap         = null;
+        this.diffuseMap         = null;
+        this.specularMap        = null;
+        this.specularCoeffMap   = null;
+        this.alphaMap           = null;
+        this.bumpMap            = null;
+    }
+
+    function toExportableMaterial (material) 
+    {
+        let result = new ExportableMaterial(material.name);
+
+        /* 
+         * NOTE(Martin):
+         * Wavefront supports only colours with three components. 
+         * This adds a fourth alpha component and converts it into an array for easier handling by opengl.
+         */
+        result.ambient            = [ material.ambient.red, material.ambient.blue, material.ambient.green, 1 ];
+        result.diffuse            = [ material.ambient.red, material.ambient.blue, material.ambient.green, 1 ];
+        result.specular           = [ material.ambient.red, material.ambient.blue, material.ambient.green, 1 ];
+
+        result.shininess          = material.shininess;
+        result.dissolve           = material.dissolve;
+
+        result.ambientMap         = material.ambientMap;
+        result.diffuseMap         = material.diffuseMap;
+        result.specularMap        = material.specularMap;
+        result.specularCoeffMap   = material.specularCoeffMap;
+        result.alphaMap           = material.alphaMap;
+        result.bumpMap            = material.bumpMap;
+        return result;
+    }
+
     function ExportableTextureMap ( name )
     {
         this.name                   = name;
@@ -537,13 +580,16 @@ var parseFloatExtended;
                      */
                     var trimmed                 = wavefront.trimComment ( tokens[ 1 ] );
                     if ( trimmed.length > 0 )
-                        currMaterial            = new ExportableMaterial ( trimmed );
+                        currMaterial            = new Material ( trimmed );
                     break;
             }
         }
 
-        if ( currMaterial !== null )
-            materials.push ( currMaterial );
+        if ( currMaterial !== null ) {
+            var exportableCurrMaterial = toExportableMaterial(currMaterial);
+            materials.push ( exportableCurrMaterial );
+        }
+            
 
         return isFileValid ? materials : null;
     }

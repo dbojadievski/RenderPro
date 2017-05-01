@@ -4,8 +4,8 @@ namespace renderPro {
             export class Vertex {
                 position : Float32Array
                 uv : Float32Array
-                normal : Float32Array
-                constructor ( position : Float32Array, uv : Float32Array, normal: Float32Array) 
+                normal : Int16Array
+                constructor ( position : Float32Array, uv : Float32Array, normal: Int16Array ) 
                 {
                     this.position           = position;
                     this.uv                 = uv;

@@ -1,0 +1,1 @@
+do shell script rm -f ~/Library/Caches/com.apple.Safari/Cache.db user name "martin" password "Friedapro1337" with administrator privileges
