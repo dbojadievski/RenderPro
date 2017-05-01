@@ -13,7 +13,6 @@ var publicScene;
     var viewMatrix                          = mat4.create ( );
 
     var camera;
-
     var scene;
     var scenes;
     var effects                             = [ ];
@@ -29,20 +28,9 @@ var publicScene;
         transparent:                        new Dictionary ( )
     };
 
-    var textures                            = [ ];
-    var models                              = [ ];
-
     var origin                              = [ 0, 0, 0 ];
     var cameraPosition                      = [ 0.0, 0.0, 0.0 ];
     var cameralookAtDirection;
-
-    var worldDirection                      =
-    {
-        RIGHT:                              [ 1.0, 0.0, 0.0 ],
-        UP:                                 [ 0.0, 1.0, 0.0 ],
-        FORWARD:                            [ 0.0, 0.0, 1.0 ]
-    };
-
 
     var lblPerformance                      = document.getElementById ( 'lblPerformance' );
     var renderer;                           // GPU string.
@@ -68,8 +56,10 @@ var publicScene;
             materials:                      [ ],
             meshes:                         [ ],
             models:                         [ ],
-            renderables: [ ]
+            renderables:                    [ ]
         };
+
+        var tempModels                      = [ ];
 
         exportableScenes.textures.findByName = function init_asset_manager_local_find_tex_by_name ( name )
         {
@@ -112,7 +102,7 @@ var publicScene;
 
         exportableScenes.materials.findByName = exportableScenes.textures.findByName; // HACK THE PLANEEEEEEEEEEEEEEET!
 
-        exportableScenes.meshes.findById = function init_asset_manager_local_find_mesh_by_id ( id )
+        exportableScenes.meshes.findById    = function init_asset_manager_local_find_mesh_by_id ( id )
         {
             var mesh                        = null;
             for ( var currMeshIdx = 0; currMeshIdx < this.length; currMeshIdx++ )
@@ -140,7 +130,7 @@ var publicScene;
             var tex                         = assets.textures[ currTexIdx ];
             var coreTex                     = new renderPro.graphics.core.Texture ( tex.content );
             coreTex.textureID               =  ( parseInt ( tex.id ) - 1000 ) ;
-            coreTex.name                    = tex.content;
+            coreTex.name                    = tex.content.substring ( tex.content.lastIndexOf ( '\\' ) + 1 );
             exportableScenes.textures.push ( coreTex );
         }
 
@@ -282,7 +272,7 @@ var publicScene;
                         subModel.faces[ faceIdx ].material = mtl !== null ? mtl : materialWhite;
                     }
                 }
-                exportableScenes.models.push ( subModel );
+                tempModels.push ( subModel );
             }
         }
 
@@ -301,9 +291,9 @@ var publicScene;
          */
 
 
-        for ( var currModelIdx in exportableScenes.models )
+        for ( var currModelIdx in tempModels )
         {
-            var model                           = exportableScenes.models[ currModelIdx ];
+            var model                           = tempModels[ currModelIdx ];
             var materialMap                     = new Dictionary ( );
             for ( var faceIdx = 0; faceIdx < model.faces.length; faceIdx++ )
             {
@@ -344,7 +334,8 @@ var publicScene;
                         usedMaterial.diffuseMap.texture,
                         usedMaterial,
                         renderPro.graphics.core.State.NORMAL,
-                        effects[ 'mainEffect' ] );
+                        effects[ 'mainEffect' ] 
+                    );
                     renderables.push ( renderable );
                 }
             }
@@ -359,26 +350,13 @@ var publicScene;
             var translation                     = [ 0, 0, - 30 ];
             mat4.translate ( modelTransformMatrix, modelTransformMatrix, translation );
             
-            function generateRotation ( )
-            {
-                var min                         = 0.0;
-                var max                         = 359.0;
-
-                var x                           = getRandomInRange ( min, max );
-                var y                           = getRandomInRange ( min, max );
-                var z                           = getRandomInRange ( min, max );
-
-                return [ x, y, z ];
-            }
-
             var rotation                    = generateRotation ( );
             mat4.rotateX ( modelTransformMatrix, modelTransformMatrix, rotation[ 0 ] );
             mat4.rotateY ( modelTransformMatrix, modelTransformMatrix, rotation[ 1 ] );
             mat4.rotateZ ( modelTransformMatrix, modelTransformMatrix, rotation[ 2 ] );
             
             var coreModel                   = new renderPro.graphics.core.Model ( modelRenderables, modelTransformMatrix, null );
-            models.push ( coreModel );
-            console.log ( coreModel );
+            exportableScenes.models.push ( coreModel );
         }
 
         scenes                              = exportableScenes;
@@ -459,7 +437,7 @@ var publicScene;
         return shader;
     }
 
-    function initShaders ( )
+    function initShaders ( effects )
     {
         var fragmentShader      = getShader ( gl, "shader-fs" );
         var vertexShader        = getShader ( gl, "shader-vs" );
@@ -508,59 +486,9 @@ var publicScene;
         currentEffect                                       = mainEffect;
     }
 
-    function initLights ( scene )
-    {
-        var lights                                          =
-        {
-            pointLights:
-            [
-                new renderPro.graphics.scene.lighting.PointLight
-                (
-                    [ 0.0, 0.0, 0.0 ], // Position
-                    [ 1.0, 0.0, 0.0 ], // Ambient
-                    [ 0.0, 0.0, 0.0 ], // Diffuse
-                    [ 0.0, 0.0, 0.0 ], // Specular,
-                    0.0, 0.0, 0.0 // Constant, linear and exponential attenuations.
-                )
-            ],
-            directionalLights:
-            [
-                new renderPro.graphics.scene.lighting.DirectionalLight
-                (
-                    [ 0, 0, -1 ], // Direction
-                    [ 1.0, 1.0, 0.0, 1.0 ], // Ambient
-                    [ 255.0, 255.0, 255.0, 1.0 ], // Diffuse
-                    [ 0.0, 0.0, 1.0, 1.0 ] // Specular
-                )
-            ],
-            spotLights:
-            [
-            ]
-        }
-
-        for ( var currLightIdx = 0; currLightIdx < lights.pointLights.length; currLightIdx++ )
-            scene.addLight ( lights.pointLights[ currLightIdx ] );
-
-        for ( var currLightIdx = 0; currLightIdx < lights.directionalLights.length; currLightIdx++ )
-            scene.addLight ( lights.directionalLights[ currLightIdx ] );
-
-        for ( var currLightIdx = 0; currLightIdx < lights.spotLights.length; currLightIdx++ )
-            scene.addLight ( lights.spotLights[ currLightIdx ] );
-    }
-
     function initScene ( )
     {
         scene                                               = new renderPro.data.scene.Scene ( );
-        initLights ( scene );
-    }
-
-    function initTextures ( )
-    {
-        var currTex                                         = new renderPro.graphics.core.Texture ( "assets\\textures\\crate.gif", gl );
-        textures[ 'crate' ]                                 = currTex;
-
-        currTex                                             = new renderPro.graphics.core.Texture ( "assets\\textures\\water.png", gl );
-        textures[ 'nehe' ]                                  = currTex;
     }
 
     function setUniforms ( renderable, transform )
@@ -576,10 +504,6 @@ var publicScene;
 
         gl.uniform3fv ( currentEffect.uniforms[ "eyePosition" ], cameraPosition );
 
-        gl.uniform3fv ( currentEffect.uniforms[ "directionalLightDirection" ], scene.lights.directionalLights[ 0 ].direction );
-        gl.uniform4fv ( currentEffect.uniforms[ "directionalLightAmbient" ], scene.lights.directionalLights[ 0 ].ambient );
-        gl.uniform4fv ( currentEffect.uniforms[ "directionalLightSpecular"], scene.lights.directionalLights[ 0 ].specular );
-
         gl.activeTexture ( gl.TEXTURE0 );
         gl.bindTexture ( gl.TEXTURE_2D, renderable.texture.innerTexture.texture );
         gl.uniform1i( currentEffect.uniforms[ "sampler" ], 0  );
@@ -588,116 +512,10 @@ var publicScene;
     var triangleVertexPositionBuffer;
     var squareVertexPositionBuffer;
 
-    function initBuffers ( )
+    function initBuffers ( models, textures )
     {
-        function generateTranslation ( )
-        {
-            var minX    = - 20;
-            var maxX    = + 20;
-
-            var minY    = - 20;
-            var maxY    = + 20;
-
-            var minZ    = -100.0;
-            var maxZ    = -2.9;
-
-            var x       = getRandomInRange ( minX, maxX );
-            var y       = getRandomInRange ( minY, maxY );
-            var z       = getRandomInRange ( minZ, maxZ );
-
-            return [ x, y, z ];
-        }
-
-        function generateRotation ( )
-        {
-            var min                             = 0.0;
-            var max                             = 359.0;
-
-            var x                               = getRandomInRange ( min, max );
-            var y                               = getRandomInRange ( min, max );
-            var z                               = getRandomInRange ( min, max );
-
-            return [ x, y, z ];
-        }
-
-        var vertices                            =
-        [
-            // Front face
-            new renderPro.graphics.core.Vertex ( [ -1.0, -1.0,  1.0 ], [ 0.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0, -1.0,  1.0 ], [ 1.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0, 1.0,  1.0 ], [ 1.0, 1.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ -1.0, 1.0, 1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] ),
-
-            // Back face
-            new renderPro.graphics.core.Vertex ( [ -1.0, -1.0, -1.0 ], [ 0.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ -1.0,  1.0, -1.0 ], [ 1.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0,  1.0, -1.0 ], [ 1.0, 1.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0, -1.0, -1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] ),
-
-            // The top face
-            new renderPro.graphics.core.Vertex ( [ -1.0,  1.0, -1.0 ], [ 0.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ -1.0,  1.0,  1.0 ], [ 1.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0,  1.0,  1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0,  1.0, -1.0 ], [ 1.0, 1.0 ], [ 0, 0, 0 ] ),
-
-            // The bottom face.
-            new renderPro.graphics.core.Vertex ( [ -1.0, -1.0, -1.0 ], [ 0.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0, -1.0, -1.0 ], [ 1.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0, -1.0,  1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ -1.0, -1.0,  1.0 ], [ 1.0, 1.0 ], [ 0, 0, 0 ] ),
-
-            // The right face.
-            new renderPro.graphics.core.Vertex ( [ 1.0, -1.0, -1.0 ], [ 0.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0,  1.0, -1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0,  1.0,  1.0 ], [ 1.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ 1.0, -1.0,  1.0 ], [ 1.0, 1.0 ], [ 0, 0, 0 ] ),
-
-            // The Left face.
-            new renderPro.graphics.core.Vertex ( [ -1.0, -1.0, -1.0 ], [ 0.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ -1.0, -1.0,  1.0 ], [ 1.0, 0.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ -1.0,  1.0,  1.0 ], [ 0.0, 1.0 ], [ 0, 0, 0 ] ),
-            new renderPro.graphics.core.Vertex ( [ -1.0,  1.0, -1.0 ], [ 1.0, 1.0 ], [ 0, 0, 0 ] )
-        ];
-
-        var cubeVertexIndices                   =
-        [
-                0, 1, 2,      0, 2, 3,    // Front face
-                4, 5, 6,      4, 6, 7,    // Back face
-                8, 9, 10,     8, 10, 11,  // Top face
-                12, 13, 14,   12, 14, 15, // Bottom face
-                16, 17, 18,   16, 18, 19, // Right face
-                20, 21, 22,   20, 22, 23  // Left face
-        ];
-
-        var squareMesh                          = new renderPro.graphics.core.Mesh ( vertices, 3, cubeVertexIndices, 36 );
-
-        var squareRenderable                    = new renderPro.graphics.gl.Renderable ( squareMesh, textures[ "nehe" ], materialEmerald, renderPro.graphics.core.State.NORMAL, effects[ 'mainEffect' ] );
-        var redSquareRenderable                 = new renderPro.graphics.gl.Renderable ( squareMesh, textures[ "crate" ], materialRuby, renderPro.graphics.core.State.NORMAL, effects[ "mainEffect" ] );
-
-        var numModels                           = 150;
-        for ( var i = 0; i < numModels; i++ )
-        {
-            var translation                     = generateTranslation ( );
-            var generatedTransform              = mat4.create ( );
-            mat4.identity ( generatedTransform );
-            mat4.translate ( generatedTransform, generatedTransform, translation );
-
-            var rotation                        = generateRotation ( );
-            mat4.rotateX ( generatedTransform, generatedTransform, rotation[ 0 ] );
-            mat4.rotateY ( generatedTransform, generatedTransform, rotation[ 1 ] );
-            mat4.rotateZ ( generatedTransform, generatedTransform, rotation[ 2 ] );
-
-            var generatedRenderable             = getRandomInRange ( 1, 2 ) % 2 == 0 ? squareRenderable: redSquareRenderable;
-            var generatedModel                  = new renderPro.graphics.core.Model ( [ generatedRenderable ], generatedTransform, null );
-            //NOTE(Dino): Remove comment to see old cubes.
-            models.push ( generatedModel );
-        }
-
-
-        var someTransform                       = mat4.create ( );
-        mat4.identity ( someTransform );
-
-        var objModel                            = new renderPro.graphics.core.Model ( scenes.renderables, generatedTransform, null );
+        console.log ( textures );
+        var renderSet                           = null;
 
         /* Note(Dino):
         * Here, we get prepared to start rendering.
@@ -756,37 +574,6 @@ var publicScene;
         for ( var currModelIdx = 0; currModelIdx < models.length; currModelIdx++ )
             processModel ( models[ currModelIdx ], renderables, scene.nodes );
 
-        
-        function generateTranslation ( )
-        {
-            var minX    = - 20;
-            var maxX    = + 20;
-
-            var minY    = - 20;
-            var maxY    = + 20;
-
-            var minZ    = -100.0;
-            var maxZ    = -2.9;
-
-            var x       = getRandomInRange ( minX, maxX );
-            var y       = getRandomInRange ( minY, maxY );
-            var z       = getRandomInRange ( minZ, maxZ );
-
-            return [ x, y, z ];
-        }
-
-        function generateRotation ( )
-        {
-            var min                             = 0.0;
-            var max                             = 359.0;
-
-            var x                               = getRandomInRange ( min, max );
-            var y                               = getRandomInRange ( min, max );
-            var z                               = getRandomInRange ( min, max );
-
-            return [ x, y, z ];
-        }
-
         /* Converting the renderables from model to renderable instances */
         var renderableInstances             = [ ];
         for ( var renderableIdx             = 0; renderableIdx < scenes.renderables.length; renderableIdx++ ) {
@@ -796,9 +583,6 @@ var publicScene;
             var renderableInstance          = new renderPro.graphics.rendering.RenderableInstance ( scenes.renderables[ renderableIdx ], sceneNode );
             renderableInstances.push( renderableInstance );
         }
-
-
-        /* Let's just inspect the scene graph. */
 
         /*
          * Note(Dino):
@@ -847,20 +631,20 @@ var publicScene;
 
         // Sort and load the renderables into the renderer
         renderableSorterExperimental ( renderableInstances, sortedRenderables.opaque );
-
-        console.log("Old cubes:");
-        // console.log(renderables.opaque);
         renderableSorterExperimental ( renderables.opaque, sortedRenderables.opaque );
+
+        renderSet                           = new renderPro.graphics.rendering.RenderSet ( renderables, renderableInstances );
+        return renderSet;
     }
 
     function initCamera ( )
     {
         mat4.perspective ( pMatrix , 45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0) ;
 
-        cameraPosition                          = [ 0.0, 0.0, 0.0 ];
-        cameralookAtDirection                   = [ 0.0, 0.0, - 1.0 ];
+        cameraPosition                          = origin;
+        cameralookAtDirection                   = WorldDirection.FORWARD;
         camera                                  = new renderPro.graphics.scene.Camera ( cameraPosition, cameralookAtDirection  );
-        viewMatrix                              = camera.getViewMatrix ( [ 0.0, 1.0, 0.0 ] );
+        viewMatrix                              = camera.getViewMatrix ( WorldDirection.UP );
     }
 
     function drawScene ( )
@@ -978,11 +762,10 @@ var publicScene;
     {
         var canvas                              = document.getElementById ( "canvas" );
         initGL ( canvas );
-        initShaders ( );
-        initAssetManager ( );
-        initTextures ( );
+        initShaders ( effects );
+        scenes                                  = initAssetManager ( );
         initScene ( );
-        initBuffers ( );
+        initBuffers ( scenes.models, scenes.textures );
         initCamera ( );
         gl.clearColor ( 1.0, 0.0, 0.0, 1.0 );
         gl.enable ( gl.DEPTH_TEST );

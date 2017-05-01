@@ -4,23 +4,23 @@ var assets =
     [
         { 
             "id":       "1001", 
-            "content":  "crate.gif"
+            "content":  "assets\\textures\\crate.gif"
         },
         { 
             "id":       "1002", 
-            "content": "cubetexture.png"
+            "content": "assets\\textures\\cubetexture.png"
         },
         {
             "id":       "1003",
-            "content": "water.png"
+            "content": "assets\\textures\\water.png"
         },
         {
             "id":       "1004",
-            "content":  "nehe.gif"
+            "content":  "assets\\textures\\nehe.gif"
         },
         {
             "id":       "1005",
-            "content":  "metallic.png"
+            "content":  "assets\\textures\\metallic.png"
         }
     ],
     "materials":

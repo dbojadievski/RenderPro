@@ -1,10 +1,14 @@
-namespace renderPro {
-    export namespace graphics {
-        export namespace scene {
-            export class Camera {
-                position : Float32Array
-                viewDirection : Float32Array
-                constructor ( position : Float32Array, viewDirection : Float32Array )
+namespace renderPro 
+{
+    export namespace graphics 
+    {
+        export namespace scene 
+        {
+            export class Camera 
+            {
+                position: Float32Array
+                viewDirection: Float32Array
+                constructor ( position: Float32Array, viewDirection: Float32Array )
                 {
                     this.position               = position;
                     this.viewDirection          = viewDirection;
