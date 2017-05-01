@@ -30,6 +30,7 @@ var renderPro;
                 };
                 Scene.prototype.addCamera = function (camera) {
                     Application.Debug.assert(camera instanceof renderPro.graphics.scene.Camera, "Invalid argument: arg 'camera' not an instance of 'Camera'.");
+                    this.cameras.push(camera);
                 };
                 return Scene;
             }());

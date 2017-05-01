@@ -5,9 +5,10 @@ var renderPro;
         var core;
         (function (core) {
             var Model = (function () {
-                function Model(renderables, transform, parent) {
+                function Model(renderables, transform, parent, name) {
                     this.renderables = renderables;
                     this.transform = transform;
+                    this.name = name;
                     this.parent = null;
                     this.children = [];
                     if (Model._currentModelID == undefined)

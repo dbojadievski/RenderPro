@@ -62,7 +62,6 @@ var renderPro;
                     gl.bindBuffer(gl.ARRAY_BUFFER, null);
                 };
                 Renderable.prototype.drawWithoutStateChanges = function (shaderProgram, gl) {
-                    // console.log ( shaderProgram );
                     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer.pointer);
                     gl.vertexAttribPointer(shaderProgram.attributes["vertexPosition"], 3, gl.FLOAT, false, 0, 0);
                     if (this.mesh.vertices.length > 0 && this.mesh.vertices[0].uv != undefined) {

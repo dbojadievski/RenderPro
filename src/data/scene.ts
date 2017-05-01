@@ -34,6 +34,7 @@ namespace renderPro {
                 addCamera ( camera : renderPro.graphics.scene.Camera ) : void
                 {
                     Application.Debug.assert ( camera instanceof renderPro.graphics.scene.Camera, "Invalid argument: arg 'camera' not an instance of 'Camera'." );
+                    this.cameras.push ( camera );
                 }
             }
         }

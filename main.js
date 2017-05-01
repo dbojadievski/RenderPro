@@ -15,22 +15,13 @@ var publicScene;
     var camera;
     var scene;
     var scenes;
-    var effects                             = [ ];
     var renderables                         =
     {
         opaque:                             [ ],
         transparent:                        [ ]
     };
 
-    var sortedRenderables                   =
-    {
-        opaque:                             new Dictionary ( ),
-        transparent:                        new Dictionary ( )
-    };
-
     var origin                              = [ 0, 0, 0 ];
-    var cameraPosition                      = [ 0.0, 0.0, 0.0 ];
-    var cameralookAtDirection;
 
     var lblPerformance                      = document.getElementById ( 'lblPerformance' );
     var renderer;                           // GPU string.
@@ -47,322 +38,6 @@ var publicScene;
 
         return isContained;
     };
-
-    function initAssetManager ( )
-    {
-        var exportableScenes                =
-        {
-            textures:                       [ ],
-            materials:                      [ ],
-            meshes:                         [ ],
-            models:                         [ ],
-            renderables:                    [ ]
-        };
-
-        var tempModels                      = [ ];
-
-        exportableScenes.textures.findByName = function init_asset_manager_local_find_tex_by_name ( name )
-        {
-            var tex                         = null;
-            for ( var currTexIdx = 0; currTexIdx < this.length; currTexIdx++ )
-                if ( name === this[ currTexIdx ].name )
-                {
-                    tex                     = this[ currTexIdx ];
-                    break;
-                }
-
-            return tex;
-        };
-
-        exportableScenes.textures.findById = function init_asset_manager_local_find_tex_by_id ( id )
-        {
-            var tex                         = null;
-            for ( var currTexIdx = 0; currTexIdx < this.length; currTexIdx++ )
-                if ( id === this[ currTexIdx ].textureID )
-                {
-                    tex                     = this[ currTexIdx ];
-                    break;
-                }
-
-            return tex;
-        };
-
-        exportableScenes.materials.findById = function init_asset_manager_local_find_material_by_id ( id )
-        {
-            var mtl                         = null;
-            for ( var currMtlIdx = 0; currMtlIdx < this.length; currMtlIdx++ )
-                if ( id === this[ currMtlIdx ].materialID )
-                {
-                    mtl                     = this[ currMtlIdx ];
-                    break;
-                }
-
-            return mtl;
-        };
-
-        exportableScenes.materials.findByName = exportableScenes.textures.findByName; // HACK THE PLANEEEEEEEEEEEEEEET!
-
-        exportableScenes.meshes.findById    = function init_asset_manager_local_find_mesh_by_id ( id )
-        {
-            var mesh                        = null;
-            for ( var currMeshIdx = 0; currMeshIdx < this.length; currMeshIdx++ )
-                if ( id === this[ currMeshIdx ].meshID )
-                {
-                    mesh                    = this[ currMeshIdx ];
-                    break;
-                }
-
-                return mesh;
-        };
-
-        /*
-         * NOTE(Dino):
-         * We have three main asset types: textures, materials, and models.
-         *
-         * Every asset type may contain references to the one beforehand.
-         * Thus, a material may contain references to textures as maps,
-         * and a model may contain references to materials.
-         *
-         * This means that they should be loaded in series, and in that order.
-         */
-        for ( var currTexIdx = 0; currTexIdx < assets.textures.length; currTexIdx++ )
-        {
-            var tex                         = assets.textures[ currTexIdx ];
-            var coreTex                     = new renderPro.graphics.core.Texture ( tex.content );
-            coreTex.textureID               =  ( parseInt ( tex.id ) - 1000 ) ;
-            coreTex.name                    = tex.content.substring ( tex.content.lastIndexOf ( '\\' ) + 1 );
-            exportableScenes.textures.push ( coreTex );
-        }
-
-        for ( var currMtlIdx = 0; currMtlIdx < assets.materials.length; currMtlIdx++ )
-        /* TODO(Dino): every material file can contain multiple materials, but this isn't recognized in this function.  */
-        {
-            var mtl                         = assets.materials[ currMtlIdx ];
-            var innerMtl                    = renderPro.importers.loadMaterialFromMaterialFile ( mtl.content );
-            Application.Debug.assert ( innerMtl.length === 1, "INVALID CONTENT: Export tool supports only one material per material file." );
-            innerMtl                        = innerMtl[ 0 ];
-            var ambient                     = innerMtl.ambient;
-            var diffuse                     = innerMtl.diffuse;
-            var specular                    = innerMtl.specular;
-
-            var coreMtl                     = new renderPro.graphics.core.Material ( ambient, diffuse, specular, innerMtl.shininess );
-
-            if ( innerMtl.diffuseMap !== null )
-            {
-                var mapCoreTex              = exportableScenes.textures.findByName ( innerMtl.diffuseMap.name );
-                Application.Debug.assert ( mapCoreTex !== null, "INVALID CONTENT: Texture map missing." );
-                coreMtl.diffuseMap          =
-                {
-                    texture:                mapCoreTex,
-
-                    base:                   innerMtl.diffuseMap.base,
-                    gain:                   innerMtl.diffuseMap.gain,
-
-                    blendU:                 innerMtl.diffuseMap.blendU,
-                    blendV:                 innerMtl.diffuseMap.blendV,
-
-                    originOffset:           innerMtl.diffuseMap.originOffset,
-                    scale:                  innerMtl.diffuseMap.scale,
-                    turbulence:             innerMtl.diffuseMap.turbulence,
-
-                    clamp:                  innerMtl.diffuseMap.clamp
-
-                };
-
-                if ( innerMtl.diffuseMap.textureResolution !== undefined && innerMtl.diffuseMap.textureResolution !== null )
-                    coreMtl.diffuseMap.resolution   = innerMtl.diffuseMap.textureResolution;
-            }
-
-            if ( innerMtl.ambientMap !== null )
-            {
-                var mapCoreTex              = exportableScenes.textures.findByName ( innerMtl.ambientMap.name );
-                Application.Debug.assert ( mapCoreTex !== null, "INVALID CONTENT: Texture map missing." );
-                coreMtl.ambientMap          =
-                {
-                    texture:                mapCoreTex,
-
-                    base:                   innerMtl.ambientMap.base,
-                    gain:                   innerMtl.ambientMap.gain,
-
-                    blendU:                 innerMtl.ambientMap.blendU,
-                    blendV:                 innerMtl.ambientMap.blendV,
-
-                    originOffset:           innerMtl.ambientMap.originOffset,
-                    scale:                  innerMtl.ambientMap.scale,
-                    turbulence:             innerMtl.ambientMap.turbulence,
-
-                    clamp:                  innerMtl.ambientMap.clamp
-
-                };
-
-                if ( innerMtl.ambientMap.textureResolution !== undefined && innerMtl.ambientMap.textureResolution !== null )
-                    coreMtl.ambientMap.resolution   = innerMtl.ambientMap.textureResolution;
-            }
-
-            if ( innerMtl.specularMap !== null )
-            {
-                var mapCoreTex              = exportableScenes.textures.findByName ( innerMtl.specularMap.name );
-                Application.Debug.assert ( mapCoreTex !== null, "INVALID CONTENT: Texture map missing." );
-                coreMtl.specularMap          =
-                {
-                    texture:                mapCoreTex,
-
-                    base:                   innerMtl.specularMap.base,
-                    gain:                   innerMtl.specularMap.gain,
-
-                    blendU:                 innerMtl.specularMap.blendU,
-                    blendV:                 innerMtl.specularMap.blendV,
-
-                    originOffset:           innerMtl.specularMap.originOffset,
-                    scale:                  innerMtl.specularMap.scale,
-                    turbulence:             innerMtl.specularMap.turbulence,
-
-                    clamp:                  innerMtl.specularMap.clamp
-
-                };
-
-                if ( innerMtl.specularMap.textureResolution !== undefined && innerMtl.specularMap.textureResolution !== null )
-                    coreMtl.specularMap.resolution   = innerMtl.specularMap.textureResolution;
-            }
-
-            if ( innerMtl.alphaMap !== null )
-            {
-                var mapCoreTex              = exportableScenes.textures.findByName ( innerMtl.alphaMap.name );
-                Application.Debug.assert ( mapCoreTex !== null, "INVALID CONTENT: Texture map missing." );
-                coreMtl.alphaMap            =
-                {
-                    texture:                mapCoreTex,
-
-                    base:                   innerMtl.alphaMap.base,
-                    gain:                   innerMtl.alphaMap.gain,
-
-                    blendU:                 innerMtl.alphaMap.blendU,
-                    blendV:                 innerMtl.alphaMap.blendV,
-                    clamp:                  innerMtl.alphaMap.clamp,
-
-                    originOffset:           innerMtl.alphaMap.originOffset,
-                    scale:                  innerMtl.alphaMap.scale,
-                    turbulence:             innerMtl.alphaMap.turbulence
-
-                };
-
-                if ( innerMtl.alphaMap.textureResolution !== undefined && innerMtl.alphaMap.textureResolution !== null )
-                    coreMtl.alphaMap.resolution   = innerMtl.alphaMap.textureResolution;
-            }
-
-            coreMtl.materialID              = ( parseInt ( mtl.id ) - 2000 );
-            coreMtl.name                    = innerMtl.name;
-            exportableScenes.materials.push ( coreMtl );
-        }
-
-        for ( var currModelIdx = 0; currModelIdx < assets.models.length; currModelIdx++ )
-        {
-            var str                         = assets.models[ currModelIdx ].content;
-            var model                       = renderPro.importers.loadGeometryFromObjectFile ( str );
-            Application.Debug.assert ( model !== null, "Model parse from OBJ failed." );
-            for ( var modelIdx = 0; modelIdx < model.length; modelIdx++ )
-            {
-                var subModel                = model[ modelIdx ];
-                for ( var faceIdx = 0; faceIdx < subModel.faces.length; faceIdx++ )
-                {
-                    if ( subModel.faces[ faceIdx ] !== null )
-                    /* By .obj specification, the default material for a face is a matte white material.  */
-                    {
-                        var mtl             = exportableScenes.materials.findByName ( subModel.faces[ faceIdx ].material );
-                        subModel.faces[ faceIdx ].material = mtl !== null ? mtl : materialWhite;
-                    }
-                }
-                tempModels.push ( subModel );
-            }
-        }
-
-        /*
-         * TODO(Dino): Generate render constructs from these objects.
-         *
-         * In renderPro, a 'renderable' is a set of all attributes
-         * that uniquely and completely specify how a mesh should be rendered.
-         * This includes not just the mesh geometry, but also the material used.
-         * The material also implicitly defines the shader to be used during rendering.
-         *
-         * Materials are generally specified per-face, instead of per-'model'.
-         * However, a model may not necessarily have different materials per face.
-         * In this case, the entire model is a renderable.
-         * Otherwise, all faces sharing a material comprise a renderable.
-         */
-
-
-        for ( var currModelIdx in tempModels )
-        {
-            var model                           = tempModels[ currModelIdx ];
-            var materialMap                     = new Dictionary ( );
-            for ( var faceIdx = 0; faceIdx < model.faces.length; faceIdx++ )
-            {
-                var faceMaterial                = model.faces[ faceIdx ].material;
-                if ( !materialMap.hasKey ( faceMaterial.materialID ) )
-                    materialMap.push ( new KeyValuePair ( faceMaterial.materialID, [ ] ) );
-                var facesByMaterial             = materialMap.getByKey ( faceMaterial.materialID );
-                facesByMaterial.push ( model.faces[ faceIdx ] );
-            }
-
-            var vertexArray                     = [ ];
-            var translation                     = [ 0, 0, -30 ];
-
-            // Function to proces a single facegroup, to generate the renderable for each face.
-            function processFaceGroup ( renderables, vertexArray, faceGroup)
-            {
-                for ( var faceIdx               = 0; faceIdx < faceGroup.value.length; faceIdx++ )
-                {
-                    var face                    = faceGroup.value[ faceIdx ];
-                    var actualVertexArray       = [ ];
-                    var indexArray              = [ ];
-                    for ( var vertexIdx         = 0; vertexIdx < face.vertices.length; vertexIdx++ )
-                    {
-                        var exportableVertex    = face.vertices[ vertexIdx ];
-                        var vPosArray           = new Float32Array ( exportableVertex.position );
-                        var vUvArray            = new Float32Array ( exportableVertex.textureCoordinates );
-                        var vNormArray          = new Int16Array ( exportableVertex.normal );
-                        var coreVertex          = new renderPro.graphics.core.Vertex ( vPosArray, vUvArray, vNormArray );
-                        actualVertexArray.push ( coreVertex );
-                        indexArray.push ( vertexIdx );
-                    }
-
-                    var mesh                    = new renderPro.graphics.core.Mesh ( actualVertexArray, actualVertexArray.length, indexArray, indexArray.length );
-                    var usedMaterial            = model.faces[ faceIdx ].material;
-                    var renderable              = new renderPro.graphics.gl.Renderable 
-                    (
-                        mesh,
-                        usedMaterial.diffuseMap.texture,
-                        usedMaterial,
-                        renderPro.graphics.core.State.NORMAL,
-                        effects[ 'mainEffect' ] 
-                    );
-                    renderables.push ( renderable );
-                }
-            }
-
-            /* NOTE(Dino): Separate by model, and not just by material ID. */
-            var modelRenderables                = [ ];
-            materialMap.iterate (  processFaceGroup.bind(null, modelRenderables, model.vertices ) );
-            
-            var modelTransformMatrix            = mat4.create ( );
-            mat4.identity ( modelTransformMatrix );
-            
-            var translation                     = [ 0, 0, - 30 ];
-            mat4.translate ( modelTransformMatrix, modelTransformMatrix, translation );
-            
-            var rotation                    = generateRotation ( );
-            mat4.rotateX ( modelTransformMatrix, modelTransformMatrix, rotation[ 0 ] );
-            mat4.rotateY ( modelTransformMatrix, modelTransformMatrix, rotation[ 1 ] );
-            mat4.rotateZ ( modelTransformMatrix, modelTransformMatrix, rotation[ 2 ] );
-            
-            var coreModel                   = new renderPro.graphics.core.Model ( modelRenderables, modelTransformMatrix, null );
-            exportableScenes.models.push ( coreModel );
-        }
-
-        scenes                              = exportableScenes;
-        return exportableScenes;
-    }
-
 
     function initGL ( canvas )
     {
@@ -437,8 +112,9 @@ var publicScene;
         return shader;
     }
 
-    function initShaders ( effects )
+    function initShaders ( )
     {
+        var effects             = new Array ( );
         var fragmentShader      = getShader ( gl, "shader-fs" );
         var vertexShader        = getShader ( gl, "shader-vs" );
 
@@ -469,8 +145,6 @@ var publicScene;
         mainEffect.uniforms[ "directionalLightDiffuse" ]    = gl.getUniformLocation ( mainEffect.programPointer, "uDirectionalLight.diffuse" );
         mainEffect.uniforms[ "directionalLightSpecular" ]   = gl.getUniformLocation ( mainEffect.programPointer, "uDirectionalLight.specular" );
 
-        mainEffect.uniforms[ "eyePosition" ]                = gl.getUniformLocation ( mainEffect.programPointer, "uEyePosition" );
-
         mainEffect.uniforms[ "sampler" ]                    = gl.getUniformLocation ( mainEffect.programPointer, "uSampler" );
 
         mainEffect.attributes[ "vertexNormal" ]            = gl.getAttribLocation ( mainEffect.programPointer, "aVertexNormal" );
@@ -484,11 +158,21 @@ var publicScene;
 
         mainEffect.use ( gl );
         currentEffect                                       = mainEffect;
+
+        return effects;
     }
 
-    function initScene ( )
+    function initScene ( scenes )
     {
-        scene                                               = new renderPro.data.scene.Scene ( );
+        scene                                  = new renderPro.data.scene.Scene ( );
+
+        mat4.perspective ( pMatrix , 45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0) ;
+
+        var cameraPosition                     = origin;
+        var cameralookAtDirection              = WorldDirection.FORWARD;
+        var camera                             = new renderPro.graphics.scene.Camera ( cameraPosition, cameralookAtDirection  );
+        scene.addCamera ( camera );
+        viewMatrix                             = camera.getViewMatrix ( WorldDirection.UP );
     }
 
     function setUniforms ( renderable, transform )
@@ -502,8 +186,6 @@ var publicScene;
         gl.uniform4fv ( currentEffect.uniforms[ "materialSpecular" ], renderable.material.specular );
         gl.uniform1f ( currentEffect.uniforms[ "materialShininess" ], renderable.material.shininess );
 
-        gl.uniform3fv ( currentEffect.uniforms[ "eyePosition" ], cameraPosition );
-
         gl.activeTexture ( gl.TEXTURE0 );
         gl.bindTexture ( gl.TEXTURE_2D, renderable.texture.innerTexture.texture );
         gl.uniform1i( currentEffect.uniforms[ "sampler" ], 0  );
@@ -514,8 +196,11 @@ var publicScene;
 
     function initBuffers ( models, textures )
     {
-        console.log ( textures );
-        var renderSet                           = null;
+        var renderSet                           = 
+        {
+            opaque:                             new Dictionary ( ),
+            transparent:                        new Dictionary ( )
+        };
 
         /* Note(Dino):
         * Here, we get prepared to start rendering.
@@ -576,7 +261,8 @@ var publicScene;
 
         /* Converting the renderables from model to renderable instances */
         var renderableInstances             = [ ];
-        for ( var renderableIdx             = 0; renderableIdx < scenes.renderables.length; renderableIdx++ ) {
+        for ( var renderableIdx             = 0; renderableIdx < scenes.renderables.length; renderableIdx++ ) 
+        {
             scenes.renderables[ renderableIdx ].bufferData( gl );
                        
             var sceneNode                   = new renderPro.data.scene.SceneNode ( null );
@@ -630,24 +316,13 @@ var publicScene;
         }
 
         // Sort and load the renderables into the renderer
-        renderableSorterExperimental ( renderableInstances, sortedRenderables.opaque );
-        renderableSorterExperimental ( renderables.opaque, sortedRenderables.opaque );
+        renderableSorterExperimental ( renderables.opaque, renderSet.opaque );
+        renderableSorterExperimental ( renderables.transparent, renderSet.transparent );
 
-        renderSet                           = new renderPro.graphics.rendering.RenderSet ( renderables, renderableInstances );
         return renderSet;
     }
 
-    function initCamera ( )
-    {
-        mat4.perspective ( pMatrix , 45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0) ;
-
-        cameraPosition                          = origin;
-        cameralookAtDirection                   = WorldDirection.FORWARD;
-        camera                                  = new renderPro.graphics.scene.Camera ( cameraPosition, cameralookAtDirection  );
-        viewMatrix                              = camera.getViewMatrix ( WorldDirection.UP );
-    }
-
-    function drawScene ( )
+    function drawScene ( renderSet )
     {
         timer                                   = Date.now ( );
         drawCalls                               = 0;
@@ -678,10 +353,10 @@ var publicScene;
         * It saves time by minimizing GPGPU state changes.
         */
 
-        for ( var currFxIdx = 0; currFxIdx < sortedRenderables.opaque.content.length; currFxIdx++ )
+        for ( var currFxIdx = 0; currFxIdx < renderSet.opaque.content.length; currFxIdx++ )
         /* Opaque objects are rendered in this first pass. */
         {
-            var byEffect                                = sortedRenderables.opaque.content[ currFxIdx ];
+            var byEffect                                = renderSet.opaque.content[ currFxIdx ];
             if ( byEffect.value.content.length > 0 )
             {
                 /* Switch GPGPU program state. */
@@ -714,10 +389,10 @@ var publicScene;
             }
         }
 
-        for ( var currFxIdx = 0; currFxIdx < sortedRenderables.transparent.content.length; currFxIdx++ )
+        for ( var currFxIdx = 0; currFxIdx < renderSet.transparent.content.length; currFxIdx++ )
         /* Transparent objects are rendered in this second pass. */
         {
-            var byEffect                                = sortedRenderables.transparent.content[ currFxIdx ];
+            var byEffect                                = renderSet.transparent.content[ currFxIdx ];
             if ( byEffect.value.content.length > 0 )
             {
                 /* Switch GPGPU program state. */
@@ -758,24 +433,23 @@ var publicScene;
                                                 + renderer;
     }
 
-    function initWebGL ( )
+    function init ( )
     {
         var canvas                              = document.getElementById ( "canvas" );
         initGL ( canvas );
-        initShaders ( effects );
-        scenes                                  = initAssetManager ( );
-        initScene ( );
-        initBuffers ( scenes.models, scenes.textures );
-        initCamera ( );
+        var shaders                             = initShaders ( );
+        scenes                                  = initAssetManager ( shaders );
+        initScene ( scenes );
+        var renderSet                           = initBuffers ( scenes.models, scenes.textures );
         gl.clearColor ( 1.0, 0.0, 0.0, 1.0 );
         gl.enable ( gl.DEPTH_TEST );
 
         (function animloop()
         {
             requestAnimationFrame(animloop);
-            drawScene ( );
+            drawScene ( renderSet );
         })();
     }
 
-    initWebGL ( );
+    init ( );
  } ) ( );

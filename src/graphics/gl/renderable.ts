@@ -94,7 +94,6 @@ namespace renderPro {
                 }
                 drawWithoutStateChanges ( shaderProgram : any, gl : WebGLRenderingContext ) :  void
                 {
-                    // console.log ( shaderProgram );
                     gl.bindBuffer ( gl.ARRAY_BUFFER, this.vertexBuffer.pointer );
 
                     gl.vertexAttribPointer ( shaderProgram.attributes[ "vertexPosition" ], 3, gl.FLOAT, false, 0, 0 );
