@@ -222,8 +222,11 @@ function initAssetManager ( shaders )
                 {
                     var mtl             = exportableScenes.materials.findByName ( subModel.faces[ faceIdx ].material );
                     subModel.faces[ faceIdx ].material = mtl !== null ? mtl : materialWhite;
+                    subModel.facesByMaterial 
                 }
+                
             }
+
             tempModels.push ( subModel );
         }
     }
@@ -260,8 +263,9 @@ function initAssetManager ( shaders )
         var translation                     = [ 0, 0, -30 ];
 
         // Function to proces a single facegroup, to generate the renderable for each face.
-        function processFaceGroup ( renderables, vertexArray, faceGroup)
+        function processFaceGroup ( renderables, faceGroup)
         {
+            var renderablesInFaceGroup = [];
             for ( var faceIdx               = 0; faceIdx < faceGroup.value.length; faceIdx++ )
             {
                 var face                    = faceGroup.value[ faceIdx ];
@@ -288,13 +292,55 @@ function initAssetManager ( shaders )
                     renderPro.graphics.core.State.NORMAL,
                     exportableScenes.effects[ 'mainEffect' ] 
                 );
-                renderables.push ( renderable );
+                renderablesInFaceGroup.push ( renderable );
             }
+
+            /* NOTE(Martin): Renderables combined using this method must use the same material */
+            function combineRenderables ( renderables ) 
+            {
+                var combinedVertices        = [];
+                var combinedIndices         = [];
+                for ( var renderIdx = 0; renderIdx < renderables.length; renderIdx++ )
+                 {
+                    var currRenderable      = renderables[renderIdx];
+                    var currMesh            = currRenderable.mesh;
+                    var currAmountVertices  = combinedVertices.length;
+                    
+                    for ( var vertexIdx = 0; vertexIdx < currMesh.vertices.length; vertexIdx++ ) 
+                    {
+                        combinedVertices.push ( currMesh.vertices[vertexIdx] )
+                    }
+
+                    for ( var indexIdx = 0; indexIdx < currMesh.indices.length; indexIdx++ ) 
+                    {
+                        combinedIndices.push ( currMesh.indices[indexIdx] + currAmountVertices);
+                    }
+                }
+
+                var combinedMesh            = new renderPro.graphics.core.Mesh ( 
+                    combinedVertices, 
+                    combinedVertices.length, 
+                    combinedIndices, 
+                    combinedIndices.length
+                );
+
+                var renderable              = new renderPro.graphics.gl.Renderable (
+                    combinedMesh,
+                    renderables[0].texture,
+                    renderables[0].material,
+                    renderPro.graphics.core.State.NORMAL,
+                    exportableScenes.effects[ 'mainEffect' ] 
+                );
+                return renderable
+            }
+
+            renderables.push( combineRenderables(renderablesInFaceGroup));
         }
+
 
         /* NOTE(Dino): Separate by model, and not just by material ID. */
         var modelRenderables                = [ ];
-        materialMap.iterate (  processFaceGroup.bind(null, modelRenderables, model.vertices ) );
+        materialMap.iterate (  processFaceGroup.bind(null, modelRenderables ) );
         
         var modelTransformMatrix            = mat4.create ( );
         mat4.identity ( modelTransformMatrix );
