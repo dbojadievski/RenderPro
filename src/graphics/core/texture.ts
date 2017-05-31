@@ -6,7 +6,7 @@ namespace renderPro {
                 textureID: number
                 innerTexture: renderPro.graphics.gl.Texture
                 static _currentTextureID : number
-                constructor ( src : string )
+                constructor ( src: string = null )
                 {
                     let self : renderPro.graphics.core.Texture   = this;
 
@@ -17,17 +17,49 @@ namespace renderPro {
                     {
                         self.innerTexture.load ( self.image );
                     };
-                    this.image.src                  = src;
+                    if ( src !== null )
+                        this.image.src              = src;
 
                     if ( Texture._currentTextureID == undefined )
                         Texture._currentTextureID   = 1;
                     this.textureID                  = Texture._currentTextureID;
-                    // document.body.appendChild ( this.image ); /* Uncomment to view texture for debugging. */ 
                 }
+                
                 unload ( ) : void
                 {
                     this.innerTexture.unload (  );
-                };
+                }
+
+                load ( data: any, type: any, width: number, height: number )
+                {
+                    let asTypedArray: any           = null;
+                    switch ( type )
+                    {
+                        case CoreType.BYTE:
+                        case CoreType.UINT8:
+                            asTypedArray            = new Uint8Array ( data );
+                            this.innerTexture.loadFloatTexture ( asTypedArray, width, height );
+                            break;
+                        case CoreType.INT16:
+                            asTypedArray            = new Int16Array ( data );
+                            break;
+                        case CoreType.UINT16:
+                            asTypedArray            = new Uint16Array ( data );
+                            break;
+                        case CoreType.FLOAT32:
+                            asTypedArray            = new Float32Array ( data );
+                            this.innerTexture.loadFloatTexture ( asTypedArray, width, height );
+                            break;
+                        case CoreType.FLOAT64:
+                            asTypedArray            = new Float64Array ( data );
+                            break;
+                    }
+                }
+
+                getTexPointer ( ) : any
+                {
+                    return this.innerTexture.texture;
+                }
             }
         }
     }

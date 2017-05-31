@@ -13,6 +13,8 @@ function initAssetManager ( shaders )
 
     var tempModels                      = [ ];
     
+    initTextureFromArray ( );
+
     exportableScenes.textures.findByName = function init_asset_manager_local_find_tex_by_name ( name )
     {
         var tex                         = null;
@@ -361,6 +363,24 @@ function initAssetManager ( shaders )
     }
 
     scenes                              = exportableScenes;
-    console.log ( exportableScenes );
     return exportableScenes;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                Test functions. Do not call.             */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+function initTextureFromArray ( )
+{
+    var rawData        = 
+    [ 
+        1.0, 0.0, 0.0, 1.0, 
+        0.0, 1.0, 0.0, 1.0,
+        0.0, 0.0, 1.0, 1.0 
+    ];
+    
+    var data           = new Float32Array ( rawData );
+    const coreTex      = new renderPro.graphics.core.Texture ( );
+    coreTex.load ( data, CoreType.FLOAT32, 3, 1 );
+
+    return coreTex;
 }

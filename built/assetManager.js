@@ -8,6 +8,7 @@ function initAssetManager(shaders) {
         effects: shaders
     };
     var tempModels = [];
+    initTextureFromArray();
     exportableScenes.textures.findByName = function init_asset_manager_local_find_tex_by_name(name) {
         var tex = null;
         for (var currTexIdx = 0; currTexIdx < this.length; currTexIdx++)
@@ -161,6 +162,7 @@ function initAssetManager(shaders) {
                 {
                     var mtl = exportableScenes.materials.findByName(subModel.faces[faceIdx].material);
                     subModel.faces[faceIdx].material = mtl !== null ? mtl : materialWhite;
+                    subModel.facesByMaterial;
                 }
             }
             tempModels.push(subModel);
@@ -192,7 +194,8 @@ function initAssetManager(shaders) {
         var vertexArray = [];
         var translation = [0, 0, -30];
         // Function to proces a single facegroup, to generate the renderable for each face.
-        function processFaceGroup(renderables, vertexArray, faceGroup) {
+        function processFaceGroup(renderables, faceGroup) {
+            var renderablesInFaceGroup = [];
             for (var faceIdx = 0; faceIdx < faceGroup.value.length; faceIdx++) {
                 var face = faceGroup.value[faceIdx];
                 var actualVertexArray = [];
@@ -209,12 +212,32 @@ function initAssetManager(shaders) {
                 var mesh = new renderPro.graphics.core.Mesh(actualVertexArray, actualVertexArray.length, indexArray, indexArray.length);
                 var usedMaterial = model.faces[faceIdx].material;
                 var renderable = new renderPro.graphics.gl.Renderable(mesh, usedMaterial.diffuseMap.texture, usedMaterial, renderPro.graphics.core.State.NORMAL, exportableScenes.effects['mainEffect']);
-                renderables.push(renderable);
+                renderablesInFaceGroup.push(renderable);
             }
+            /* NOTE(Martin): Renderables combined using this method must use the same material */
+            function combineRenderables(renderables) {
+                var combinedVertices = [];
+                var combinedIndices = [];
+                for (var renderIdx = 0; renderIdx < renderables.length; renderIdx++) {
+                    var currRenderable = renderables[renderIdx];
+                    var currMesh = currRenderable.mesh;
+                    var currAmountVertices = combinedVertices.length;
+                    for (var vertexIdx = 0; vertexIdx < currMesh.vertices.length; vertexIdx++) {
+                        combinedVertices.push(currMesh.vertices[vertexIdx]);
+                    }
+                    for (var indexIdx = 0; indexIdx < currMesh.indices.length; indexIdx++) {
+                        combinedIndices.push(currMesh.indices[indexIdx] + currAmountVertices);
+                    }
+                }
+                var combinedMesh = new renderPro.graphics.core.Mesh(combinedVertices, combinedVertices.length, combinedIndices, combinedIndices.length);
+                var renderable = new renderPro.graphics.gl.Renderable(combinedMesh, renderables[0].texture, renderables[0].material, renderPro.graphics.core.State.NORMAL, exportableScenes.effects['mainEffect']);
+                return renderable;
+            }
+            renderables.push(combineRenderables(renderablesInFaceGroup));
         }
         /* NOTE(Dino): Separate by model, and not just by material ID. */
         var modelRenderables = [];
-        materialMap.iterate(processFaceGroup.bind(null, modelRenderables, model.vertices));
+        materialMap.iterate(processFaceGroup.bind(null, modelRenderables));
         var modelTransformMatrix = mat4.create();
         mat4.identity(modelTransformMatrix);
         var translation = [0, 0, -30];
@@ -229,6 +252,19 @@ function initAssetManager(shaders) {
         exportableScenes.models.push(coreModel);
     }
     scenes = exportableScenes;
-    console.log(exportableScenes);
     return exportableScenes;
+}
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                Test functions. Do not call.             */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+function initTextureFromArray() {
+    var rawData = [
+        1.0, 0.0, 0.0, 1.0,
+        0.0, 1.0, 0.0, 1.0,
+        0.0, 0.0, 1.0, 1.0
+    ];
+    var data = new Float32Array(rawData);
+    var coreTex = new renderPro.graphics.core.Texture();
+    coreTex.load(data, CoreType.FLOAT32, 3, 1);
+    return coreTex;
 }

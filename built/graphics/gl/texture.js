@@ -22,6 +22,24 @@ var renderPro;
                     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
                     gl.bindTexture(gl.TEXTURE_2D, null);
                 };
+                Texture.prototype.loadFloatTexture = function (data, width, height) {
+                    var gl = this.gl;
+                    gl.bindTexture(gl.TEXTURE_2D, this.texture);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.FLOAT, data);
+                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                    gl.bindTexture(gl.TEXTURE_2D, null);
+                };
+                Texture.prototype.loadByteTexture = function (data, width, height) {
+                    var gl = this.gl;
+                    gl.bindTexture(gl.TEXTURE_2D, this.texture);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+                    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                    gl.bindTexture(gl.TEXTURE_2D, null);
+                };
                 Texture.prototype.unload = function () {
                     var gl = renderPro.graphics.gl.context;
                     gl.deleteTexture(this.texture);

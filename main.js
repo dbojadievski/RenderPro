@@ -51,8 +51,19 @@ var publicScene;
         {
             throw e.message;
         }
-        if (Application.Debug.IS_DEBUGGING_ENABLED) {
-            try{
+
+        var floatTextures                   = gl.getExtension( "OES_texture_float" );
+        var floatTexturesLinearFilter       = gl.getExtension( "OES_texture_float_linear" );
+        if ( !floatTextures || !floatTexturesLinearFilter ) 
+        {
+            alert('No floating point texture support. Terminating program.');
+            return;
+        }
+
+        if (Application.Debug.IS_DEBUGGING_ENABLED) 
+        {
+            try
+            {
                 /*
                 * Note(Dino):
                 * This extension provides information regarding the hardware and software environment the application is running under.
@@ -186,8 +197,9 @@ var publicScene;
         gl.uniform4fv ( currentEffect.uniforms[ "materialSpecular" ], renderable.material.specular );
         gl.uniform1f ( currentEffect.uniforms[ "materialShininess" ], renderable.material.shininess );
 
+        
         gl.activeTexture ( gl.TEXTURE0 );
-        gl.bindTexture ( gl.TEXTURE_2D, renderable.texture.innerTexture.texture );
+        gl.bindTexture ( gl.TEXTURE_2D, renderable.texture.getTexPointer ( ) );
         gl.uniform1i( currentEffect.uniforms[ "sampler" ], 0  );
     }
 
@@ -315,7 +327,7 @@ var publicScene;
             }
         }
 
-        // Sort and load the renderables into the renderer
+        // Sort and load the renderables into the renderer.
         renderableSorterExperimental ( renderables.opaque, renderSet.opaque );
         renderableSorterExperimental ( renderables.transparent, renderSet.transparent );
 
@@ -372,7 +384,7 @@ var publicScene;
                     {
                         /* Switch GPGPU texture state. */
                         gl.activeTexture ( gl.TEXTURE0 );
-                        gl.bindTexture ( gl.TEXTURE_2D, byTexture.key.innerTexture.texture );
+                        gl.bindTexture ( gl.TEXTURE_2D, byTexture.key.getTexPointer ( ) );
                         gl.uniform1i( currentEffect.uniforms[ "sampler" ], 0  );
                         textureSwitches++;
 
@@ -408,7 +420,7 @@ var publicScene;
                     {
                         /* Switch GPGPU texture state. */
                         gl.activeTexture ( gl.TEXTURE0 );
-                        gl.bindTexture ( gl.TEXTURE_2D, byTexture.key.innerTexture.texture );
+                        gl.bindTexture ( gl.TEXTURE_2D, byTexture.key.getTexPointer ( ) );
                         gl.uniform1i( currentEffect.uniforms[ "sampler" ], 0  );
                         ++textureSwitches;
 
@@ -441,7 +453,7 @@ var publicScene;
         scenes                                  = initAssetManager ( shaders );
         initScene ( scenes );
         var renderSet                           = initBuffers ( scenes.models, scenes.textures );
-        gl.clearColor ( 1.0, 0.0, 0.0, 1.0 );
+        gl.clearColor ( 0.0, 0.0, 0.0, 1.0 );
         gl.enable ( gl.DEPTH_TEST );
 
         (function animloop()
