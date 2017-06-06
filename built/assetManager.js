@@ -169,18 +169,18 @@ function initAssetManager(shaders) {
         }
     }
     /*
-        * TODO(Dino): Generate render constructs from these objects.
-        *
-        * In renderPro, a 'renderable' is a set of all attributes
-        * that uniquely and completely specify how a mesh should be rendered.
-        * This includes not just the mesh geometry, but also the material used.
-        * The material also implicitly defines the shader to be used during rendering.
-        *
-        * Materials are generally specified per-face, instead of per-'model'.
-        * However, a model may not necessarily have different materials per face.
-        * In this case, the entire model is a renderable.
-        * Otherwise, all faces sharing a material comprise a renderable.
-        */
+     * TODO(Dino): Generate render constructs from these objects.
+     *
+     * In renderPro, a 'renderable' is a set of all attributes
+     * that uniquely and completely specify how a mesh should be rendered.
+     * This includes not just the mesh geometry, but also the material used.
+     * The material also implicitly defines the shader to be used during rendering.
+     *
+     * Materials are generally specified per-face, instead of per-'model'.
+     * However, a model may not necessarily have different materials per face.
+     * In this case, the entire model is a renderable.
+     * Otherwise, all faces sharing a material comprise a renderable.
+     */
     for (var currModelIdx in tempModels) {
         var model = tempModels[currModelIdx];
         var materialMap = new Dictionary();
@@ -251,6 +251,8 @@ function initAssetManager(shaders) {
             exportableScenes.renderables.push(modelRenderables[currIdx]);
         exportableScenes.models.push(coreModel);
     }
+    /* Experimental WexBIM loading. */
+    loadWexBim(exportableScenes.effects['mainEffect'], exportableScenes);
     scenes = exportableScenes;
     return exportableScenes;
 }
@@ -260,11 +262,81 @@ function initAssetManager(shaders) {
 function initTextureFromArray() {
     var rawData = [
         1.0, 0.0, 0.0, 1.0,
-        0.0, 1.0, 0.0, 1.0,
-        0.0, 0.0, 1.0, 1.0
+        0.0, 0.0, 0.0, 1.0,
+        0.0, 0.0, 0.0, 1.0
     ];
     var data = new Float32Array(rawData);
     var coreTex = new renderPro.graphics.core.Texture();
     coreTex.load(data, CoreType.FLOAT32, 3, 1);
     return coreTex;
+}
+function loadWexBim(effect, exportableScenes) {
+    console.log(exportableScenes);
+    var newGeometry = new xModelGeometry();
+    var blob = new Blob([newGeometry]);
+    newGeometry.onloaded = function (shapes) {
+        for (var currShapeIdx = 0; currShapeIdx < shapes.length; currShapeIdx++) {
+            var shape = shapes[currShapeIdx];
+            var vertexTable = [];
+            var coreVertices = [];
+            for (var currVertStartIdx = 0; currVertStartIdx < shape.vertices.length; currVertStartIdx += 3) {
+                var positions = new Float32Array([shape.vertices[currVertStartIdx], shape.vertices[currVertStartIdx + 1], shape.vertices[currVertStartIdx + 2]]);
+                var vertex = new renderPro.graphics.core.Vertex(positions);
+                vertexTable.push(vertex);
+            }
+            var triangleSkeletons = [];
+            for (var currIndiceIdx = 0; currIndiceIdx < shape.indices.length; currIndiceIdx += 3) {
+                var indice = [shape.indices[currIndiceIdx], shape.indices[currIndiceIdx + 1], shape.indices[currIndiceIdx + 2]];
+                triangleSkeletons.push(indice);
+            }
+            var triangles = [];
+            for (var currSkeletonIdx = 0; currSkeletonIdx < triangleSkeletons.length; currSkeletonIdx++) {
+                var currSkeleton = triangleSkeletons[currSkeletonIdx];
+                var triangle = [];
+                for (var vertexIdx = 0; vertexIdx < currSkeleton.length; vertexIdx++) {
+                    var vert = currSkeleton[vertexIdx];
+                    var vertex = {
+                        position: vertexTable[vert].position,
+                        normal: []
+                    };
+                    triangle.push(vertex);
+                }
+                triangles.push(triangle);
+            }
+            var normalIdx = 0;
+            for (var triangleIdx = 0; triangleIdx < triangles.length; triangleIdx++) {
+                var triangle = triangles[triangleIdx];
+                for (var vertIdx = 0; vertIdx < triangles[triangleIdx].length; vertIdx++) {
+                    var vertex = triangle[vertIdx];
+                    var normal = [shape.normals[++normalIdx], shape.normals[++normalIdx]];
+                    vertex.normal = new Uint16Array(normal);
+                    vertex.uv = new Float32Array([0.0, 0.0]);
+                    var coreVertex = new renderPro.graphics.core.Vertex(vertex.position, vertex.uv, vertex.normal);
+                    coreVertices.push(coreVertex);
+                }
+            }
+            var coreMesh = new renderPro.graphics.core.Mesh(coreVertices, coreVertices[0].getSize(), shape.indices, 2, coreVertices.length, shape.indices.length);
+            console.log(coreMesh);
+            var rawData = [
+                1.0, 0.0, 0.0, 1.0,
+                0.0, 0.0, 0.0, 1.0,
+                0.0, 0.0, 0.0, 1.0
+            ];
+            var data = new Float32Array(rawData);
+            var coreTex = new renderPro.graphics.core.Texture();
+            coreTex.load(data, CoreType.FLOAT32, 3, 1);
+            var material = new renderPro.graphics.core.Material([1.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, 1.0], 1.0);
+            var renderable = new renderPro.graphics.gl.Renderable(coreMesh, coreTex, material, renderPro.graphics.core.State.NORMAL, effect);
+            console.log("Renderable:");
+            console.log(renderable);
+            var modelTransformMatrix = mat4.create();
+            mat4.identity(modelTransformMatrix);
+            var translation = [0, 0, 0];
+            mat4.translate(modelTransformMatrix, modelTransformMatrix, translation);
+            var model = new renderPro.graphics.core.Model([renderable], modelTransformMatrix, null, "WexBIM");
+            exportableScenes.models.push(model);
+            eventSystem.fire("wexBimLoaded");
+        }
+    };
+    newGeometry.load("http://dev.renderpro.com/assets/models/OneWall.wexbim");
 }

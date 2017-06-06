@@ -1,4 +1,5 @@
 var publicScene;
+var eventSystem                         = new Application.Infrastructure.ProEventSystem( );
 ( function ( )
 {
     var gl;
@@ -452,16 +453,21 @@ var publicScene;
         var shaders                             = initShaders ( );
         scenes                                  = initAssetManager ( shaders );
         initScene ( scenes );
-        var renderSet                           = initBuffers ( scenes.models, scenes.textures );
-        gl.clearColor ( 0.0, 0.0, 0.0, 1.0 );
-        gl.enable ( gl.DEPTH_TEST );
 
-        (function animloop()
-        {
-            requestAnimationFrame(animloop);
-            drawScene ( renderSet );
-        })();
+        eventSystem.on("wexBimLoaded", function ( ) 
+        { 
+            var renderSet                           = initBuffers( scenes.models, scenes.textures );
+            gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
+            gl.enable( gl.DEPTH_TEST );
+            (function animloop( )
+            {
+                requestAnimationFrame(animloop);
+                drawScene ( renderSet );
+            })();
+
+        } );
+        eventSystem.fire( "testEvent" );
     }
 
-    init ( );
+    init( );
  } ) ( );

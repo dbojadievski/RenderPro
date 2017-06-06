@@ -82,9 +82,9 @@ function initAssetManager ( shaders )
     for ( var currTexIdx = 0; currTexIdx < assets.textures.length; currTexIdx++ )
     {
         var tex                         = assets.textures[ currTexIdx ];
-        var coreTex                     = new renderPro.graphics.core.Texture ( tex.content );
+        var coreTex                     = new renderPro.graphics.core.Texture( tex.content );
         coreTex.textureID               =  ( parseInt ( tex.id ) - 1000 ) ;
-        coreTex.name                    = tex.content.substring ( tex.content.lastIndexOf ( '\\' ) + 1 );
+        coreTex.name                    = tex.content.substring( tex.content.lastIndexOf ( '\\' ) + 1 );
         exportableScenes.textures.push ( coreTex );
     }
 
@@ -99,12 +99,12 @@ function initAssetManager ( shaders )
         var diffuse                     = innerMtl.diffuse;
         var specular                    = innerMtl.specular;
 
-        var coreMtl                     = new renderPro.graphics.core.Material ( ambient, diffuse, specular, innerMtl.shininess );
+        var coreMtl                     = new renderPro.graphics.core.Material( ambient, diffuse, specular, innerMtl.shininess );
 
         if ( innerMtl.diffuseMap !== null )
         {
-            var mapCoreTex              = exportableScenes.textures.findByName ( innerMtl.diffuseMap.name );
-            Application.Debug.assert ( mapCoreTex !== null, "INVALID CONTENT: Texture map missing." );
+            var mapCoreTex              = exportableScenes.textures.findByName( innerMtl.diffuseMap.name );
+            Application.Debug.assert( mapCoreTex !== null, "INVALID CONTENT: Texture map missing." );
             coreMtl.diffuseMap          =
             {
                 texture:                mapCoreTex,
@@ -129,8 +129,8 @@ function initAssetManager ( shaders )
 
         if ( innerMtl.ambientMap !== null )
         {
-            var mapCoreTex              = exportableScenes.textures.findByName ( innerMtl.ambientMap.name );
-            Application.Debug.assert ( mapCoreTex !== null, "INVALID CONTENT: Texture map missing." );
+            var mapCoreTex              = exportableScenes.textures.findByName( innerMtl.ambientMap.name );
+            Application.Debug.assert( mapCoreTex !== null, "INVALID CONTENT: Texture map missing." );
             coreMtl.ambientMap          =
             {
                 texture:                mapCoreTex,
@@ -181,8 +181,8 @@ function initAssetManager ( shaders )
 
         if ( innerMtl.alphaMap !== null )
         {
-            var mapCoreTex              = exportableScenes.textures.findByName ( innerMtl.alphaMap.name );
-            Application.Debug.assert ( mapCoreTex !== null, "INVALID CONTENT: Texture map missing." );
+            var mapCoreTex              = exportableScenes.textures.findByName( innerMtl.alphaMap.name );
+            Application.Debug.assert( mapCoreTex !== null, "INVALID CONTENT: Texture map missing." );
             coreMtl.alphaMap            =
             {
                 texture:                mapCoreTex,
@@ -206,14 +206,14 @@ function initAssetManager ( shaders )
 
         coreMtl.materialID              = ( parseInt ( mtl.id ) - 2000 );
         coreMtl.name                    = innerMtl.name;
-        exportableScenes.materials.push ( coreMtl );
+        exportableScenes.materials.push( coreMtl );
     }
 
     for ( var currModelIdx = 0; currModelIdx < assets.models.length; currModelIdx++ )
     {
         var str                         = assets.models[ currModelIdx ].content;
-        var model                       = renderPro.importers.loadGeometryFromObjectFile ( str );
-        Application.Debug.assert ( model !== null, "Model parse from OBJ failed." );
+        var model                       = renderPro.importers.loadGeometryFromObjectFile( str );
+        Application.Debug.assert( model !== null, "Model parse from OBJ failed." );
         for ( var modelIdx = 0; modelIdx < model.length; modelIdx++ )
         {
             var subModel                = model[ modelIdx ];
@@ -222,43 +222,40 @@ function initAssetManager ( shaders )
                 if ( subModel.faces[ faceIdx ] !== null )
                 /* By .obj specification, the default material for a face is a matte white material.  */
                 {
-                    var mtl             = exportableScenes.materials.findByName ( subModel.faces[ faceIdx ].material );
+                    var mtl             = exportableScenes.materials.findByName( subModel.faces[ faceIdx ].material );
                     subModel.faces[ faceIdx ].material = mtl !== null ? mtl : materialWhite;
                     subModel.facesByMaterial 
                 }
-                
             }
 
-            tempModels.push ( subModel );
+            tempModels.push( subModel );
         }
     }
 
     /*
-        * TODO(Dino): Generate render constructs from these objects.
-        *
-        * In renderPro, a 'renderable' is a set of all attributes
-        * that uniquely and completely specify how a mesh should be rendered.
-        * This includes not just the mesh geometry, but also the material used.
-        * The material also implicitly defines the shader to be used during rendering.
-        *
-        * Materials are generally specified per-face, instead of per-'model'.
-        * However, a model may not necessarily have different materials per face.
-        * In this case, the entire model is a renderable.
-        * Otherwise, all faces sharing a material comprise a renderable.
-        */
-
-
+     * TODO(Dino): Generate render constructs from these objects.
+     *
+     * In renderPro, a 'renderable' is a set of all attributes
+     * that uniquely and completely specify how a mesh should be rendered.
+     * This includes not just the mesh geometry, but also the material used.
+     * The material also implicitly defines the shader to be used during rendering.
+     *
+     * Materials are generally specified per-face, instead of per-'model'.
+     * However, a model may not necessarily have different materials per face.
+     * In this case, the entire model is a renderable.
+     * Otherwise, all faces sharing a material comprise a renderable.
+     */
     for ( var currModelIdx in tempModels )
     {
         var model                           = tempModels[ currModelIdx ];
-        var materialMap                     = new Dictionary ( );
+        var materialMap                     = new Dictionary( );
         for ( var faceIdx = 0; faceIdx < model.faces.length; faceIdx++ )
         {
             var faceMaterial                = model.faces[ faceIdx ].material;
-            if ( !materialMap.hasKey ( faceMaterial.materialID ) )
-                materialMap.push ( new KeyValuePair ( faceMaterial.materialID, [ ] ) );
-            var facesByMaterial             = materialMap.getByKey ( faceMaterial.materialID );
-            facesByMaterial.push ( model.faces[ faceIdx ] );
+            if ( !materialMap.hasKey( faceMaterial.materialID ) )
+                materialMap.push( new KeyValuePair( faceMaterial.materialID, [ ] ) );
+            var facesByMaterial             = materialMap.getByKey( faceMaterial.materialID );
+            facesByMaterial.push( model.faces[ faceIdx ] );
         }
 
         var vertexArray                     = [ ];
@@ -267,7 +264,7 @@ function initAssetManager ( shaders )
         // Function to proces a single facegroup, to generate the renderable for each face.
         function processFaceGroup ( renderables, faceGroup)
         {
-            var renderablesInFaceGroup = [];
+            var renderablesInFaceGroup      = [ ];
             for ( var faceIdx               = 0; faceIdx < faceGroup.value.length; faceIdx++ )
             {
                 var face                    = faceGroup.value[ faceIdx ];
@@ -276,15 +273,15 @@ function initAssetManager ( shaders )
                 for ( var vertexIdx         = 0; vertexIdx < face.vertices.length; vertexIdx++ )
                 {
                     var exportableVertex    = face.vertices[ vertexIdx ];
-                    var vPosArray           = new Float32Array ( exportableVertex.position );
-                    var vUvArray            = new Float32Array ( exportableVertex.textureCoordinates );
-                    var vNormArray          = new Int16Array ( exportableVertex.normal );
-                    var coreVertex          = new renderPro.graphics.core.Vertex ( vPosArray, vUvArray, vNormArray );
-                    actualVertexArray.push ( coreVertex );
+                    var vPosArray           = new Float32Array( exportableVertex.position );
+                    var vUvArray            = new Float32Array( exportableVertex.textureCoordinates );
+                    var vNormArray          = new Int16Array( exportableVertex.normal );
+                    var coreVertex          = new renderPro.graphics.core.Vertex( vPosArray, vUvArray, vNormArray );
+                    actualVertexArray.push( coreVertex );
                     indexArray.push ( vertexIdx );
                 }
 
-                var mesh                    = new renderPro.graphics.core.Mesh ( actualVertexArray, actualVertexArray.length, indexArray, indexArray.length );
+                var mesh                    = new renderPro.graphics.core.Mesh( actualVertexArray, actualVertexArray.length, indexArray, indexArray.length );
                 var usedMaterial            = model.faces[ faceIdx ].material;
                 var renderable              = new renderPro.graphics.gl.Renderable 
                 (
@@ -294,14 +291,14 @@ function initAssetManager ( shaders )
                     renderPro.graphics.core.State.NORMAL,
                     exportableScenes.effects[ 'mainEffect' ] 
                 );
-                renderablesInFaceGroup.push ( renderable );
+                renderablesInFaceGroup.push( renderable );
             }
 
             /* NOTE(Martin): Renderables combined using this method must use the same material */
             function combineRenderables ( renderables ) 
             {
-                var combinedVertices        = [];
-                var combinedIndices         = [];
+                var combinedVertices        = [ ];
+                var combinedIndices         = [ ];
                 for ( var renderIdx = 0; renderIdx < renderables.length; renderIdx++ )
                  {
                     var currRenderable      = renderables[renderIdx];
@@ -310,23 +307,23 @@ function initAssetManager ( shaders )
                     
                     for ( var vertexIdx = 0; vertexIdx < currMesh.vertices.length; vertexIdx++ ) 
                     {
-                        combinedVertices.push ( currMesh.vertices[vertexIdx] )
+                        combinedVertices.push( currMesh.vertices[vertexIdx] )
                     }
 
                     for ( var indexIdx = 0; indexIdx < currMesh.indices.length; indexIdx++ ) 
                     {
-                        combinedIndices.push ( currMesh.indices[indexIdx] + currAmountVertices);
+                        combinedIndices.push( currMesh.indices[indexIdx] + currAmountVertices);
                     }
                 }
 
-                var combinedMesh            = new renderPro.graphics.core.Mesh ( 
+                var combinedMesh            = new renderPro.graphics.core.Mesh( 
                     combinedVertices, 
                     combinedVertices.length, 
                     combinedIndices, 
                     combinedIndices.length
                 );
 
-                var renderable              = new renderPro.graphics.gl.Renderable (
+                var renderable              = new renderPro.graphics.gl.Renderable(
                     combinedMesh,
                     renderables[0].texture,
                     renderables[0].material,
@@ -336,31 +333,33 @@ function initAssetManager ( shaders )
                 return renderable
             }
 
-            renderables.push( combineRenderables(renderablesInFaceGroup));
+            renderables.push( combineRenderables( renderablesInFaceGroup ) );
         }
-
 
         /* NOTE(Dino): Separate by model, and not just by material ID. */
         var modelRenderables                = [ ];
-        materialMap.iterate (  processFaceGroup.bind(null, modelRenderables ) );
+        materialMap.iterate(  processFaceGroup.bind(null, modelRenderables ) );
         
-        var modelTransformMatrix            = mat4.create ( );
-        mat4.identity ( modelTransformMatrix );
+        var modelTransformMatrix            = mat4.create( );
+        mat4.identity( modelTransformMatrix );
         
         var translation                     = [ 0, 0, - 30 ];
-        mat4.translate ( modelTransformMatrix, modelTransformMatrix, translation );
+        mat4.translate( modelTransformMatrix, modelTransformMatrix, translation );
         
-        var rotation                    = generateRotation ( );
-        mat4.rotateX ( modelTransformMatrix, modelTransformMatrix, rotation[ 0 ] );
-        mat4.rotateY ( modelTransformMatrix, modelTransformMatrix, rotation[ 1 ] );
-        mat4.rotateZ ( modelTransformMatrix, modelTransformMatrix, rotation[ 2 ] );
+        var rotation                    = generateRotation( );
+        mat4.rotateX( modelTransformMatrix, modelTransformMatrix, rotation[ 0 ] );
+        mat4.rotateY( modelTransformMatrix, modelTransformMatrix, rotation[ 1 ] );
+        mat4.rotateZ( modelTransformMatrix, modelTransformMatrix, rotation[ 2 ] );
         
-        var coreModel                   = new renderPro.graphics.core.Model ( modelRenderables, modelTransformMatrix, null, model.name );
+        var coreModel                   = new renderPro.graphics.core.Model( modelRenderables, modelTransformMatrix, null, model.name );
         for ( var currIdx = 0; currIdx < modelRenderables.length; currIdx++ )
             exportableScenes.renderables.push ( modelRenderables[ currIdx ] );
 
-        exportableScenes.models.push ( coreModel );
+        exportableScenes.models.push ( coreModel );  
     }
+
+    /* Experimental WexBIM loading. */
+    loadWexBim( exportableScenes.effects[ 'mainEffect' ], exportableScenes );
 
     scenes                              = exportableScenes;
     return exportableScenes;
@@ -374,13 +373,112 @@ function initTextureFromArray ( )
     var rawData        = 
     [ 
         1.0, 0.0, 0.0, 1.0, 
-        0.0, 1.0, 0.0, 1.0,
-        0.0, 0.0, 1.0, 1.0 
+        0.0, 0.0, 0.0, 1.0,
+        0.0, 0.0, 0.0, 1.0 
     ];
     
-    var data           = new Float32Array ( rawData );
-    const coreTex      = new renderPro.graphics.core.Texture ( );
-    coreTex.load ( data, CoreType.FLOAT32, 3, 1 );
+    var data           = new Float32Array( rawData );
+    const coreTex      = new renderPro.graphics.core.Texture( );
+    coreTex.load( data, CoreType.FLOAT32, 3, 1 );
 
     return coreTex;
+}
+
+function loadWexBim( effect, exportableScenes )
+{
+    console.log( exportableScenes );
+    var newGeometry             = new xModelGeometry( );
+    var blob                    = new Blob( [ newGeometry ] );
+    
+    newGeometry.onloaded        = function ( shapes )
+    {
+        for ( var currShapeIdx = 0; currShapeIdx < shapes.length; currShapeIdx++ )
+        {
+            var shape               = shapes[ currShapeIdx ];
+            var vertexTable         = [ ];
+            var coreVertices        = [ ];
+
+            for ( var currVertStartIdx = 0; currVertStartIdx < shape.vertices.length; currVertStartIdx += 3 )
+            {
+                var positions       = new Float32Array( [ shape.vertices[ currVertStartIdx ], shape.vertices[ currVertStartIdx + 1 ], shape.vertices[ currVertStartIdx + 2 ] ] );
+                var vertex          = new renderPro.graphics.core.Vertex( positions );
+                vertexTable.push( vertex );
+            }
+
+            var triangleSkeletons   = [ ];
+            for ( var currIndiceIdx = 0; currIndiceIdx < shape.indices.length; currIndiceIdx += 3 )
+            {
+                var indice          = [ shape.indices[ currIndiceIdx ], shape.indices[ currIndiceIdx + 1], shape.indices[ currIndiceIdx + 2 ] ];
+                triangleSkeletons.push( indice );
+            }
+
+            var triangles           = [ ];
+            for ( var currSkeletonIdx = 0; currSkeletonIdx < triangleSkeletons.length; currSkeletonIdx++ )
+            {
+                var currSkeleton    = triangleSkeletons[ currSkeletonIdx ];
+
+                var triangle        = [ ];
+                for ( var vertexIdx = 0; vertexIdx < currSkeleton.length; vertexIdx++ )
+                {
+                    var vert        = currSkeleton[ vertexIdx ];
+                    var vertex      = 
+                    {
+                        position: vertexTable[ vert ].position,
+                        normal:     [ ]
+                    };
+
+                    triangle.push( vertex );
+                }
+
+                triangles.push( triangle );
+            }
+
+            var normalIdx           = 0;
+            for ( var triangleIdx = 0; triangleIdx < triangles.length; triangleIdx++ )
+            {
+                var triangle        = triangles[ triangleIdx ];
+                for ( var vertIdx = 0; vertIdx < triangles[ triangleIdx ].length; vertIdx++ )
+                {
+                    var vertex      = triangle[ vertIdx ];
+                    var normal      = [ shape.normals[ ++normalIdx ], shape.normals[ ++normalIdx ] ];
+                    vertex.normal   = new Uint16Array( normal );
+                    vertex.uv       = new Float32Array( [ 0.0, 0.0 ] );
+                    
+                    var coreVertex  = new renderPro.graphics.core.Vertex( vertex.position, vertex.uv, vertex.normal );
+                    coreVertices.push( coreVertex );
+                }
+            }
+
+            var coreMesh            = new renderPro.graphics.core.Mesh( coreVertices, coreVertices[ 0 ].getSize ( ), shape.indices, 2, coreVertices.length, shape.indices.length  );
+            console.log( coreMesh );
+
+            var rawData        = 
+            [ 
+                1.0, 0.0, 0.0, 1.0, 
+                0.0, 0.0, 0.0, 1.0,
+                0.0, 0.0, 0.0, 1.0 
+            ];
+
+            var data           = new Float32Array( rawData );
+            const coreTex      = new renderPro.graphics.core.Texture( );
+            coreTex.load( data, CoreType.FLOAT32, 3, 1 );
+
+            var material        = new renderPro.graphics.core.Material( [ 1.0, 0.0, 0.0, 1.0 ], [ 0.0, 0.0, 0.0, 1.0 ], [ 0.0, 0.0, 0.0, 1.0 ], 1.0 );
+            var renderable      = new renderPro.graphics.gl.Renderable( coreMesh, coreTex, material, renderPro.graphics.core.State.NORMAL, effect );
+            console.log( "Renderable:" );
+            console.log( renderable );
+
+            var modelTransformMatrix            = mat4.create( );
+            mat4.identity( modelTransformMatrix );
+            
+            var translation                     = [ 0, 0, 0 ];
+            mat4.translate( modelTransformMatrix, modelTransformMatrix, translation );
+
+            var model                           = new renderPro.graphics.core.Model( [ renderable], modelTransformMatrix, null, "WexBIM" );
+            exportableScenes.models.push( model );
+            eventSystem.fire( "wexBimLoaded" );
+        }
+    };
+    
+    newGeometry.load ( "http://dev.renderpro.com/assets/models/OneWall.wexbim" );
 }
