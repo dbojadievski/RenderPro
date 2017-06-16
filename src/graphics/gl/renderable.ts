@@ -1,7 +1,7 @@
 namespace renderPro {
     export namespace graphics {
         export namespace gl {
-            export class Renderable {
+            export class Renderable implements IRenderable {
                 mesh    : renderPro.graphics.core.Mesh
                 effect : renderPro.graphics.Effect
                 texture : renderPro.graphics.core.Texture
@@ -30,7 +30,7 @@ namespace renderPro {
                     this.renderableID           = Renderable._renderableIdentifier++;
                 }
 
-                bufferData ( gl: WebGLRenderingContext )
+                bufferData ( gl: WebGLRenderingContext ) : void
                 {
                     let positions : Array<any>              = new Array ( );
                     let textureCoordinates : Array<any>     = new Array ( );
@@ -67,7 +67,7 @@ namespace renderPro {
                     this.indexBuffer            = new renderPro.graphics.gl.ElementArrayBuffer ( gl );
                     this.indexBuffer.bufferData ( this.mesh.indices );
                 }
-                draw ( shaderProgram : any, gl : WebGLRenderingContext ) : void
+                draw ( shaderProgram : renderPro.graphics.Effect, gl : WebGLRenderingContext ) : void
                 {
                     var that                    = this;
                     gl.bindBuffer ( gl.ARRAY_BUFFER, this.vertexBuffer.pointer );
@@ -92,7 +92,7 @@ namespace renderPro {
 
                     gl.bindBuffer ( gl.ARRAY_BUFFER, null );
                 }
-                drawWithoutStateChanges ( shaderProgram : any, gl : WebGLRenderingContext ) :  void
+                drawWithoutStateChanges ( shaderProgram : renderPro.graphics.Effect, gl : WebGLRenderingContext ) :  void
                 {
                     gl.bindBuffer ( gl.ARRAY_BUFFER, this.vertexBuffer.pointer );
 
@@ -113,7 +113,7 @@ namespace renderPro {
                     
                     gl.bindBuffer ( gl.ARRAY_BUFFER, null );
                 }
-                drawUnindexed ( shaderProgram : any, gl : WebGLRenderingContext ) : void
+                drawUnindexed ( shaderProgram : renderPro.graphics.Effect, gl : WebGLRenderingContext ) : void
                 {
                     gl.bindBuffer ( gl.ARRAY_BUFFER, this.vertexBuffer.pointer );
                     gl.vertexAttribPointer ( shaderProgram.attributes[ "vertexPosition" ], 3, gl.FLOAT, false, 0, 0 );
