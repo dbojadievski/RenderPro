@@ -178,9 +178,10 @@ var eventSystem                         = new Application.Infrastructure.ProEven
     {
         scene                                  = new renderPro.data.scene.Scene ( );
 
-        mat4.perspective ( pMatrix , 45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0) ;
+        mat4.perspective ( pMatrix , 45, gl.viewportWidth / gl.viewportHeight, 0.1, 20000.0 ) ;
 
-        var cameraPosition                     = origin;
+        var cameraPosition                     = new Float32Array ( [ origin[0], origin[1], origin[0] + 9000 ] );
+        // var cameraPosition                     = origin;
         var cameralookAtDirection              = WorldDirection.FORWARD;
         var camera                             = new renderPro.graphics.scene.Camera ( cameraPosition, cameralookAtDirection  );
         scene.addCamera ( camera );
@@ -457,7 +458,7 @@ var eventSystem                         = new Application.Infrastructure.ProEven
         eventSystem.on("wexBimLoaded", function ( ) 
         { 
             var renderSet                           = initBuffers( scenes.models, scenes.textures );
-            gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
+            gl.clearColor( 1.0, 0.0, 0.0, 1.0 );
             gl.enable( gl.DEPTH_TEST );
             (function animloop( )
             {

@@ -343,7 +343,7 @@ function initAssetManager ( shaders )
         var modelTransformMatrix            = mat4.create( );
         mat4.identity( modelTransformMatrix );
         
-        var translation                     = [ 0, 0, - 30 ];
+        var translation                     = [ 0, 0, -30+9000 ];
         mat4.translate( modelTransformMatrix, modelTransformMatrix, translation );
         
         var rotation                    = generateRotation( );
@@ -392,6 +392,7 @@ function loadWexBim( effect, exportableScenes )
     
     newGeometry.onloaded        = function ( shapes )
     {
+
         for ( var currShapeIdx = 0; currShapeIdx < shapes.length; currShapeIdx++ )
         {
             var shape               = shapes[ currShapeIdx ];
@@ -400,7 +401,7 @@ function loadWexBim( effect, exportableScenes )
 
             for ( var currVertStartIdx = 0; currVertStartIdx < shape.vertices.length; currVertStartIdx += 3 )
             {
-                var positions       = new Float32Array( [ shape.vertices[ currVertStartIdx ], shape.vertices[ currVertStartIdx + 1 ], shape.vertices[ currVertStartIdx + 2 ] ] );
+                var positions       = new Float32Array( [ shape.vertices[ currVertStartIdx ], shape.vertices[ currVertStartIdx + 2 ], shape.vertices[ currVertStartIdx + 1 ] ] );
                 var vertex          = new renderPro.graphics.core.Vertex( positions );
                 vertexTable.push( vertex );
             }
@@ -475,10 +476,11 @@ function loadWexBim( effect, exportableScenes )
             mat4.translate( modelTransformMatrix, modelTransformMatrix, translation );
 
             var model                           = new renderPro.graphics.core.Model( [ renderable], modelTransformMatrix, null, "WexBIM" );
+            
             exportableScenes.models.push( model );
             eventSystem.fire( "wexBimLoaded" );
         }
     };
     
-    newGeometry.load ( "http://dev.renderpro.com/assets/models/OneWall.wexbim" );
+    newGeometry.load ( "/assets/models/OneWall.wexbim" );
 }
