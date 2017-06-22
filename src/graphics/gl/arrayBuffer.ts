@@ -7,7 +7,7 @@ namespace renderPro {
                 constructor ( gl : WebGLRenderingContext )
                 {
                     this.pointer                    = gl.createBuffer ( );
-                    this.gl = gl;
+                    this.gl                         = gl;
                 }
                 bufferData ( vertices : any ) : void
                 {

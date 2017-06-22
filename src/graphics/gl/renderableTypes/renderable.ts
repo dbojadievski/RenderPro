@@ -1,3 +1,4 @@
+//NOTE(Dino): Default renderable type, used for rendering plain geometry (.obj) types.
 namespace renderPro {
     export namespace graphics {
         export namespace gl {
@@ -27,7 +28,7 @@ namespace renderPro {
                     if ( Renderable._renderableIdentifier == undefined )
                         Renderable._renderableIdentifier = 1;
 
-                    this.renderableID           = Renderable._renderableIdentifier++;
+                    this.renderableID           = s_RenderableIdentifier++;
                 }
 
                 bufferData ( gl: WebGLRenderingContext ) : void

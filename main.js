@@ -1,5 +1,7 @@
 var publicScene;
 var eventSystem                         = new Application.Infrastructure.ProEventSystem( );
+var g_OpenGLContext;
+
 ( function ( )
 {
     var gl;
@@ -78,7 +80,8 @@ var eventSystem                         = new Application.Infrastructure.ProEven
                 var debugInfo                   = gl.getExtension('WEBGL_debug_renderer_info');
                 var vendor                      = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
                 renderer                        = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-
+                g_OpenGLContext                 = gl;
+                
             } catch ( e )
             {
                 throw e.message;
@@ -91,28 +94,26 @@ var eventSystem                         = new Application.Infrastructure.ProEven
 
     function getShader (gl, id )
     {
-        var shaderScript        = document.getElementById ( id );
+        var shaderScript        = null;
+        for ( var shaderScriptIdx = 0; shaderScriptIdx < assets.shaders.length; shaderScriptIdx++ ) {
+            if ( assets.shaders[ shaderScriptIdx ].id === id )
+            {
+                shaderScript    = assets.shaders[ shaderScriptIdx ]
+                break;
+            }
+        }
         if ( !shaderScript )
             return null;
 
-        var str                 = "";
-        var k                   = shaderScript.firstChild;
-        while ( k )
-        {
-            if ( k.nodeType == 3 )
-                str             += k.textContent;
-            k                   = k.nextSibling;
-        }
-
         var shader;
-        if ( shaderScript.type == "x-shader/x-fragment" )
+        if ( shaderScript.type === "FRAGMENT" )
             shader              = gl.createShader(gl.FRAGMENT_SHADER);
-        else if ( shaderScript.type == "x-shader/x-vertex" )
+        else if ( shaderScript.type === "VERTEX" )
             shader              = gl.createShader(gl.VERTEX_SHADER);
         else
             return null;
 
-        gl.shaderSource ( shader, str );
+        gl.shaderSource ( shader, shaderScript.content );
         gl.compileShader ( shader );
 
         if ( !gl.getShaderParameter ( shader, gl.COMPILE_STATUS ) )
@@ -127,51 +128,57 @@ var eventSystem                         = new Application.Infrastructure.ProEven
     function initShaders ( )
     {
         var effects             = new Array ( );
-        var fragmentShader      = getShader ( gl, "shader-fs" );
-        var vertexShader        = getShader ( gl, "shader-vs" );
+        initEffect ( effects, "mainEffect", "0003", "0004" );
+        return effects;
+    }
 
-        var mainEffect          = new renderPro.graphics.Effect ( vertexShader, fragmentShader, gl );
-        effects[ 'mainEffect']  = mainEffect;
+    function initEffect ( effects, effectName, vertexShaderId, fragmentShaderId ) 
+    {
+        var fragmentShader      = getShader ( gl, fragmentShaderId );
+        var vertexShader        = getShader ( gl, vertexShaderId );
 
-        if ( !gl.getProgramParameter ( mainEffect.programPointer, gl.LINK_STATUS ) )
+        var effect              = new renderPro.graphics.Effect ( vertexShader, fragmentShader, gl );
+        effects[ effectName ]   = effect;
+
+        if ( !gl.getProgramParameter ( effect.programPointer, gl.LINK_STATUS ) )
         {
             alert ( "Could not initialise shaders" );
         }
 
-        mainEffect.uniforms[ "pMatrixUniform" ]             = gl.getUniformLocation ( mainEffect.programPointer, "uPMatrix" );
-        mainEffect.uniforms[ "mvMatrixUniform" ]            = gl.getUniformLocation ( mainEffect.programPointer, "uMVMatrix" );
-        mainEffect.uniforms[ "mMatrixUniform" ]             = gl.getUniformLocation ( mainEffect.programPointer, "uMMatrix" );
+        effect.uniforms[ "pMatrixUniform" ]             = new renderPro.graphics.gl.Uniform(gl, effect.programPointer, "uPMatrix", renderPro.graphics.gl.UniformType.UNIFORM_MATRIX_4FV );
+        effect.uniforms[ "mvMatrixUniform" ]            = new renderPro.graphics.gl.Uniform(gl, effect.programPointer, "uMVMatrix", renderPro.graphics.gl.UniformType.UNIFORM_MATRIX_4FV );
+        effect.uniforms[ "mMatrixUniform" ]             = new renderPro.graphics.gl.Uniform(gl, effect.programPointer, "uMMatrix", renderPro.graphics.gl.UniformType.UNIFORM_MATRIX_4FV );
 
-        mainEffect.uniforms[ "materialAmbient" ]            = gl.getUniformLocation ( mainEffect.programPointer, "uMaterial.ambient" );
-        mainEffect.uniforms[ "materialDiffuse" ]            = gl.getUniformLocation ( mainEffect.programPointer, "uMaterial.diffuse" );
-        mainEffect.uniforms[ "materialSpecular" ]           = gl.getUniformLocation ( mainEffect.programPointer, "uMaterial.specular" );
-        mainEffect.uniforms[ "materialShininess" ]          = gl.getUniformLocation ( mainEffect.programPointer, "uMaterial.shininess" );
+        effect.uniforms[ "materialAmbient" ]            = new renderPro.graphics.gl.Uniform(gl, effect.programPointer, "uMaterial.ambient", renderPro.graphics.gl.UniformType.UNIFORM_4FV);
+        effect.uniforms[ "materialDiffuse" ]            = new renderPro.graphics.gl.Uniform(gl, effect.programPointer, "uMaterial.diffuse", renderPro.graphics.gl.UniformType.UNIFORM_4FV );
+        effect.uniforms[ "materialSpecular" ]           = new renderPro.graphics.gl.Uniform(gl, effect.programPointer, "uMaterial.specular", renderPro.graphics.gl.UniformType.UNIFORM_4FV );
+        effect.uniforms[ "materialShininess" ]          = new renderPro.graphics.gl.Uniform(gl, effect.programPointer, "uMaterial.shininess", renderPro.graphics.gl.UniformType.UNIFORM_1FV );
 
-        mainEffect.uniforms[ "pointLightPosition" ]         = gl.getUniformLocation ( mainEffect.programPointer, "uPointLight.position" );
-        mainEffect.uniforms[ "pointLightAmbient" ]          = gl.getUniformLocation ( mainEffect.programPointer, "uPointLight.ambient" );
-        mainEffect.uniforms[ "pointLightDiffuse" ]          = gl.getUniformLocation ( mainEffect.programPointer, "uPointLight.diffuse" );
-        mainEffect.uniforms[ "pointLightSpecular" ]         = gl.getUniformLocation ( mainEffect.programPointer, "uPointLight.specular" );
+        effect.uniforms[ "pointLightPosition" ]         = gl.getUniformLocation ( effect.programPointer, "uPointLight.position" );
+        effect.uniforms[ "pointLightAmbient" ]          = gl.getUniformLocation ( effect.programPointer, "uPointLight.ambient" );
+        effect.uniforms[ "pointLightDiffuse" ]          = gl.getUniformLocation ( effect.programPointer, "uPointLight.diffuse" );
+        effect.uniforms[ "pointLightSpecular" ]         = gl.getUniformLocation ( effect.programPointer, "uPointLight.specular" );
 
-        mainEffect.uniforms[ "directionalLightDirection" ]  = gl.getUniformLocation ( mainEffect.programPointer, "uDirectionalLight.direction" );
-        mainEffect.uniforms[ "directionalLightAmbient" ]    = gl.getUniformLocation ( mainEffect.programPointer, "uDirectionalLight.ambient" );
-        mainEffect.uniforms[ "directionalLightDiffuse" ]    = gl.getUniformLocation ( mainEffect.programPointer, "uDirectionalLight.diffuse" );
-        mainEffect.uniforms[ "directionalLightSpecular" ]   = gl.getUniformLocation ( mainEffect.programPointer, "uDirectionalLight.specular" );
+        effect.uniforms[ "directionalLightDirection" ]  = gl.getUniformLocation ( effect.programPointer, "uDirectionalLight.direction" );
+        effect.uniforms[ "directionalLightAmbient" ]    = gl.getUniformLocation ( effect.programPointer, "uDirectionalLight.ambient" );
+        effect.uniforms[ "directionalLightDiffuse" ]    = gl.getUniformLocation ( effect.programPointer, "uDirectionalLight.diffuse" );
+        effect.uniforms[ "directionalLightSpecular" ]   = gl.getUniformLocation ( effect.programPointer, "uDirectionalLight.specular" );
 
-        mainEffect.uniforms[ "sampler" ]                    = gl.getUniformLocation ( mainEffect.programPointer, "uSampler" );
+        effect.uniforms[ "sampler" ]                    = new renderPro.graphics.gl.Uniform(gl, effect.programPointer, "uSamplers", renderPro.graphics.gl.UniformType.UNIFORM_1I );
 
-        mainEffect.attributes[ "vertexNormal" ]            = gl.getAttribLocation ( mainEffect.programPointer, "aVertexNormal" );
-        mainEffect.attributes[ "vertexPosition" ]          = gl.getAttribLocation ( mainEffect.programPointer, "aVertexPosition" );
-        mainEffect.attributes[ "vertexTextureCoordinate" ] = gl.getAttribLocation ( mainEffect.programPointer, "aVertexTextureCoordinate" );
+        effect.attributes[ "vertexNormal" ]             = gl.getAttribLocation ( effect.programPointer, "aVertexNormal" );
+        effect.attributes[ "vertexPosition" ]           = gl.getAttribLocation ( effect.programPointer, "aVertexPosition" );
+        effect.attributes[ "vertexTextureCoordinate" ]  = gl.getAttribLocation ( effect.programPointer, "aVertexTextureCoordinate" );
 
-        gl.enableVertexAttribArray ( mainEffect.attributes[ "vertexNormal" ] );
-        gl.enableVertexAttribArray ( mainEffect.attributes[ "vertexPosition" ] );
-        gl.enableVertexAttribArray ( mainEffect.attributes[ "vertexTextureCoordinate" ] );
+        gl.enableVertexAttribArray ( effect.attributes[ "vertexNormal" ] );
+        gl.enableVertexAttribArray ( effect.attributes[ "vertexPosition" ] );
+        gl.enableVertexAttribArray ( effect.attributes[ "vertexTextureCoordinate" ] );
 
 
-        mainEffect.use ( gl );
-        currentEffect                                       = mainEffect;
+        effect.use ( gl );
+        currentEffect                                       = effect;
 
-        return effects;
+        return effect;
     }
 
     function initScene ( scenes )
@@ -190,19 +197,19 @@ var eventSystem                         = new Application.Infrastructure.ProEven
 
     function setUniforms ( renderable, transform )
     {
-        gl.uniformMatrix4fv ( currentEffect.uniforms[ "pMatrixUniform" ], false, pMatrix );
-        gl.uniformMatrix4fv ( currentEffect.uniforms[ "mvMatrixUniform" ], false, viewMatrix );
-        gl.uniformMatrix4fv ( currentEffect.uniforms[ "mMatrixUniform"], false, transform );
+        currentEffect.uniforms[ "pMatrixUniform" ].update(pMatrix);
+        currentEffect.uniforms[ "mvMatrixUniform" ].update(viewMatrix);
+        currentEffect.uniforms[ "mMatrixUniform" ].update(transform);
         
-        gl.uniform4fv ( currentEffect.uniforms[ "materialAmbient" ], renderable.material.ambient );
-        gl.uniform4fv ( currentEffect.uniforms[ "materialDiffuse" ], renderable.material.diffuse );
-        gl.uniform4fv ( currentEffect.uniforms[ "materialSpecular" ], renderable.material.specular );
-        gl.uniform1f ( currentEffect.uniforms[ "materialShininess" ], renderable.material.shininess );
+        currentEffect.uniforms[ "materialAmbient" ].update(renderable.material.ambient );
+        currentEffect.uniforms[ "materialDiffuse" ].update(renderable.material.diffuse );
+        currentEffect.uniforms[ "materialSpecular" ].update(renderable.material.specular );
+        currentEffect.uniforms[ "materialShininess" ].update(renderable.material.shininess );
 
         
         gl.activeTexture ( gl.TEXTURE0 );
         gl.bindTexture ( gl.TEXTURE_2D, renderable.texture.getTexPointer ( ) );
-        gl.uniform1i( currentEffect.uniforms[ "sampler" ], 0  );
+        currentEffect.uniforms[ "sampler" ].update(0);
     }
 
     var triangleVertexPositionBuffer;
@@ -387,7 +394,7 @@ var eventSystem                         = new Application.Infrastructure.ProEven
                         /* Switch GPGPU texture state. */
                         gl.activeTexture ( gl.TEXTURE0 );
                         gl.bindTexture ( gl.TEXTURE_2D, byTexture.key.getTexPointer ( ) );
-                        gl.uniform1i( currentEffect.uniforms[ "sampler" ], 0  );
+                        currentEffect.uniforms[ "sampler" ].update(0);
                         textureSwitches++;
 
                         for ( var currRenderableIdx     = 0; currRenderableIdx < byTexture.value.length; currRenderableIdx++ )
@@ -423,7 +430,7 @@ var eventSystem                         = new Application.Infrastructure.ProEven
                         /* Switch GPGPU texture state. */
                         gl.activeTexture ( gl.TEXTURE0 );
                         gl.bindTexture ( gl.TEXTURE_2D, byTexture.key.getTexPointer ( ) );
-                        gl.uniform1i( currentEffect.uniforms[ "sampler" ], 0  );
+                        currentEffect.uniforms[ "sampler" ].update(0);
                         ++textureSwitches;
 
                         for ( var currRenderableIdx     = 0; currRenderableIdx < byTexture.value.length; currRenderableIdx++ )
@@ -451,7 +458,7 @@ var eventSystem                         = new Application.Infrastructure.ProEven
     {
         var canvas                              = document.getElementById ( "canvas" );
         initGL ( canvas );
-        var shaders                             = initShaders ( );
+        var shaders                             = initShaders ( "mainEffect", "0003", "0004");
         scenes                                  = initAssetManager ( shaders );
         initScene ( scenes );
 

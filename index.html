@@ -6,79 +6,6 @@
         <span id="lblPerformance"></span>
         <canvas id="canvas" width="1920" height="1080"></canvas>
 
-        <script id="shader-fs" type="x-shader/x-fragment">
-            precision mediump float;
-            
-            struct directionalLight
-            {
-                vec3 direction;
-
-                vec4 ambient;
-                vec4 diffuse;
-                vec4 specular;
-            };
-
-            struct material
-            {
-                vec4 ambient;
-                vec4 diffuse;
-                vec4 specular;
-                float shininess;
-            };
-
-            uniform vec3 uEyePosition;
-
-            uniform directionalLight uDirectionalLight;
-
-            varying highp vec2 vTextCoord;
-            uniform material uMaterial;
-            uniform sampler2D uSampler;
-            varying vec3 vVertexNormal;
-            
-            vec4 directionalLightColor ( vec3 normal, vec4 diffuse, directionalLight light )
-            {
-                vec4 computedColor      = vec4 ( 0.0, 0.0, 0.0, 1.0 );
-                float ndotl; // Dot of the normal and light direction.
-
-                ndotl                   = max ( 0.0, dot ( normal, light.direction ) );
-                
-                computedColor           += ( light.ambient * uMaterial.ambient );
-                computedColor           += ( ndotl * light.diffuse * diffuse );
-    
-                return computedColor;
-            }
-
-            void main ( void ) 
-            {
-                vec4 diffuseColor       = texture2D ( uSampler, vec2 ( vTextCoord.s, vTextCoord.t ) );
-                vec4 lightContribution  = directionalLightColor ( vVertexNormal, diffuseColor, uDirectionalLight );
-                gl_FragColor            = lightContribution + diffuseColor;
-                gl_FragColor            = diffuseColor; // Uncomment to preview diffuse texture only.  
-                // gl_FragColor            = lightContribution; // Uncomment to preview light colour only.
-            }
-        </script>
-
-        <script id="shader-vs" type="x-shader/x-vertex">
-            attribute vec3 aVertexNormal;
-            attribute vec3 aVertexPosition;
-            attribute vec2 aVertexTextureCoordinate;
-
-            uniform mat4 uMVMatrix;
-            uniform mat4 uPMatrix;
-            uniform mat4 uMMatrix;
-
-            varying highp vec2 vTextCoord;
-            varying vec3 vVertexNormal;            
-            
-            void main(void) 
-            {
-                gl_Position     = uPMatrix * uMVMatrix * uMMatrix * vec4(aVertexPosition, 1.0);
-
-                vVertexNormal   = aVertexNormal;
-                vTextCoord      = aVertexTextureCoordinate;
-            }
-        </script>
-
         <script src="assets\assets.js"></script>
         <script src="assets\models\my_cube_2.js"></script>
         <script src="assets\scenes\demoScene.js"></script>
@@ -121,6 +48,7 @@
         <script src="built\graphics\gl\arrayBuffer.js"></script>
         <script src="built\graphics\gl\elementArrayBuffer.js"></script>
         <script src="built\graphics\gl\texture.js"></script>
+        <script src="built\graphics\gl\uniform.js"></script>
 
         <!-- Core graphics and geometry. -->
         <script src="built\graphics\core\vertex.js"></script>

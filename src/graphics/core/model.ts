@@ -2,14 +2,14 @@ namespace renderPro {
     export namespace graphics {
         export namespace core {
             export class Model {
-                renderables : Array<renderPro.graphics.gl.Renderable> // TODO: make renderable 
+                renderables : Array<renderPro.graphics.gl.IRenderable>
                 transform : Float32Array
                 parent : Model
                 children : Array<Model>
                 modelID : number
                 name: string
                 static _currentModelID : number
-                constructor( renderables : Array<renderPro.graphics.gl.Renderable>, transform : Float32Array, parent : Model, name: string )
+                constructor( renderables : Array<renderPro.graphics.gl.IRenderable>, transform : Float32Array, parent : Model, name: string )
                 {
                     this.renderables            = renderables;
                     this.transform              = transform;
