@@ -5,6 +5,9 @@ namespace renderPro {
             export interface IRenderable {
                 renderableID: number;
                 effect: renderPro.graphics.Effect
+                texture: renderPro.graphics.core.Texture
+                material: renderPro.graphics.core.Material
+                state: renderPro.graphics.core.State
                 bufferData ( gl: WebGLRenderingContext ) : void;
                 unload  ( ) : void;
                 draw ( shaderProgram : renderPro.graphics.Effect, gl : WebGLRenderingContext ) : void;

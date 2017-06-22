@@ -10,10 +10,16 @@ namespace renderPro
                 private wexHandle : any; //TODO(Dino): Rewrite the xTypes (model handle etc) in Typescript.
                 renderableID: number;
                 effect: renderPro.graphics.Effect
-                constructor ( wexHandle: any, effect: renderPro.graphics.Effect )
+                texture: renderPro.graphics.core.Texture
+                material: renderPro.graphics.core.Material
+                state: renderPro.graphics.core.State
+                constructor ( wexHandle: any, texture : renderPro.graphics.core.Texture, material : renderPro.graphics.core.Material, state : renderPro.graphics.core.State, effect: renderPro.graphics.Effect )
                 {
                     this.wexHandle                  = wexHandle;
                     this.effect                     = effect;
+                    this.texture                    = texture;
+                    this.material                   = material;
+                    this.state                      = state;
                     this.renderableID               = s_RenderableIdentifier++;
                 }
 

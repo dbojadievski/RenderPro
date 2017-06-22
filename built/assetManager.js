@@ -336,7 +336,7 @@ function loadWexBim(effect, exportableScenes) {
     }
     ;
     function xModelGeometry_Loaded_NEW() {
-        var handle = new xModelHandle(g_OpenGLContext, this, true);
+        var handle = new xModelHandle(renderPro.graphics.gl.context, this, true);
         handle.stateStyle = new Uint8Array(15 * 15 * 4);
         var rawTexData = [
             1.0, 0.0, 0.0, 1.0,
@@ -347,7 +347,7 @@ function loadWexBim(effect, exportableScenes) {
         var coreTex = new renderPro.graphics.core.Texture();
         coreTex.load(data, CoreType.FLOAT32, 3, 1);
         var material = new renderPro.graphics.core.Material([1.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, 1.0], 1.0);
-        var renderable = new renderPro.graphics.gl.WexBIMRenderable(handle, /* coreTex, material, renderPro.graphics.core.State.NORMAL,*/ effect);
+        var renderable = new renderPro.graphics.gl.WexBIMRenderable(handle, coreTex, material, renderPro.graphics.core.State.NORMAL, effect);
         var modelTransformMatrix = mat4.create();
         mat4.identity(modelTransformMatrix);
         var translation = [0, 0, 0];

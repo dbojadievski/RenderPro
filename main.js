@@ -80,7 +80,6 @@ var g_OpenGLContext;
                 var debugInfo                   = gl.getExtension('WEBGL_debug_renderer_info');
                 var vendor                      = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
                 renderer                        = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-                g_OpenGLContext                 = gl;
                 
             } catch ( e )
             {
@@ -152,7 +151,7 @@ var g_OpenGLContext;
         effect.uniforms[ "materialAmbient" ]            = new renderPro.graphics.gl.Uniform(gl, effect.programPointer, "uMaterial.ambient", renderPro.graphics.gl.UniformType.UNIFORM_4FV);
         effect.uniforms[ "materialDiffuse" ]            = new renderPro.graphics.gl.Uniform(gl, effect.programPointer, "uMaterial.diffuse", renderPro.graphics.gl.UniformType.UNIFORM_4FV );
         effect.uniforms[ "materialSpecular" ]           = new renderPro.graphics.gl.Uniform(gl, effect.programPointer, "uMaterial.specular", renderPro.graphics.gl.UniformType.UNIFORM_4FV );
-        effect.uniforms[ "materialShininess" ]          = new renderPro.graphics.gl.Uniform(gl, effect.programPointer, "uMaterial.shininess", renderPro.graphics.gl.UniformType.UNIFORM_1FV );
+        effect.uniforms[ "materialShininess" ]          = new renderPro.graphics.gl.Uniform(gl, effect.programPointer, "uMaterial.shininess", renderPro.graphics.gl.UniformType.UNIFORM_1F );
 
         effect.uniforms[ "pointLightPosition" ]         = gl.getUniformLocation ( effect.programPointer, "uPointLight.position" );
         effect.uniforms[ "pointLightAmbient" ]          = gl.getUniformLocation ( effect.programPointer, "uPointLight.ambient" );

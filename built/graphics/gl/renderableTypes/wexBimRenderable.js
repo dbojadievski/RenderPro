@@ -6,9 +6,12 @@ var renderPro;
         var gl;
         (function (gl_1) {
             var WexBIMRenderable = (function () {
-                function WexBIMRenderable(wexHandle, effect) {
+                function WexBIMRenderable(wexHandle, texture, material, state, effect) {
                     this.wexHandle = wexHandle;
                     this.effect = effect;
+                    this.texture = texture;
+                    this.material = material;
+                    this.state = state;
                     this.renderableID = s_RenderableIdentifier++;
                 }
                 WexBIMRenderable.prototype.bufferData = function (gl) {
