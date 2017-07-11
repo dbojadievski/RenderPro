@@ -4,36 +4,23 @@ var renderPro;
     (function (graphics) {
         var gl;
         (function (gl_1) {
-            var UniformType;
-            (function (UniformType) {
-                UniformType[UniformType["UNIFORM_1F"] = 0] = "UNIFORM_1F";
-                UniformType[UniformType["UNIFORM_1FV"] = 1] = "UNIFORM_1FV";
-                UniformType[UniformType["UNIFORM_2F"] = 2] = "UNIFORM_2F";
-                UniformType[UniformType["UNIFORM_2FV"] = 3] = "UNIFORM_2FV";
-                UniformType[UniformType["UNIFORM_3F"] = 4] = "UNIFORM_3F";
-                UniformType[UniformType["UNIFORM_3FV"] = 5] = "UNIFORM_3FV";
-                UniformType[UniformType["UNIFORM_4F"] = 6] = "UNIFORM_4F";
-                UniformType[UniformType["UNIFORM_4FV"] = 7] = "UNIFORM_4FV";
-                UniformType[UniformType["UNIFORM_MATRIX_2FV"] = 8] = "UNIFORM_MATRIX_2FV";
-                UniformType[UniformType["UNIFORM_MATRIX_3FV"] = 9] = "UNIFORM_MATRIX_3FV";
-                UniformType[UniformType["UNIFORM_MATRIX_4FV"] = 10] = "UNIFORM_MATRIX_4FV";
-                UniformType[UniformType["UNIFORM_1I"] = 11] = "UNIFORM_1I";
-                UniformType[UniformType["UNIFORM_1IV"] = 12] = "UNIFORM_1IV";
-                UniformType[UniformType["UNIFORM_2I"] = 13] = "UNIFORM_2I";
-                UniformType[UniformType["UNIFORM_2IV"] = 14] = "UNIFORM_2IV";
-                UniformType[UniformType["UNIFORM_3I"] = 15] = "UNIFORM_3I";
-                UniformType[UniformType["UNIFORM_3IV"] = 16] = "UNIFORM_3IV";
-                UniformType[UniformType["UNIFORM_4I"] = 17] = "UNIFORM_4I";
-                UniformType[UniformType["UNIFORM_4IV"] = 18] = "UNIFORM_4IV";
-            })(UniformType = gl_1.UniformType || (gl_1.UniformType = {}));
             var Uniform = (function () {
-                function Uniform(gl, program, name, type) {
-                    this.location = gl.getUniformLocation(program, name);
+                function Uniform(name, type, gl) {
+                    if (gl === void 0) { gl = renderPro.graphics.gl.context; }
                     this.gl = gl;
                     this.name = name;
+                    this.type = type;
+                }
+                Uniform.prototype.init = function (effect) {
+                    if (effect === void 0) { effect = null; }
+                    if (effect != null)
+                        this.updateLocation(effect);
+                    if (this.location == null) {
+                        return null;
+                    }
                     var self = this;
-                    switch (type) {
-                        case UniformType.UNIFORM_1F:
+                    switch (this.type) {
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1F:
                             this.compare = this.compareSimpleValues;
                             this.set = function set() {
                                 var args = [];
@@ -43,7 +30,7 @@ var renderPro;
                                 self.gl.uniform1f(self.location, args[0]);
                             };
                             break;
-                        case UniformType.UNIFORM_1FV:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1FV:
                             this.compare = this.compareArrays;
                             this.set = function set() {
                                 var args = [];
@@ -53,7 +40,7 @@ var renderPro;
                                 self.gl.uniform1fv(self.location, args[0]);
                             };
                             break;
-                        case UniformType.UNIFORM_2F:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2F:
                             this.compare = this.compareSimpleValues;
                             this.set = function set() {
                                 var args = [];
@@ -63,7 +50,7 @@ var renderPro;
                                 self.gl.uniform2f(self.location, args[0], args[1]);
                             };
                             break;
-                        case UniformType.UNIFORM_2FV:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2FV:
                             this.compare = this.compareArrays;
                             this.set = function set() {
                                 var args = [];
@@ -73,7 +60,7 @@ var renderPro;
                                 self.gl.uniform2fv(self.location, args[0]);
                             };
                             break;
-                        case UniformType.UNIFORM_3F:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3F:
                             this.compare = this.compareSimpleValues;
                             this.set = function set() {
                                 var args = [];
@@ -83,7 +70,7 @@ var renderPro;
                                 self.gl.uniform3f(self.location, args[0], args[1], args[2]);
                             };
                             break;
-                        case UniformType.UNIFORM_3FV:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3FV:
                             this.compare = this.compareArrays;
                             this.set = function set() {
                                 var args = [];
@@ -93,7 +80,7 @@ var renderPro;
                                 self.gl.uniform3fv(self.location, args[0]);
                             };
                             break;
-                        case UniformType.UNIFORM_4F:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4F:
                             this.compare = this.compareSimpleValues;
                             this.set = function set() {
                                 var args = [];
@@ -103,7 +90,7 @@ var renderPro;
                                 self.gl.uniform4f(self.location, args[0], args[1], args[2], args[3]);
                             };
                             break;
-                        case UniformType.UNIFORM_4FV:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4FV:
                             this.compare = this.compareArrays;
                             this.set = function set() {
                                 var args = [];
@@ -113,7 +100,7 @@ var renderPro;
                                 self.gl.uniform4fv(self.location, args[0]);
                             };
                             break;
-                        case UniformType.UNIFORM_MATRIX_2FV:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_MATRIX_2FV:
                             this.compare = this.compareArrays;
                             this.set = function set() {
                                 var args = [];
@@ -123,7 +110,7 @@ var renderPro;
                                 self.gl.uniformMatrix2fv(self.location, false, args[0]);
                             };
                             break;
-                        case UniformType.UNIFORM_MATRIX_3FV:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_MATRIX_3FV:
                             this.compare = this.compareArrays;
                             this.set = function set() {
                                 var args = [];
@@ -133,7 +120,7 @@ var renderPro;
                                 self.gl.uniformMatrix3fv(self.location, false, args[0]);
                             };
                             break;
-                        case UniformType.UNIFORM_MATRIX_4FV:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_MATRIX_4FV:
                             this.compare = this.compareArrays;
                             this.set = function set() {
                                 var args = [];
@@ -143,7 +130,7 @@ var renderPro;
                                 self.gl.uniformMatrix4fv(self.location, false, args[0]);
                             };
                             break;
-                        case UniformType.UNIFORM_1I:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1I:
                             this.compare = this.compareArrays;
                             this.set = function set() {
                                 var args = [];
@@ -153,7 +140,7 @@ var renderPro;
                                 self.gl.uniform1i(self.location, args[0]);
                             };
                             break;
-                        case UniformType.UNIFORM_1IV:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1IV:
                             this.compare = this.compareArrays;
                             this.set = function set() {
                                 var args = [];
@@ -163,7 +150,7 @@ var renderPro;
                                 self.gl.uniform1iv(self.location, args[0]);
                             };
                             break;
-                        case UniformType.UNIFORM_2I:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2I:
                             this.compare = this.compareSimpleValues;
                             this.set = function set() {
                                 var args = [];
@@ -173,7 +160,7 @@ var renderPro;
                                 self.gl.uniform2i(self.location, args[0], args[1]);
                             };
                             break;
-                        case UniformType.UNIFORM_2IV:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2IV:
                             this.compare = this.compareArrays;
                             this.set = function set() {
                                 var args = [];
@@ -183,7 +170,7 @@ var renderPro;
                                 self.gl.uniform2iv(self.location, args[0]);
                             };
                             break;
-                        case UniformType.UNIFORM_3I:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3I:
                             this.compare = this.compareSimpleValues;
                             this.set = function set() {
                                 var args = [];
@@ -193,7 +180,7 @@ var renderPro;
                                 self.gl.uniform3i(self.location, args[0], args[1], args[2]);
                             };
                             break;
-                        case UniformType.UNIFORM_3IV:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3IV:
                             this.compare = this.compareArrays;
                             this.set = function set() {
                                 var args = [];
@@ -203,7 +190,7 @@ var renderPro;
                                 self.gl.uniform3iv(self.location, args[0]);
                             };
                             break;
-                        case UniformType.UNIFORM_4I:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4I:
                             this.compare = this.compareSimpleValues;
                             this.set = function set() {
                                 var args = [];
@@ -213,7 +200,7 @@ var renderPro;
                                 self.gl.uniform4i(self.location, args[0], args[1], args[2], args[3]);
                             };
                             break;
-                        case UniformType.UNIFORM_4IV:
+                        case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4IV:
                             this.compare = this.compareArrays;
                             this.set = function set() {
                                 var args = [];
@@ -224,8 +211,11 @@ var renderPro;
                             };
                             break;
                     }
-                }
-                Uniform.prototype.update = function () {
+                };
+                Uniform.prototype.updateLocation = function (effect) {
+                    this.location = this.gl.getUniformLocation(effect.programPointer, this.name);
+                };
+                Uniform.prototype.updateValue = function () {
                     var args = [];
                     for (var _i = 0; _i < arguments.length; _i++) {
                         args[_i] = arguments[_i];

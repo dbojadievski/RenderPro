@@ -12,8 +12,12 @@
         <script src="assets\models\OneWall.js"></script>
 
         <!-- Core engine namespaces. -->
-        <script src="built/app.js"></script>
         <script src="renderPro.js" id="rps"></script>
+        <script src="built\app.js"></script>
+        <script src="built\engine\interfaces\ISystem.js"> </script>
+        <script src="built\engine\engine.js"> </script>
+        <script src="built\engine\systems\renderers\webGLRenderer.js"> </script>
+        <script src="built\engine\systems\assetManager.js"> </script>
         
         <script src="built\infrastructure\eventSystem.js"></script>
         
@@ -45,10 +49,12 @@
         <script src="built\graphics\enums\worldDirection.js"></script>
         
         <!-- Core OpenGL. -->
+        <script src="built\graphics\gl\enums\shaderValueTypes.js"></script>
         <script src="built\graphics\gl\arrayBuffer.js"></script>
         <script src="built\graphics\gl\elementArrayBuffer.js"></script>
         <script src="built\graphics\gl\texture.js"></script>
         <script src="built\graphics\gl\uniform.js"></script>
+        <script src="built\graphics\gl\attribute.js"></script>
 
         <!-- Core graphics and geometry. -->
         <script src="built\graphics\core\vertex.js"></script>
@@ -57,10 +63,11 @@
         <script src="built\graphics\core\state.js"></script>
         <script src="built\graphics\core\texture.js"></script>
         <script src="built\graphics\core\material.js"></script>
+        <script src="built\graphics\core\effect.js"></script>
 
 
         <!-- Basic rendering constructs. -->
-        <script src="built\graphics\effect.js"></script>
+        <script src="built\graphics\gl\effect.js"></script>
         <script src="built\graphics\scene\lights.js"></script>
         <script src="built\graphics\scene\camera.js"></script>
         <script src="built\graphics\gl\interfaces\IRenderable.js"></script>
@@ -68,10 +75,11 @@
         <script src="built\graphics\gl\renderableTypes\wexBimRenderable.js"></script>
         <script src="built\graphics\rendering\renderableInstance.js"></script>
         <script src="built\graphics\rendering\renderSet.js"></script>
+        <script src="built\graphics\rendering\sortedRenderSet.js"></script>
 
         <!-- Example content. -->
         <script src="assets\materials\basic-materials.js"></script>
-        <script src="src\assetManager.js"></script>
+        <!--<script src="built\assetManager.js"></script>-->
         <!-- Entry point. -->
         <script src="main.js"></script>
     </body>

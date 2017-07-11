@@ -1,161 +1,156 @@
 namespace renderPro {
     export namespace graphics {
         export namespace gl {
-            export enum UniformType {
-                UNIFORM_1F, UNIFORM_1FV,
-                UNIFORM_2F, UNIFORM_2FV,
-                UNIFORM_3F, UNIFORM_3FV,
-                UNIFORM_4F, UNIFORM_4FV,
-                UNIFORM_MATRIX_2FV,
-                UNIFORM_MATRIX_3FV,
-                UNIFORM_MATRIX_4FV,
-                UNIFORM_1I, UNIFORM_1IV,
-                UNIFORM_2I, UNIFORM_2IV,
-                UNIFORM_3I, UNIFORM_3IV,
-                UNIFORM_4I, UNIFORM_4IV
-            }
             export class Uniform {
                 location : WebGLUniformLocation
                 gl: WebGLRenderingContext
-                name: String
+                name: string
                 values: any[]
-                private type : UniformType
+                private type : renderPro.graphics.gl.enums.ShaderValueType
                 private compare : Function
                 private set : Function
-                constructor ( gl: WebGLRenderingContext, program: WebGLProgram, name: string, type: UniformType ) {
-                    this.location   = gl.getUniformLocation(program, name);
+                constructor ( name: string, type:  renderPro.graphics.gl.enums.ShaderValueType, gl: WebGLRenderingContext = renderPro.graphics.gl.context) {
                     this.gl         = gl;
                     this.name       = name;
+                    this.type       = type;
+                }
+                init (effect : renderPro.graphics.gl.Effect = null) {
+                    if (effect != null)
+                        this.updateLocation(effect);
+
+                    if(this.location == null ) {
+                        return null;
+                    }
 
                     var self = this;
-                    switch (type) {
-                        case UniformType.UNIFORM_1F: 
+                    switch (this.type) {
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1F: 
                             this.compare = this.compareSimpleValues;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniform1f( self.location, args[0] );
                             };
                             break;
-                        case UniformType.UNIFORM_1FV: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1FV: 
                             this.compare = this.compareArrays;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniform1fv( self.location, args[0] );
                             };
                             break;
-                        case UniformType.UNIFORM_2F: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2F: 
                             this.compare = this.compareSimpleValues;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniform2f( self.location, args[0], args[1] );
                             };
                             break;
-                        case UniformType.UNIFORM_2FV: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2FV: 
                             this.compare = this.compareArrays;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniform2fv( self.location, args[0] );
                             };
                             break;
-                        case UniformType.UNIFORM_3F: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3F: 
                             this.compare = this.compareSimpleValues;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniform3f( self.location, args[0], args[1], args[2] );
                             };
                             break;
-                        case UniformType.UNIFORM_3FV: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3FV: 
                             this.compare = this.compareArrays;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniform3fv( self.location, args[0] );
                             };
                             break;
-                        case UniformType.UNIFORM_4F: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4F: 
                             this.compare = this.compareSimpleValues;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniform4f( self.location, args[0], args[1], args[2], args[3] );
                             };
                             break;
-                        case UniformType.UNIFORM_4FV: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4FV: 
                             this.compare = this.compareArrays;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniform4fv( self.location, args[0] );
                             };
                             break;
-                         case UniformType.UNIFORM_MATRIX_2FV: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_MATRIX_2FV: 
                             this.compare = this.compareArrays;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniformMatrix2fv( self.location, false, args[0] );
                             };
                             break;
-                        case UniformType.UNIFORM_MATRIX_3FV: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_MATRIX_3FV: 
                             this.compare = this.compareArrays;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniformMatrix3fv( self.location, false, args[0] );
                             };
                             break;
-                        case UniformType.UNIFORM_MATRIX_4FV: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_MATRIX_4FV: 
                             this.compare = this.compareArrays;
                             this.set = function set ( ...args: any[]  ) 
                             {
                                 self.gl.uniformMatrix4fv( self.location, false, args[0]);
                             };
                             break;
-                        case UniformType.UNIFORM_1I: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1I: 
                             this.compare = this.compareArrays;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniform1i( self.location, args[0] );
                             };
                             break;
-                        case UniformType.UNIFORM_1IV: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1IV: 
                             this.compare = this.compareArrays;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniform1iv( self.location, args[0] );
                             };
                             break;
-                        case UniformType.UNIFORM_2I: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2I: 
                             this.compare = this.compareSimpleValues;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniform2i( self.location, args[0], args[1] );
                             };
                             break;
-                        case UniformType.UNIFORM_2IV: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2IV: 
                             this.compare = this.compareArrays;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniform2iv( self.location, args[0] );
                             };
                             break;
-                        case UniformType.UNIFORM_3I: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3I: 
                             this.compare = this.compareSimpleValues;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniform3i( self.location, args[0], args[1], args[2] );
                             };
                             break;
-                        case UniformType.UNIFORM_3IV: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3IV: 
                             this.compare = this.compareArrays;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniform3iv( self.location, args[0] );
                             };
                             break;
-                        case UniformType.UNIFORM_4I: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4I: 
                             this.compare = this.compareSimpleValues;
                             this.set = function set ( ...args: any[] ) 
                             {
                                 self.gl.uniform4i( self.location, args[0], args[1], args[2], args[3] );
                             };
                             break;
-                        case UniformType.UNIFORM_4IV: 
+                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4IV: 
                             this.compare = this.compareArrays;
                             this.set = function set ( ...args: any[] ) 
                             {
@@ -164,7 +159,10 @@ namespace renderPro {
                             break;
                     }
                 }
-                update ( ...args: any[] ) : void {
+                updateLocation ( effect : renderPro.graphics.gl.Effect ) : void {
+                    this.location   = this.gl.getUniformLocation(effect.programPointer, this.name);
+                }
+                updateValue ( ...args: any[] ) : void {
                     let needUpdate = false;
 
                     // Check if new values are of a different length

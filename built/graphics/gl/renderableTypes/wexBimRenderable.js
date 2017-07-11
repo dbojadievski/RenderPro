@@ -35,7 +35,7 @@ var renderPro;
                 };
                 WexBIMRenderable.prototype.draw = function (shaderProgram, gl) {
                     this.wexHandle._gl = gl;
-                    shaderProgram.use(gl);
+                    shaderProgram.innerEffect.use(gl);
                     this.wexHandle.draw();
                 };
                 WexBIMRenderable.prototype.drawWithoutStateChanges = function (shaderProgram, gl) {

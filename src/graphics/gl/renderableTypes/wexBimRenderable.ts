@@ -7,13 +7,13 @@ namespace renderPro
         {
             export class WexBIMRenderable implements IRenderable
             {
-                private wexHandle : any; //TODO(Dino): Rewrite the xTypes (model handle etc) in Typescript.
-                renderableID: number;
-                effect: renderPro.graphics.Effect
+                private wexHandle : any //TODO(Dino): Rewrite the xTypes (model handle etc) in Typescript.
+                renderableID: number
+                effect: renderPro.graphics.core.Effect
                 texture: renderPro.graphics.core.Texture
                 material: renderPro.graphics.core.Material
                 state: renderPro.graphics.core.State
-                constructor ( wexHandle: any, texture : renderPro.graphics.core.Texture, material : renderPro.graphics.core.Material, state : renderPro.graphics.core.State, effect: renderPro.graphics.Effect )
+                constructor ( wexHandle: any, texture : renderPro.graphics.core.Texture, material : renderPro.graphics.core.Material, state : renderPro.graphics.core.State, effect: renderPro.graphics.core.Effect )
                 {
                     this.wexHandle                  = wexHandle;
                     this.effect                     = effect;
@@ -33,7 +33,6 @@ namespace renderPro
                 unload ( ) : void
                 {
                     //NOTE(Dino): Make sure none of these buffers are currently bound!
-
                     this.wexHandle._gl.deleteBuffer( this.wexHandle.normalBuffer );
                     this.wexHandle._gl.deleteBuffer( this.wexHandle.indexBuffer );
                     this.wexHandle._gl.deleteBuffer( this.wexHandle.productBuffer );
@@ -48,20 +47,20 @@ namespace renderPro
                     this.wexHandle._gl.deleteTexture( this.wexHandle.stateStyleTexture );
                 }
 
-                draw ( shaderProgram: renderPro.graphics.Effect, gl: WebGLRenderingContext )
+                draw ( shaderProgram: renderPro.graphics.core.Effect, gl: WebGLRenderingContext ) : void
                 {
                     this.wexHandle._gl              = gl;
-                    shaderProgram.use ( gl );
+                    shaderProgram.innerEffect.use ( gl );
                     this.wexHandle.draw ( );
                 }
 
-                drawWithoutStateChanges ( shaderProgram: renderPro.graphics.Effect, gl: WebGLRenderingContext )
+                drawWithoutStateChanges ( shaderProgram: renderPro.graphics.core.Effect, gl: WebGLRenderingContext ) : void
                 {
                     //TODO(Dino): Update attributes. Found in the effect.
                     this.wexHandle.draw ( );
                 }
 
-                drawUnindexed ( shaderProgram: renderPro.graphics.Effect, gl: WebGLRenderingContext )
+                drawUnindexed ( shaderProgram: renderPro.graphics.core.Effect, gl: WebGLRenderingContext ) : void
                 {
                     this.wexHandle.drawProducts ( gl, 2 );
                 }

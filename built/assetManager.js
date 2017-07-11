@@ -1,11 +1,11 @@
-function initAssetManager(shaders) {
+function initAssetManager() {
     var exportableScenes = {
         textures: [],
         materials: [],
         meshes: [],
         models: [],
         renderables: [],
-        effects: shaders
+        effects: []
     };
     var tempModels = [];
     initTextureFromArray();
@@ -26,6 +26,24 @@ function initAssetManager(shaders) {
                 break;
             }
         return tex;
+    };
+    exportableScenes.effects.findByName = function init_asset_manager_local_find_effect_by_name(name) {
+        var eff = null;
+        for (var currEffIdx = 0; currEffIdx < this.length; currEffIdx++)
+            if (name === this[currEffIdx].name) {
+                eff = this[currEffIdx];
+                break;
+            }
+        return eff;
+    };
+    exportableScenes.effects.findById = function init_asset_manager_local_find_effect_by_id(id) {
+        var eff = null;
+        for (var currEffIdx = 0; currEffIdx < this.length; currEffIdx++)
+            if (id === this[currEffIdx].id) {
+                eff = this[currEffIdx];
+                break;
+            }
+        return eff;
     };
     exportableScenes.materials.findById = function init_asset_manager_local_find_material_by_id(id) {
         var mtl = null;
@@ -62,6 +80,22 @@ function initAssetManager(shaders) {
         coreTex.textureID = (parseInt(tex.id) - 1000);
         coreTex.name = tex.content.substring(tex.content.lastIndexOf('\\') + 1);
         exportableScenes.textures.push(coreTex);
+    }
+    for (var currEffIdx = 0; currEffIdx < assets.effects.length; currEffIdx++) {
+        var effectObject = assets.effects[currEffIdx];
+        var vertexShaderObject, fragmentShaderObject;
+        for (var shaderScriptIdx = 0; shaderScriptIdx < assets.shaders.length; shaderScriptIdx++) {
+            if (assets.shaders[shaderScriptIdx].id === effectObject.vertexShaderId) {
+                vertexShaderObject = assets.shaders[shaderScriptIdx];
+            }
+            if (assets.shaders[shaderScriptIdx].id === effectObject.fragmentShaderId) {
+                fragmentShaderObject = assets.shaders[shaderScriptIdx];
+            }
+        }
+        if (!vertexShaderObject || !fragmentShaderObject)
+            return null;
+        var coreEffect = new renderPro.graphics.core.Effect(effectObject.name, vertexShaderObject, fragmentShaderObject);
+        exportableScenes.effects.push(coreEffect);
     }
     for (var currMtlIdx = 0; currMtlIdx < assets.materials.length; currMtlIdx++) 
     /* TODO(Dino): every material file can contain multiple materials, but this isn't recognized in this function.  */
@@ -211,7 +245,7 @@ function initAssetManager(shaders) {
                 }
                 var mesh = new renderPro.graphics.core.Mesh(actualVertexArray, actualVertexArray.length, indexArray, indexArray.length);
                 var usedMaterial = model.faces[faceIdx].material;
-                var renderable = new renderPro.graphics.gl.Renderable(mesh, usedMaterial.diffuseMap.texture, usedMaterial, renderPro.graphics.core.State.NORMAL, exportableScenes.effects['mainEffect']);
+                var renderable = new renderPro.graphics.gl.Renderable(mesh, usedMaterial.diffuseMap.texture, usedMaterial, renderPro.graphics.core.State.NORMAL, exportableScenes.effects.findByName('standardFlatShading'));
                 renderablesInFaceGroup.push(renderable);
             }
             /* NOTE(Martin): Renderables combined using this method must use the same material */
@@ -230,7 +264,7 @@ function initAssetManager(shaders) {
                     }
                 }
                 var combinedMesh = new renderPro.graphics.core.Mesh(combinedVertices, combinedVertices.length, combinedIndices, combinedIndices.length);
-                var renderable = new renderPro.graphics.gl.Renderable(combinedMesh, renderables[0].texture, renderables[0].material, renderPro.graphics.core.State.NORMAL, exportableScenes.effects['mainEffect']);
+                var renderable = new renderPro.graphics.gl.Renderable(combinedMesh, renderables[0].texture, renderables[0].material, renderPro.graphics.core.State.NORMAL, exportableScenes.effects.findByName('standardFlatShading'));
                 return renderable;
             }
             renderables.push(combineRenderables(renderablesInFaceGroup));
@@ -252,7 +286,7 @@ function initAssetManager(shaders) {
         exportableScenes.models.push(coreModel);
     }
     /* Experimental WexBIM loading. */
-    loadWexBim(exportableScenes.effects['mainEffect'], exportableScenes);
+    loadWexBim(exportableScenes.effects.findByName('standardFlatShading'), exportableScenes);
     scenes = exportableScenes;
     return exportableScenes;
 }
@@ -331,7 +365,7 @@ function loadWexBim(effect, exportableScenes) {
             mat4.translate(modelTransformMatrix, modelTransformMatrix, translation);
             var model = new renderPro.graphics.core.Model([renderable], modelTransformMatrix, null, "WexBIM");
             exportableScenes.models.push(model);
-            eventSystem.fire("wexBimLoaded");
+            Application.Systems.eventSystem.fire("wexBimLoaded");
         }
     }
     ;
@@ -354,7 +388,7 @@ function loadWexBim(effect, exportableScenes) {
         mat4.translate(modelTransformMatrix, modelTransformMatrix, translation);
         var model = new renderPro.graphics.core.Model([renderable], modelTransformMatrix, null, "WexBIM");
         exportableScenes.models.push(model);
-        eventSystem.fire("wexBimLoaded");
+        Application.Systems.eventSystem.fire("wexBimLoaded");
     }
     ;
     var xModelGeometry_Loaded = xModelGeometry_Loaded_OLD;

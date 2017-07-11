@@ -5,6 +5,7 @@ namespace renderPro {
                 image: HTMLImageElement
                 textureID: number
                 innerTexture: renderPro.graphics.gl.Texture
+                name: string
                 static _currentTextureID : number
                 constructor ( src: string = null )
                 {
@@ -30,7 +31,7 @@ namespace renderPro {
                     this.innerTexture.unload (  );
                 }
 
-                load ( data: any, type: any, width: number, height: number )
+                load ( data: any, type: any, width: number, height: number ) : void
                 {
                     let asTypedArray: any           = null;
                     switch ( type )

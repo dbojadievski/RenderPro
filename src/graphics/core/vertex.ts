@@ -5,7 +5,7 @@ namespace renderPro {
                 position : Float32Array
                 uv : Float32Array
                 normal : Int16Array
-                constructor ( position : Float32Array, uv : Float32Array, normal: Int16Array ) 
+                constructor ( position : Float32Array, uv : Float32Array = new Float32Array([]), normal: Int16Array = new Int16Array([]) ) 
                 {
                     this.position           = position;
                     this.uv                 = uv;

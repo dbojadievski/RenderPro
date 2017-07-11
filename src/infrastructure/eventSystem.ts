@@ -2,7 +2,7 @@ namespace Application
 {
     export namespace Infrastructure
     {
-        export class ProEventSystem
+        export class ProEventSystem implements renderPro.core.interfaces.ISystem
         {
             _events: Array<any>;
 
@@ -33,7 +33,7 @@ namespace Application
             }
 
             fireOA ( event: string, args ) : void
-            /* NOTE(Dino): Fires with an object argument, not with Охридска Архиепископија. */
+            /* NOTE(Dino): Fires with an object argument. */
             {
                 let handlers: Array<any>            = this._events[ event ];
                 if ( handlers )
@@ -69,6 +69,9 @@ namespace Application
                     }
                 }
             }
+
+            init ( ) : void { }
+            update ( ) : void { }
         }
     }
 }

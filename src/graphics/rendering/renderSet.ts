@@ -4,11 +4,12 @@ namespace renderPro
     {
         export namespace rendering
         {
+            export type renderableInstanceList = Array<renderPro.graphics.rendering.RenderableInstance>
             export class RenderSet
             {
-                transparent: Array<renderPro.graphics.rendering.RenderableInstance>;
-                opaque: Array<renderPro.graphics.rendering.RenderableInstance>;
-                constructor ( transparent: Array<renderPro.graphics.rendering.RenderableInstance>, opaque: Array<renderPro.graphics.rendering.RenderableInstance> )
+                transparent: renderableInstanceList;
+                opaque: renderableInstanceList;
+                constructor ( transparent: renderableInstanceList = [ ], opaque: renderableInstanceList = [ ] )
                 {
                     this.opaque               = opaque;
                     this.transparent          = transparent;

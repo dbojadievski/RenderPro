@@ -10,6 +10,7 @@ var renderPro;
                     this.diffuse = diffuse;
                     this.specular = specular;
                     this.shininess = shininess;
+                    this.textures = new Dictionary();
                 }
                 return Material;
             }());

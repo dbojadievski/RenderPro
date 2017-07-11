@@ -4,7 +4,7 @@ namespace renderPro {
         export namespace gl {
             export class Renderable implements IRenderable {
                 mesh    : renderPro.graphics.core.Mesh
-                effect : renderPro.graphics.Effect
+                effect : renderPro.graphics.core.Effect
                 texture : renderPro.graphics.core.Texture
                 state : renderPro.graphics.core.State
                 material: renderPro.graphics.core.Material
@@ -14,7 +14,7 @@ namespace renderPro {
                 indexBuffer: renderPro.graphics.gl.ElementArrayBuffer 
                 normalBuffer: renderPro.graphics.gl.ArrayBuffer
                 static _renderableIdentifier : number
-                constructor ( mesh : renderPro.graphics.core.Mesh, texture : renderPro.graphics.core.Texture, material : renderPro.graphics.core.Material, state : renderPro.graphics.core.State, effect : renderPro.graphics.Effect )
+                constructor ( mesh : renderPro.graphics.core.Mesh, texture : renderPro.graphics.core.Texture, material : renderPro.graphics.core.Material, state : renderPro.graphics.core.State, effect : renderPro.graphics.core.Effect )
                 {
                     this.mesh                    = mesh;
 
@@ -68,67 +68,67 @@ namespace renderPro {
                     this.indexBuffer            = new renderPro.graphics.gl.ElementArrayBuffer ( gl );
                     this.indexBuffer.bufferData ( this.mesh.indices );
                 }
-                draw ( shaderProgram : renderPro.graphics.Effect, gl : WebGLRenderingContext ) : void
+                draw ( shaderProgram : renderPro.graphics.core.Effect, gl : WebGLRenderingContext ) : void
                 {
                     var that                    = this;
                     gl.bindBuffer ( gl.ARRAY_BUFFER, this.vertexBuffer.pointer );
-                    gl.vertexAttribPointer ( shaderProgram.attributes[ "vertexPosition" ], this.mesh.vertexSize, gl.FLOAT, false, 0, 0 );
+                    gl.vertexAttribPointer ( shaderProgram.innerEffect.attributes[ "aVertexPosition" ].location, this.mesh.vertexSize, gl.FLOAT, false, 0, 0 );
 
                     if ( this.mesh.vertices.length > 0  && this.mesh.vertices[ 0 ].uv != undefined )
                     {
                         gl.bindBuffer ( gl.ARRAY_BUFFER, this.uvBuffer.pointer );
-                        gl.vertexAttribPointer ( shaderProgram.attributes["vertexTextureCoordinate"], 2, gl.FLOAT, false, 0, 0 );
+                        gl.vertexAttribPointer ( shaderProgram.innerEffect.attributes["aVertexTextureCoordinate"].location, 2, gl.FLOAT, false, 0, 0 );
                     }
                     else
-                        gl.enableVertexAttribArray ( shaderProgram.attributes[ "vertexTextureCoordinate" ] );
+                        gl.enableVertexAttribArray ( shaderProgram.innerEffect.attributes[ "aVertexTextureCoordinate" ].location );
 
                     gl.activeTexture ( gl.TEXTURE0 );
                     gl.bindTexture ( gl.TEXTURE_2D, this.texture.innerTexture.texture );
 
                     gl.bindBuffer ( gl.ARRAY_BUFFER, this.normalBuffer.pointer );
-                    gl.vertexAttribPointer ( shaderProgram.attributes[ "vertexNormal" ], 3, gl.UNSIGNED_SHORT, false, 0, 0 );
+                    gl.vertexAttribPointer ( shaderProgram.innerEffect.attributes[ "aVertexNormal" ].location, 3, gl.UNSIGNED_SHORT, false, 0, 0 );
 
                     gl.bindBuffer ( gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer.pointer );
                     gl.drawElements ( gl.TRIANGLES, this.mesh.indices.length, gl.UNSIGNED_SHORT, 0 );
 
                     gl.bindBuffer ( gl.ARRAY_BUFFER, null );
                 }
-                drawWithoutStateChanges ( shaderProgram : renderPro.graphics.Effect, gl : WebGLRenderingContext ) :  void
+                drawWithoutStateChanges ( shaderProgram : renderPro.graphics.core.Effect, gl : WebGLRenderingContext ) :  void
                 {
                     gl.bindBuffer ( gl.ARRAY_BUFFER, this.vertexBuffer.pointer );
 
-                    gl.vertexAttribPointer ( shaderProgram.attributes[ "vertexPosition" ], 3, gl.FLOAT, false, 0, 0 );
+                    gl.vertexAttribPointer ( shaderProgram.innerEffect.attributes[ "aVertexPosition" ].location, 3, gl.FLOAT, false, 0, 0 );
 
                     if ( this.mesh.vertices.length > 0  && this.mesh.vertices[ 0 ].uv != undefined )
                     {
                         gl.bindBuffer ( gl.ARRAY_BUFFER, this.uvBuffer.pointer );
-                        gl.vertexAttribPointer ( shaderProgram.attributes["vertexTextureCoordinate"], 2, gl.FLOAT, false, 0, 0 );
+                        gl.vertexAttribPointer ( shaderProgram.innerEffect.attributes["aVertexTextureCoordinate"].location, 2, gl.FLOAT, false, 0, 0 );
                     }
                     else
-                        gl.enableVertexAttribArray ( shaderProgram.attributes[ "vertexTextureCoordinate" ] );
+                        gl.enableVertexAttribArray ( shaderProgram.innerEffect.attributes[ "aVertexTextureCoordinate" ].location );
                     gl.bindBuffer ( gl.ARRAY_BUFFER, this.normalBuffer.pointer );
-                    gl.vertexAttribPointer ( shaderProgram.attributes[ "vertexNormal" ], 3, gl.UNSIGNED_SHORT, false, 0, 0 );
+                    gl.vertexAttribPointer ( shaderProgram.innerEffect.attributes[ "aVertexNormal" ].location, 3, gl.UNSIGNED_SHORT, false, 0, 0 );
 
                     gl.bindBuffer ( gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer.pointer );
                     gl.drawElements ( gl.TRIANGLES, this.mesh.indices.length, gl.UNSIGNED_SHORT, 0 );
                     
                     gl.bindBuffer ( gl.ARRAY_BUFFER, null );
                 }
-                drawUnindexed ( shaderProgram : renderPro.graphics.Effect, gl : WebGLRenderingContext ) : void
+                drawUnindexed ( shaderProgram : renderPro.graphics.core.Effect, gl : WebGLRenderingContext ) : void
                 {
                     gl.bindBuffer ( gl.ARRAY_BUFFER, this.vertexBuffer.pointer );
-                    gl.vertexAttribPointer ( shaderProgram.attributes[ "vertexPosition" ], 3, gl.FLOAT, false, 0, 0 );
+                    gl.vertexAttribPointer ( shaderProgram.innerEffect.attributes[ "aVertexPosition" ].location, 3, gl.FLOAT, false, 0, 0 );
 
                     if ( this.mesh.vertices.length > 0  && this.mesh.vertices[ 0 ].uv != undefined )    
                     {
                         gl.bindBuffer ( gl.ARRAY_BUFFER, this.uvBuffer.pointer );
-                        gl.vertexAttribPointer ( shaderProgram.attributes["vertexTextureCoordinate"], 2, gl.FLOAT, false, 0, 0 );
+                        gl.vertexAttribPointer ( shaderProgram.innerEffect.attributes["aVertexTextureCoordinate"].location, 2, gl.FLOAT, false, 0, 0 );
                     }
                     else
-                        gl.enableVertexAttribArray ( shaderProgram.attributes[ "vertexTextureCoordinate" ] );
+                        gl.enableVertexAttribArray ( shaderProgram.innerEffect.attributes[ "aVertexTextureCoordinate" ].location );
                     
                     gl.bindBuffer ( gl.ARRAY_BUFFER, this.normalBuffer.pointer );
-                    gl.vertexAttribPointer ( shaderProgram.attributes[ "vertexNormal" ], 3, gl.UNSIGNED_SHORT, false, 0, 0 );
+                    gl.vertexAttribPointer ( shaderProgram.innerEffect.attributes[ "aVertexNormal" ].location, 3, gl.UNSIGNED_SHORT, false, 0, 0 );
                     gl.drawArrays ( gl.TRIANGLES, 0, this.mesh.vertices.length );
 
                     gl.bindBuffer ( gl.ARRAY_BUFFER, null );

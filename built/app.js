@@ -13,4 +13,7 @@ var Application;
             Path.Textures = Application.Environment.Path.Assets + "textures\\";
         })(Path = Environment.Path || (Environment.Path = {}));
     })(Environment = Application.Environment || (Application.Environment = {}));
+    var Systems;
+    (function (Systems) {
+    })(Systems = Application.Systems || (Application.Systems = {}));
 })(Application || (Application = {}));

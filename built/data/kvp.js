@@ -42,6 +42,9 @@ var Dictionary = (function () {
     Dictionary.prototype.push = function (kvp) {
         this.content.push(kvp);
     };
+    Dictionary.prototype.add = function (key, value) {
+        this.content.push(new KeyValuePair(key, value));
+    };
     Dictionary.prototype.length = function () {
         return this.content.length;
     };

@@ -50,6 +50,8 @@ var Application;
                     }
                 }
             };
+            ProEventSystem.prototype.init = function () { };
+            ProEventSystem.prototype.update = function () { };
             return ProEventSystem;
         }());
         Infrastructure.ProEventSystem = ProEventSystem;

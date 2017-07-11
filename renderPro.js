@@ -5,6 +5,10 @@ var renderPro           =
     {
 
     },
+    core: 
+    {
+
+    },
     graphics: 
     {
         gl: { },

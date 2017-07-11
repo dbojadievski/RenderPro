@@ -9,4 +9,7 @@ namespace Application {
             export const Textures : string      = Application.Environment.Path.Assets + "textures\\";
         }
     }
+    export namespace Systems {
+        export let eventSystem : Application.Infrastructure.ProEventSystem
+    }
 }

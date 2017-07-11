@@ -6,6 +6,8 @@ var renderPro;
         (function (core) {
             var Vertex = (function () {
                 function Vertex(position, uv, normal) {
+                    if (uv === void 0) { uv = new Float32Array([]); }
+                    if (normal === void 0) { normal = new Int16Array([]); }
                     this.position = position;
                     this.uv = uv;
                     this.normal = normal;

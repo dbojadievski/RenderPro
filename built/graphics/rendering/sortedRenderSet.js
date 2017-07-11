@@ -4,16 +4,16 @@ var renderPro;
     (function (graphics) {
         var rendering;
         (function (rendering) {
-            var RenderSet = (function () {
-                function RenderSet(transparent, opaque) {
-                    if (transparent === void 0) { transparent = []; }
-                    if (opaque === void 0) { opaque = []; }
+            var SortedRenderSet = (function () {
+                function SortedRenderSet(transparent, opaque) {
+                    if (transparent === void 0) { transparent = new Dictionary(); }
+                    if (opaque === void 0) { opaque = new Dictionary(); }
                     this.opaque = opaque;
                     this.transparent = transparent;
                 }
-                return RenderSet;
+                return SortedRenderSet;
             }());
-            rendering.RenderSet = RenderSet;
+            rendering.SortedRenderSet = SortedRenderSet;
         })(rendering = graphics.rendering || (graphics.rendering = {}));
     })(graphics = renderPro.graphics || (renderPro.graphics = {}));
 })(renderPro || (renderPro = {}));

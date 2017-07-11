@@ -215,5 +215,5 @@ xModelGeometry.prototype.load = function (source) {
     };
     br.load(source);
 };
-xModelGeometry.prototype.onloaded = function () { };
+xModelGeometry.prototype.onloaded = function (shapes) { };
 xModelGeometry.prototype.onerror = function () { };

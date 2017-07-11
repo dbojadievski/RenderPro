@@ -62,6 +62,10 @@ class Dictionary<T,U>
     {
         this.content.push ( kvp );
     }
+    add ( key : T, value : U ) : void
+    {
+        this.content.push ( new KeyValuePair<T,U> ( key, value ) );
+    }
     length ( ) : number
     {
         return this.content.length;
