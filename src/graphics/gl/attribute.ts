@@ -3,10 +3,10 @@ namespace renderPro {
         export namespace gl {
             export class Attribute {
                 name: string
-                type: renderPro.graphics.gl.enums.ShaderValueType
+                type: renderPro.graphics.gl.enums.ShaderUpdateType
                 location: GLint
                 gl: WebGLRenderingContext
-                constructor (name : string, type : renderPro.graphics.gl.enums.ShaderValueType, gl: WebGLRenderingContext = renderPro.graphics.gl.context) {
+                constructor (name : string, type : renderPro.graphics.gl.enums.ShaderUpdateType, gl: WebGLRenderingContext = renderPro.graphics.gl.context) {
                     this.name = name
                     this.type = type
                     this.gl = gl

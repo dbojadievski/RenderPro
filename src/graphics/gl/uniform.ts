@@ -6,10 +6,10 @@ namespace renderPro {
                 gl: WebGLRenderingContext
                 name: string
                 values: any[]
-                private type : renderPro.graphics.gl.enums.ShaderValueType
+                private type : renderPro.graphics.gl.enums.ShaderUpdateType
                 private compare : Function
                 private setOnGPU : Function
-                constructor ( name: string, type:  renderPro.graphics.gl.enums.ShaderValueType, gl: WebGLRenderingContext = renderPro.graphics.gl.context) {
+                constructor ( name: string, type:  renderPro.graphics.gl.enums.ShaderUpdateType, gl: WebGLRenderingContext = renderPro.graphics.gl.context) {
                     this.gl         = gl;
                     this.name       = name;
                     this.type       = type;
@@ -24,133 +24,133 @@ namespace renderPro {
 
                     var self = this;
                     switch (this.type) {
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1F: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1F: 
                             this.compare = this.compareSimpleValues;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniform1f( self.location, args[0] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1FV: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1FV: 
                             this.compare = this.compareArrays;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniform1fv( self.location, args[0] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2F: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_2F: 
                             this.compare = this.compareSimpleValues;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniform2f( self.location, args[0], args[1] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2FV: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_2FV: 
                             this.compare = this.compareArrays;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniform2fv( self.location, args[0] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3F: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_3F: 
                             this.compare = this.compareSimpleValues;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniform3f( self.location, args[0], args[1], args[2] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3FV: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_3FV: 
                             this.compare = this.compareArrays;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniform3fv( self.location, args[0] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4F: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_4F: 
                             this.compare = this.compareSimpleValues;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniform4f( self.location, args[0], args[1], args[2], args[3] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4FV: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_4FV: 
                             this.compare = this.compareArrays;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniform4fv( self.location, args[0] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_MATRIX_2FV: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_MATRIX_2FV: 
                             this.compare = this.compareArrays;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniformMatrix2fv( self.location, false, args[0] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_MATRIX_3FV: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_MATRIX_3FV: 
                             this.compare = this.compareArrays;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniformMatrix3fv( self.location, false, args[0] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_MATRIX_4FV: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_MATRIX_4FV: 
                             this.compare = this.compareArrays;
                             this.setOnGPU = function setOnGPU ( ...args: any[]  ) 
                             {
                                 self.gl.uniformMatrix4fv( self.location, false, args[0]);
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1I: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1I: 
                             this.compare = this.compareArrays;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniform1i( self.location, args[0] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1IV: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1IV: 
                             this.compare = this.compareArrays;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniform1iv( self.location, args[0] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2I: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_2I: 
                             this.compare = this.compareSimpleValues;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniform2i( self.location, args[0], args[1] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2IV: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_2IV: 
                             this.compare = this.compareArrays;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniform2iv( self.location, args[0] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3I: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_3I: 
                             this.compare = this.compareSimpleValues;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniform3i( self.location, args[0], args[1], args[2] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3IV: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_3IV: 
                             this.compare = this.compareArrays;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniform3iv( self.location, args[0] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4I: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_4I: 
                             this.compare = this.compareSimpleValues;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {
                                 self.gl.uniform4i( self.location, args[0], args[1], args[2], args[3] );
                             };
                             break;
-                        case  renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4IV: 
+                        case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_4IV: 
                             this.compare = this.compareArrays;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 
                             {

@@ -14,12 +14,15 @@ namespace renderPro {
                     this.uniforms               = { };
                     this.attributes             = { };
 
+                    /* Create the vertex and fragment shader */
                     this.vertexShader           =  gl.createShader(gl.VERTEX_SHADER);
                     this.fragmentShader         =  gl.createShader(gl.FRAGMENT_SHADER);
                     
+                    /* Set the source for the vertex and fragment shader */
                     gl.shaderSource ( this.vertexShader, vertexShaderObject.content );
                     gl.shaderSource ( this.fragmentShader, fragmentShaderObject.content );
-                    
+
+                    /* Compile the vertex shader */
                     gl.compileShader ( this.vertexShader );
                     if ( !gl.getShaderParameter ( this.vertexShader, gl.COMPILE_STATUS ) )
                     {
@@ -27,6 +30,7 @@ namespace renderPro {
                         return null;
                     }
 
+                    /* Compile the fragment shader */
                     gl.compileShader ( this.fragmentShader );
                     if ( !gl.getShaderParameter ( this.fragmentShader, gl.COMPILE_STATUS ) )
                     {
@@ -34,11 +38,11 @@ namespace renderPro {
                         return null;
                     }
 
+                    /* Create a shader program and attach the vertex and fragment shader to this program */
                     this.programPointer         = gl.createProgram ( );
                     gl.attachShader ( this.programPointer, this.vertexShader );
                     gl.attachShader ( this.programPointer, this.fragmentShader );
                     gl.linkProgram ( this.programPointer );
-
 
                     if ( !gl.getProgramParameter ( this.programPointer, gl.LINK_STATUS ) )
                     {
@@ -47,19 +51,19 @@ namespace renderPro {
                     }
 
                     var typesMapping = {
-                        "int"       : renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1I,
-                        "float"     : renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1F,
-                        "vec2"      : renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2FV,
-                        "vec3"      : renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3FV,
-                        "vec4"      : renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4FV,
-                        "mat2"      : renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_MATRIX_2FV,
-                        "mat3"      : renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_MATRIX_3FV,
-                        "mat4"      : renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_MATRIX_4FV,
-                        "sampler2D" : renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1I
+                        "int"       : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1I,
+                        "float"     : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1F,
+                        "vec2"      : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_2FV,
+                        "vec3"      : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_3FV,
+                        "vec4"      : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_4FV,
+                        "mat2"      : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_MATRIX_2FV,
+                        "mat3"      : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_MATRIX_3FV,
+                        "mat4"      : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_MATRIX_4FV,
+                        "sampler2D" : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1I
                     }
 
+                    /* Create uniform objects for shaders in the shader program */
                     let uniformDefaults : any = {};
-                    // TODO(Martin): Add defaultValue from fragment shader if uniform is already set
                     for ( var i = 0; i < vertexShaderObject.uniforms.length; i++ )
                     {
                         var uniform = vertexShaderObject.uniforms[i];
@@ -79,6 +83,7 @@ namespace renderPro {
                         if ( uniform.defaultValue != undefined ) uniformDefaults[ uniform.name ] = uniform.defaultValue;
                     }
 
+                    /* Initiate  uniform object and set defaultValue if provided */
                     for (var name in this.uniforms) {
                         // skip loop if the property is from prototype
                         if (!this.uniforms.hasOwnProperty(name)) continue;
@@ -88,8 +93,7 @@ namespace renderPro {
                         }
                     }
 
-
-                    // TODO
+                    /* Create attribute objects for shaders in the shader program */
                     for ( var i = 0; i < vertexShaderObject.attributes.length; i++ )
                     {
                         var attribute = vertexShaderObject.attributes[i];
@@ -107,21 +111,15 @@ namespace renderPro {
                         }
                     }
 
+                    /* Initiate each attribute */
                     for (var attrName in this.attributes) {
                         if (this.attributes.hasOwnProperty(attrName)) {
                             this.attributes[attrName].updateLocation(this);
                             this.attributes[attrName].enable();
                         }
                     }
-
-                    // this.attributes[ "vertexNormal" ].updateLocation();
-                    // this.attributes[ "vertexPosition" ].updateLocation();
-                    // this.attributes[ "vertexTextureCoordinate" ].updateLocation();
-
-                    // this.attributes[ "vertexNormal" ].enable();
-                    // this.attributes[ "vertexPosition" ].enable();
-                    // this.attributes[ "vertexTextureCoordinate" ].enable();
         
+                    /* Give this effect a unique id */
                     if ( Effect.currentEffectIdx == undefined )
                         Effect.currentEffectIdx = 1;
                     else
