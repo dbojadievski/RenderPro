@@ -211,7 +211,7 @@ var renderPro;
                         this.exportableScenes.models.push(coreModel);
                     }
                     /* Experimental WexBIM loading. */
-                    this.loadWexBim(this.findEffectByName('standardFlatShading'), this.exportableScenes);
+                    this.loadWexBim(this.findEffectByName('wexbimFlatShading'), this.exportableScenes);
                     // scenes                              = this.exportableScenes;
                     return this.exportableScenes;
                 };
@@ -336,7 +336,6 @@ var renderPro;
                     return coreTex;
                 };
                 AssetManager.prototype.loadWexBim = function (effect, exportableScenes) {
-                    var _this = this;
                     var newGeometry = new xModelGeometry();
                     var blob = new Blob([newGeometry]);
                     var xModelGeometry_Loaded_OLD = function (shapes) {
@@ -400,16 +399,15 @@ var renderPro;
                         }
                     };
                     var xModelGeometry_Loaded_NEW = function (shapes) {
-                        var handle = new xModelHandle(renderPro.graphics.gl.context, _this, true);
+                        var handle = new xModelHandle(renderPro.graphics.gl.context, newGeometry, true);
                         handle.stateStyle = new Uint8Array(15 * 15 * 4);
-                        var rawTexData = [
+                        var texData = new Float32Array([
                             1.0, 0.0, 0.0, 1.0,
                             0.0, 0.0, 0.0, 1.0,
                             0.0, 0.0, 0.0, 1.0
-                        ];
-                        var data = new Float32Array(rawTexData);
+                        ]);
                         var coreTex = new renderPro.graphics.core.Texture();
-                        coreTex.load(data, CoreType.FLOAT32, 3, 1);
+                        coreTex.load(texData, CoreType.FLOAT32, 3, 1);
                         var material = new renderPro.graphics.core.Material([1.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, 1.0], 1.0);
                         var renderable = new renderPro.graphics.gl.WexBIMRenderable(handle, coreTex, material, renderPro.graphics.core.State.NORMAL, effect);
                         var modelTransformMatrix = mat4.create();
@@ -420,7 +418,7 @@ var renderPro;
                         exportableScenes.models.push(model);
                         Application.Systems.eventSystem.fire("wexBimLoaded");
                     };
-                    var xModelGeometry_Loaded = xModelGeometry_Loaded_OLD;
+                    var xModelGeometry_Loaded = xModelGeometry_Loaded_NEW;
                     newGeometry.onloaded = xModelGeometry_Loaded;
                     newGeometry.load("/assets/models/OneWall.wexbim");
                 };

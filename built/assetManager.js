@@ -286,7 +286,7 @@ function initAssetManager() {
         exportableScenes.models.push(coreModel);
     }
     /* Experimental WexBIM loading. */
-    loadWexBim(exportableScenes.effects.findByName('standardFlatShading'), exportableScenes);
+    loadWexBim(exportableScenes.effects.findByName('wexbimFlatShading'), exportableScenes);
     scenes = exportableScenes;
     return exportableScenes;
 }

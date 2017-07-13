@@ -173,7 +173,8 @@ var renderPro;
                                         /* Switch GPGPU texture state. */
                                         gl.activeTexture(gl.TEXTURE0);
                                         gl.bindTexture(gl.TEXTURE_2D, byTexture.key.getTexPointer());
-                                        effect.innerEffect.uniforms["uSampler"].updateValue(0);
+                                        if (effect.innerEffect.uniforms["uSampler"])
+                                            effect.innerEffect.uniforms["uSampler"].updateValue(0);
                                         this.m_textureSwitches++;
                                         for (var currRenderableIdx = 0; currRenderableIdx < byTexture.value.length; currRenderableIdx++) {
                                             var renderableInstance = byTexture.value[currRenderableIdx];
@@ -224,10 +225,11 @@ var renderPro;
                     };
                     WebGLRenderer.prototype.setUniforms = function (renderable, transform, effect) {
                         var gl = this.m_glContext;
+                        // Update uniforms for normalFlatShader 
                         if (effect.innerEffect.uniforms["uPMatrix"])
                             effect.innerEffect.uniforms["uPMatrix"].updateValue(this.m_pMatrix);
-                        if (effect.innerEffect.uniforms["uMVMatrix"])
-                            effect.innerEffect.uniforms["uMVMatrix"].updateValue(this.m_viewMatrix);
+                        if (effect.innerEffect.uniforms["uVMatrix"])
+                            effect.innerEffect.uniforms["uVMatrix"].updateValue(this.m_viewMatrix);
                         if (effect.innerEffect.uniforms["uMMatrix"])
                             effect.innerEffect.uniforms["uMMatrix"].updateValue(transform);
                         if (effect.innerEffect.uniforms["uMaterial.ambient"])
@@ -238,6 +240,13 @@ var renderPro;
                             effect.innerEffect.uniforms["uMaterial.specular"].updateValue(renderable.material.specular);
                         if (effect.innerEffect.uniforms["uMaterial.shininess"])
                             effect.innerEffect.uniforms["uMaterial.shininess"].updateValue(renderable.material.shininess);
+                        // Update uniforms for wexbimFlatShader
+                        if (effect.innerEffect.uniforms["uTMatrix"]) {
+                            var transformationMatrix = new Float32Array(16);
+                            mat4.multiply(transformationMatrix, transform, this.m_viewMatrix);
+                            mat4.multiply(transformationMatrix, transformationMatrix, this.m_pMatrix);
+                            effect.innerEffect.uniforms["uTMatrix"].updateValue(transformationMatrix);
+                        }
                         gl.activeTexture(gl.TEXTURE0);
                         gl.bindTexture(gl.TEXTURE_2D, renderable.texture.getTexPointer());
                         if (effect.innerEffect.uniforms["uSampler"])

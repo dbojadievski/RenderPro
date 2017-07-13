@@ -58,12 +58,14 @@ namespace renderPro {
                         "sampler2D" : renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1I
                     }
 
+                    let uniformDefaults : any = {};
                     // TODO(Martin): Add defaultValue from fragment shader if uniform is already set
                     for ( var i = 0; i < vertexShaderObject.uniforms.length; i++ )
                     {
                         var uniform = vertexShaderObject.uniforms[i];
                         var type = typesMapping[uniform.type];
                         this.uniforms[ uniform.name ]             = new renderPro.graphics.gl.Uniform(uniform.name, typesMapping[uniform.type], gl );
+                        if ( uniform.defaultValue != undefined ) uniformDefaults[ uniform.name ] = uniform.defaultValue;
                     }
 
                     for ( var i = 0; i < fragmentShaderObject.uniforms.length; i++ )
@@ -74,13 +76,16 @@ namespace renderPro {
                         {
                             this.uniforms[ uniform.name ]         = new renderPro.graphics.gl.Uniform(uniform.name, typesMapping[uniform.type], gl );
                         }
+                        if ( uniform.defaultValue != undefined ) uniformDefaults[ uniform.name ] = uniform.defaultValue;
                     }
 
                     for (var name in this.uniforms) {
                         // skip loop if the property is from prototype
                         if (!this.uniforms.hasOwnProperty(name)) continue;
-                    
                         this.uniforms[name].init(this);
+                        if( uniformDefaults[ name ] != undefined ) {
+                            this.uniforms[name].set(uniformDefaults[ name ]);
+                        }
                     }
 
 

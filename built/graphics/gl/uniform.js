@@ -22,7 +22,7 @@ var renderPro;
                     switch (this.type) {
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1F:
                             this.compare = this.compareSimpleValues;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -32,7 +32,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1FV:
                             this.compare = this.compareArrays;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -42,7 +42,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2F:
                             this.compare = this.compareSimpleValues;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -52,7 +52,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2FV:
                             this.compare = this.compareArrays;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -62,7 +62,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3F:
                             this.compare = this.compareSimpleValues;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -72,7 +72,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3FV:
                             this.compare = this.compareArrays;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -82,7 +82,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4F:
                             this.compare = this.compareSimpleValues;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -92,7 +92,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4FV:
                             this.compare = this.compareArrays;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -102,7 +102,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_MATRIX_2FV:
                             this.compare = this.compareArrays;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -112,7 +112,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_MATRIX_3FV:
                             this.compare = this.compareArrays;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -122,7 +122,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_MATRIX_4FV:
                             this.compare = this.compareArrays;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -132,7 +132,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1I:
                             this.compare = this.compareArrays;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -142,7 +142,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_1IV:
                             this.compare = this.compareArrays;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -152,7 +152,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2I:
                             this.compare = this.compareSimpleValues;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -162,7 +162,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_2IV:
                             this.compare = this.compareArrays;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -172,7 +172,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3I:
                             this.compare = this.compareSimpleValues;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -182,7 +182,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_3IV:
                             this.compare = this.compareArrays;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -192,7 +192,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4I:
                             this.compare = this.compareSimpleValues;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -202,7 +202,7 @@ var renderPro;
                             break;
                         case renderPro.graphics.gl.enums.ShaderValueType.UNIFORM_4IV:
                             this.compare = this.compareArrays;
-                            this.set = function set() {
+                            this.setOnGPU = function setOnGPU() {
                                 var args = [];
                                 for (var _i = 0; _i < arguments.length; _i++) {
                                     args[_i] = arguments[_i];
@@ -211,6 +211,14 @@ var renderPro;
                             };
                             break;
                     }
+                };
+                Uniform.prototype.set = function () {
+                    var args = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        args[_i] = arguments[_i];
+                    }
+                    this.values = args;
+                    this.setOnGPU.apply(this, args);
                 };
                 Uniform.prototype.updateLocation = function (effect) {
                     this.location = this.gl.getUniformLocation(effect.programPointer, this.name);
@@ -236,7 +244,7 @@ var renderPro;
                     }
                     if (needUpdate) {
                         this.values = args;
-                        this.set.apply(self, args);
+                        this.set.apply(this, args);
                     }
                 };
                 Uniform.prototype.compareSimpleValues = function (val1, val2) {

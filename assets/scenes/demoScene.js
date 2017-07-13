@@ -25,7 +25,8 @@ var assets =
             "uniforms": [
                 {   
                     "name": "uMetre", 
-                    "type": "float"
+                    "type": "float",
+                    "defaultValue": 1.0
                 },{   
                     "name": "uTMatrix", 
                     "type": "mat4"
@@ -112,10 +113,10 @@ var assets =
             "id": "0003",
             "name": "standardFlatVertexShader",
             "type": "VERTEX",
-            "content": "attribute vec3 aVertexNormal;\nattribute vec3 aVertexPosition;\nattribute vec2 aVertexTextureCoordinate;\n\nuniform mat4 uMVMatrix;\nuniform mat4 uPMatrix;\nuniform mat4 uMMatrix;\n\nvarying highp vec2 vTextCoord;\nvarying vec3 vVertexNormal;            \n\nvoid main(void) \n{\n    gl_Position     = uPMatrix * uMVMatrix * uMMatrix * vec4(aVertexPosition, 1.0);\n\n    vVertexNormal   = aVertexNormal;\n    vTextCoord      = aVertexTextureCoordinate;\n}\n",
+            "content": "attribute vec3 aVertexNormal;\nattribute vec3 aVertexPosition;\nattribute vec2 aVertexTextureCoordinate;\n\nuniform mat4 uVMatrix;\nuniform mat4 uPMatrix;\nuniform mat4 uMMatrix;\n\nvarying highp vec2 vTextCoord;\nvarying vec3 vVertexNormal;            \n\nvoid main(void) \n{\n    gl_Position     = uPMatrix * uVMatrix * uMMatrix * vec4(aVertexPosition, 1.0);\n\n    vVertexNormal   = aVertexNormal;\n    vTextCoord      = aVertexTextureCoordinate;\n}\n",
             "uniforms": [
                 {
-                    "name": "uMVMatrix",
+                    "name": "uVMatrix",
                     "type": "mat4"
                 },{
                     "name": "uPMatrix",
