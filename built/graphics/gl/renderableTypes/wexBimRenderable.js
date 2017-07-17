@@ -17,7 +17,7 @@ var renderPro;
                 WexBIMRenderable.prototype.bufferData = function (gl) {
                     //NOTE(Dino): At this point, the wexBIM model handle must be entirely loaded.
                     this.wexHandle._gl = gl;
-                    this.wexHandle.feedGPU();
+                    this.wexHandle.feedGPU(this.effect);
                 };
                 WexBIMRenderable.prototype.unload = function () {
                     //NOTE(Dino): Make sure none of these buffers are currently bound!
@@ -36,6 +36,7 @@ var renderPro;
                 WexBIMRenderable.prototype.draw = function (shaderProgram, gl) {
                     this.wexHandle._gl = gl;
                     shaderProgram.innerEffect.use(gl);
+                    this.wexHandle.setActive();
                     this.wexHandle.draw();
                 };
                 WexBIMRenderable.prototype.drawWithoutStateChanges = function (shaderProgram, gl) {

@@ -50,6 +50,7 @@ namespace renderPro
                         this.m_glContext                = canvas.getContext( "experimental-webgl" );
                         this.m_viewportWidth            = canvas.width;
                         this.m_viewportHeight           = canvas.height;
+                        this.m_rendererName             = "WebGLRenderer"
                         renderPro.graphics.gl.context = this.m_glContext;
                     }
 
@@ -289,7 +290,7 @@ namespace renderPro
                                         /* Switch GPGPU texture state. */
                                         gl.activeTexture ( gl.TEXTURE0 );
                                         gl.bindTexture ( gl.TEXTURE_2D, byTexture.key.getTexPointer ( ) );
-                                        effect.innerEffect.uniforms[ "sampler" ].updateValue(0);
+                                        if ( effect.innerEffect.uniforms[ "uSampler" ] ) effect.innerEffect.uniforms[ "uSampler" ].updateValue(0);
                                         this.m_textureSwitches++;
 
                                         for ( let currRenderableIdx: number = 0; currRenderableIdx < byTexture.value.length; currRenderableIdx++ )

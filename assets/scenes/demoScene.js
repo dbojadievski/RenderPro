@@ -32,25 +32,32 @@ var assets =
                     "type": "mat4"
                 },{   
                     "name": "uLightAmbientFront", 
-                    "type": "float"
+                    "type": "float",
+                    "defaultValue": 0.4
                 },{   
                     "name": "uLightAmbientBack", 
-                    "type": "float"
+                    "type": "float",
+                    "defaultValue": 0.4
                 },{   
                     "name": "uLightAmbientFrontColor", 
-                    "type": "vec4"
+                    "type": "vec4",
+                    "defaultValue": new Float32Array([1,1,1,255])
                 },{   
                     "name": "uLightAmbientBackColor", 
-                    "type": "vec4"
+                    "type": "vec4",
+                    "defaultValue": new Float32Array([1,1,1,255])
                 },{   
                     "name": "uHighlightColour", 
-                    "type": "vec4"
+                    "type": "vec4",
+                    "defaultValue": new Float32Array([255,0,0,255])
                 },{   
                     "name": "uGamma", 
-                    "type": "float"
+                    "type": "float",
+                    "defaultValue": 1.0
                 },{   
                     "name": "uRenderingMode", 
-                    "type": "int"
+                    "type": "int",
+                    "defaultValue": 0
                 },{   
                     "name": "uVertexSampler", 
                     "type": "sampler2D"

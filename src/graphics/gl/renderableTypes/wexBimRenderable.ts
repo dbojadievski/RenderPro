@@ -27,7 +27,7 @@ namespace renderPro
                 {
                     //NOTE(Dino): At this point, the wexBIM model handle must be entirely loaded.
                     this.wexHandle._gl              = gl;
-                    this.wexHandle.feedGPU ( );
+                    this.wexHandle.feedGPU ( this.effect );
                 }
 
                 unload ( ) : void
@@ -51,6 +51,7 @@ namespace renderPro
                 {
                     this.wexHandle._gl              = gl;
                     shaderProgram.innerEffect.use ( gl );
+                    this.wexHandle.setActive();
                     this.wexHandle.draw ( );
                 }
 

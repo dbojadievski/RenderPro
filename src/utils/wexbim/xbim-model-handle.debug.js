@@ -227,10 +227,10 @@ xModelHandle.prototype.getProductMap        = function (ID)
     return null;
 };
 
-xModelHandle.prototype.feedGPU              = function () 
+xModelHandle.prototype.feedGPU              = function ( effect ) 
 {
     if (this._feedCompleted)
-        throw 'GPU can bee fed only once. It discards unnecessary data which cannot be restored again.';
+        throw 'GPU can be fed only once. It discards unnecessary data which cannot be restored again.';
 
     var gl                                  = this._gl;
     var model                               = this._model;
@@ -247,6 +247,12 @@ xModelHandle.prototype.feedGPU              = function ()
     this.vertexTextureSize                  = this._bufferTexture(this.vertexTexture, model.vertices, 3);
     this.matrixTextureSize                  = this._bufferTexture(this.matrixTexture, model.matrices, 4);
     this.styleTextureSize                   = this._bufferTexture(this.styleTexture, model.styles);
+
+
+    /* Set texture sizes to uniforms */
+    if(effect.innerEffect.uniforms["uVertexTextureSize"]) effect.innerEffect.uniforms["uVertexTextureSize"].updateValue( this.vertexTextureSize );
+    if(effect.innerEffect.uniforms["uMatrixTextureSize"]) effect.innerEffect.uniforms["uMatrixTextureSize"].updateValue( this.vertexTextureSize );
+    if(effect.innerEffect.uniforms["uStyleTextureSize"]) effect.innerEffect.uniforms["uStyleTextureSize"].updateValue( this.vertexTextureSize );
 
     this._bufferTexture( this.stateStyleTexture, this.stateStyle );   // This has a constant size of 15, which is defined in vertex shader.
     /*

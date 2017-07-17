@@ -6,10 +6,22 @@ namespace renderPro {
                 gl: WebGLRenderingContext
                 name: string
                 values: any[]
-                private type : renderPro.graphics.gl.enums.ShaderUpdateType
+                private type : string
                 private compare : Function
                 private setOnGPU : Function
-                constructor ( name: string, type:  renderPro.graphics.gl.enums.ShaderUpdateType, gl: WebGLRenderingContext = renderPro.graphics.gl.context) {
+                static readonly typeMapping: any = {
+                    "int"       : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1I,
+                    "float"     : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1F,
+                    "vec2"      : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_2FV,
+                    "vec3"      : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_3FV,
+                    "vec4"      : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_4FV,
+                    "mat2"      : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_MATRIX_2FV,
+                    "mat3"      : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_MATRIX_3FV,
+                    "mat4"      : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_MATRIX_4FV,
+                    "sampler2D" : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1I
+                }
+
+                constructor ( name: string, type: string, gl: WebGLRenderingContext = renderPro.graphics.gl.context) {
                     this.gl         = gl;
                     this.name       = name;
                     this.type       = type;
@@ -23,7 +35,7 @@ namespace renderPro {
                     }
 
                     var self = this;
-                    switch (this.type) {
+                    switch (renderPro.graphics.gl.Uniform.typeMapping[this.type]) {
                         case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1F: 
                             this.compare = this.compareSimpleValues;
                             this.setOnGPU = function setOnGPU ( ...args: any[] ) 

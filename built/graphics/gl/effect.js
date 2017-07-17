@@ -36,54 +36,61 @@ var renderPro;
                         alert("Could not initialise shaders");
                         return null;
                     }
-                    var typesMapping = {
-                        "int": renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1I,
-                        "float": renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1F,
-                        "vec2": renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_2FV,
-                        "vec3": renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_3FV,
-                        "vec4": renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_4FV,
-                        "mat2": renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_MATRIX_2FV,
-                        "mat3": renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_MATRIX_3FV,
-                        "mat4": renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_MATRIX_4FV,
-                        "sampler2D": renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1I
-                    };
-                    /* Create uniform objects for shaders in the shader program */
+                    this.use(gl);
+                    this.createAndInitiateUniforms(vertexShaderObject.uniforms, fragmentShaderObject.uniforms, gl);
+                    this.createAndInitiateAttributes(vertexShaderObject.attributes, fragmentShaderObject.attributes, gl);
+                    /* Give this effect a unique id */
+                    if (Effect.currentEffectIdx == undefined)
+                        Effect.currentEffectIdx = 1;
+                    else
+                        Effect.currentEffectIdx++;
+                    this.effectID = Effect.currentEffectIdx;
+                }
+                Effect.prototype.use = function (gl) {
+                    if (gl === void 0) { gl = renderPro.graphics.gl.context; }
+                    gl.useProgram(this.programPointer);
+                };
+                /* NOTE(Martin): The following method requires the current program letiable on the gl context object to be set to this program */
+                Effect.prototype.createAndInitiateUniforms = function (vertexUniforms, fragmentUniforms, gl) {
+                    if (gl === void 0) { gl = renderPro.graphics.gl.context; }
+                    /* Create uniform objects for vertex shader */
                     var uniformDefaults = {};
-                    for (var i = 0; i < vertexShaderObject.uniforms.length; i++) {
-                        var uniform = vertexShaderObject.uniforms[i];
-                        var type = typesMapping[uniform.type];
-                        this.uniforms[uniform.name] = new renderPro.graphics.gl.Uniform(uniform.name, typesMapping[uniform.type], gl);
+                    for (var i = 0; i < vertexUniforms.length; i++) {
+                        var uniform = vertexUniforms[i];
+                        this.uniforms[uniform.name] = new renderPro.graphics.gl.Uniform(uniform.name, uniform.type, gl);
                         if (uniform.defaultValue != undefined)
                             uniformDefaults[uniform.name] = uniform.defaultValue;
                     }
-                    for (var i = 0; i < fragmentShaderObject.uniforms.length; i++) {
-                        var uniform = fragmentShaderObject.uniforms[i];
-                        var type = typesMapping[uniform.type];
+                    /* Create uniform objects for fragment shader */
+                    for (var i = 0; i < fragmentUniforms.length; i++) {
+                        var uniform = fragmentUniforms[i];
                         if (!this.uniforms[uniform.name]) {
-                            this.uniforms[uniform.name] = new renderPro.graphics.gl.Uniform(uniform.name, typesMapping[uniform.type], gl);
+                            this.uniforms[uniform.name] = new renderPro.graphics.gl.Uniform(uniform.name, uniform.type, gl);
                         }
                         if (uniform.defaultValue != undefined)
                             uniformDefaults[uniform.name] = uniform.defaultValue;
                     }
-                    /* Initiate  uniform object and set defaultValue if provided */
-                    for (var name in this.uniforms) {
+                    /* Initiate uniform objects and set defaults if available */
+                    for (var name_1 in this.uniforms) {
                         // skip loop if the property is from prototype
-                        if (!this.uniforms.hasOwnProperty(name))
+                        if (!this.uniforms.hasOwnProperty(name_1))
                             continue;
-                        this.uniforms[name].init(this);
-                        if (uniformDefaults[name] != undefined) {
-                            this.uniforms[name].set(uniformDefaults[name]);
+                        this.uniforms[name_1].init(this);
+                        if (uniformDefaults[name_1] != undefined) {
+                            this.uniforms[name_1].set(uniformDefaults[name_1]);
                         }
                     }
-                    /* Create attribute objects for shaders in the shader program */
-                    for (var i = 0; i < vertexShaderObject.attributes.length; i++) {
-                        var attribute = vertexShaderObject.attributes[i];
-                        var type = typesMapping[attribute.type];
+                };
+                Effect.prototype.createAndInitiateAttributes = function (vertexAttribute, fragmentAttribute, gl) {
+                    if (gl === void 0) { gl = renderPro.graphics.gl.context; }
+                    /* Create attribute objects for vertex shader */
+                    for (var i = 0; i < vertexAttribute.length; i++) {
+                        var attribute = vertexAttribute[i];
                         this.attributes[attribute.name] = new renderPro.graphics.gl.Attribute(attribute.name, attribute.type, gl);
                     }
-                    for (var i = 0; i < fragmentShaderObject.attributes.length; i++) {
-                        var attribute = fragmentShaderObject.attributes[i];
-                        var type = typesMapping[attribute.type];
+                    /* Create attribute objects for fragment shader */
+                    for (var i = 0; i < fragmentAttribute.length; i++) {
+                        var attribute = fragmentAttribute[i];
                         if (!this.attributes[attribute.name]) {
                             this.attributes[attribute.name] = new renderPro.graphics.gl.Attribute(attribute.name, attribute.type, gl);
                         }
@@ -95,16 +102,6 @@ var renderPro;
                             this.attributes[attrName].enable();
                         }
                     }
-                    /* Give this effect a unique id */
-                    if (Effect.currentEffectIdx == undefined)
-                        Effect.currentEffectIdx = 1;
-                    else
-                        Effect.currentEffectIdx++;
-                    this.effectID = Effect.currentEffectIdx;
-                }
-                Effect.prototype.use = function (gl) {
-                    if (gl === void 0) { gl = renderPro.graphics.gl.context; }
-                    gl.useProgram(this.programPointer);
                 };
                 return Effect;
             }());
