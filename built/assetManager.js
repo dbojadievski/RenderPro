@@ -94,7 +94,8 @@ function initAssetManager() {
         }
         if (!vertexShaderObject || !fragmentShaderObject)
             return null;
-        var coreEffect = new renderPro.graphics.core.Effect(effectObject.name, vertexShaderObject, fragmentShaderObject);
+        var coreEffect = new renderPro.graphics.core.Effect(effectObject.name);
+        coreEffect.load(vertexShaderObject, fragmentShaderObject);
         exportableScenes.effects.push(coreEffect);
     }
     for (var currMtlIdx = 0; currMtlIdx < assets.materials.length; currMtlIdx++) 

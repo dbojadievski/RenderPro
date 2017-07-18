@@ -66,7 +66,8 @@ namespace renderPro
                         if ( !vertexShaderObject || !fragmentShaderObject)
                             return null;
 
-                        let coreEffect : renderPro.graphics.core.Effect     = new renderPro.graphics.core.Effect( effectObject.name, vertexShaderObject, fragmentShaderObject);
+                        let coreEffect : renderPro.graphics.core.Effect     = new renderPro.graphics.core.Effect( effectObject.name );
+                        coreEffect.load( vertexShaderObject, fragmentShaderObject );
                         
                         this.exportableScenes.effects.push ( coreEffect );
                     }

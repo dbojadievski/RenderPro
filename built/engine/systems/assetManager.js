@@ -50,7 +50,8 @@ var renderPro;
                         }
                         if (!vertexShaderObject || !fragmentShaderObject)
                             return null;
-                        var coreEffect = new renderPro.graphics.core.Effect(effectObject.name, vertexShaderObject, fragmentShaderObject);
+                        var coreEffect = new renderPro.graphics.core.Effect(effectObject.name);
+                        coreEffect.load(vertexShaderObject, fragmentShaderObject);
                         this.exportableScenes.effects.push(coreEffect);
                     }
                     for (var currMtlIdx = 0; currMtlIdx < this.assets.materials.length; currMtlIdx++) 

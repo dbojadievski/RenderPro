@@ -51,7 +51,7 @@ namespace renderPro
                 {
                     this.wexHandle._gl              = gl;
                     shaderProgram.innerEffect.use ( gl );
-                    this.wexHandle.setActive();
+                    this.wexHandle.setActive( );
                     this.wexHandle.draw ( );
                 }
 

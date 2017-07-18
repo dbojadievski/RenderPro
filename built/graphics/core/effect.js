@@ -5,17 +5,18 @@ var renderPro;
         var core;
         (function (core) {
             var Effect = (function () {
-                function Effect(name, vertexShaderObject, fragmentShaderObject) {
-                    this.vertexShaderId = vertexShaderObject.id;
-                    this.fragmentShaderId = fragmentShaderObject.id;
+                function Effect(name) {
                     this.name = name;
-                    this.innerEffect = new renderPro.graphics.gl.Effect(vertexShaderObject, fragmentShaderObject);
+                    this.innerEffect = new renderPro.graphics.gl.Effect();
                     if (Effect.currentEffectIdx == undefined)
                         Effect.currentEffectIdx = 1;
                     else
                         Effect.currentEffectIdx++;
                     this.effectID = Effect.currentEffectIdx;
                 }
+                Effect.prototype.load = function (vertexShaderObject, fragmentShaderObject) {
+                    this.innerEffect.load(vertexShaderObject, fragmentShaderObject);
+                };
                 Effect.prototype.use = function () {
                     this.innerEffect.use();
                 };

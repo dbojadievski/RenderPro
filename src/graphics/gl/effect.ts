@@ -4,44 +4,28 @@ namespace renderPro {
             export class Effect {
                 uniforms: any
                 attributes: any
-                vertexShader: WebGLShader
-                fragmentShader: WebGLShader
+                vertexShader: renderPro.graphics.gl.Shader
+                fragmentShader: renderPro.graphics.gl.Shader
                 programPointer: WebGLProgram
                 static currentEffectIdx: number
                 effectID: number
-                constructor ( vertexShaderObject : any, fragmentShaderObject : any, gl : WebGLRenderingContext = renderPro.graphics.gl.context )
+                constructor () 
                 {
                     this.uniforms               = { };
                     this.attributes             = { };
 
-                    /* Create the vertex and fragment shader */
-                    this.vertexShader           =  gl.createShader(gl.VERTEX_SHADER);
-                    this.fragmentShader         =  gl.createShader(gl.FRAGMENT_SHADER);
-                    
-                    /* Set the source for the vertex and fragment shader */
-                    gl.shaderSource ( this.vertexShader, vertexShaderObject.content );
-                    gl.shaderSource ( this.fragmentShader, fragmentShaderObject.content );
-
-                    /* Compile the vertex shader */
-                    gl.compileShader ( this.vertexShader );
-                    if ( !gl.getShaderParameter ( this.vertexShader, gl.COMPILE_STATUS ) )
-                    {
-                        alert( gl.getShaderInfoLog ( this.vertexShader ) );
-                        return null;
-                    }
-
-                    /* Compile the fragment shader */
-                    gl.compileShader ( this.fragmentShader );
-                    if ( !gl.getShaderParameter ( this.fragmentShader, gl.COMPILE_STATUS ) )
-                    {
-                        alert( gl.getShaderInfoLog ( this.fragmentShader ) );
-                        return null;
-                    }
+                    this.vertexShader           =  new renderPro.graphics.gl.Shader();
+                    this.fragmentShader         =  new renderPro.graphics.gl.Shader();
+                }
+                load ( vertexShaderObject : any, fragmentShaderObject : any, gl : WebGLRenderingContext = renderPro.graphics.gl.context )
+                {
+                    this.vertexShader.load ( vertexShaderObject.content, gl.VERTEX_SHADER);
+                    this.fragmentShader.load ( fragmentShaderObject.content, gl.FRAGMENT_SHADER);
 
                     /* Create a shader program and attach the vertex and fragment shader to this program */
                     this.programPointer         = gl.createProgram ( );
-                    gl.attachShader ( this.programPointer, this.vertexShader );
-                    gl.attachShader ( this.programPointer, this.fragmentShader );
+                    gl.attachShader ( this.programPointer, this.vertexShader.pointer );
+                    gl.attachShader ( this.programPointer, this.fragmentShader.pointer );
                     gl.linkProgram ( this.programPointer );
 
                     if ( !gl.getProgramParameter ( this.programPointer, gl.LINK_STATUS ) )
@@ -49,10 +33,10 @@ namespace renderPro {
                         alert ( "Could not initialise shaders" );
                         return null;
                     }     
-                    
+
                     this.use ( gl );
-                    this.createAndInitiateUniforms(vertexShaderObject.uniforms, fragmentShaderObject.uniforms, gl);
-                    this.createAndInitiateAttributes(vertexShaderObject.attributes, fragmentShaderObject.attributes, gl);
+                    this.loadUniforms(vertexShaderObject.uniforms, fragmentShaderObject.uniforms, gl);
+                    this.loadAttributes(vertexShaderObject.attributes, fragmentShaderObject.attributes, gl);
         
                     /* Give this effect a unique id */
                     if ( Effect.currentEffectIdx == undefined )
@@ -69,7 +53,7 @@ namespace renderPro {
                     gl.useProgram ( this.programPointer );
                 }
                 /* NOTE(Martin): The following method requires the current program letiable on the gl context object to be set to this program */
-                private createAndInitiateUniforms ( vertexUniforms : Array<any>, fragmentUniforms : Array<any>, gl : WebGLRenderingContext = renderPro.graphics.gl.context) 
+                private loadUniforms ( vertexUniforms : Array<any>, fragmentUniforms : Array<any>, gl : WebGLRenderingContext = renderPro.graphics.gl.context) 
                 {
                     /* Create uniform objects for vertex shader */
                     let uniformDefaults : any = {};
@@ -104,7 +88,7 @@ namespace renderPro {
                     }
 
                 }
-                private createAndInitiateAttributes ( vertexAttribute : Array<any>, fragmentAttribute : Array<any>, gl : WebGLRenderingContext = renderPro.graphics.gl.context)
+                private loadAttributes ( vertexAttribute : Array<any>, fragmentAttribute : Array<any>, gl : WebGLRenderingContext = renderPro.graphics.gl.context)
                 {
                     /* Create attribute objects for vertex shader */
                     for ( let i : number = 0; i < vertexAttribute.length; i++ )
