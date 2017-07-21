@@ -27,7 +27,7 @@ namespace renderPro
 
                     let tempModels                      = [ ];
                     
-                    this.initTextureFromArray ( );
+                    // this.initTextureFromArray ( );
 
                     /*
                         * NOTE(Dino):
@@ -456,7 +456,7 @@ namespace renderPro
                     ];
                     let data : Float32Array                         = new Float32Array(rawData);
                     var coreTex : renderPro.graphics.core.Texture   = new renderPro.graphics.core.Texture();
-                    coreTex.load(data, CoreType.FLOAT32, 3, 1);
+                    coreTex.load(data, CoreType.FLOAT32, 4, 3);
                     return coreTex;
                 }
                 private loadWexBim(effect, exportableScenes) 
@@ -558,7 +558,7 @@ namespace renderPro
                 
                     var xModelGeometry_Loaded = xModelGeometry_Loaded_NEW;
                     newGeometry.onloaded = xModelGeometry_Loaded;
-                    newGeometry.load("/assets/models/OneWall.wexbim");
+                    newGeometry.load("assets/models/OneWall.wexbim");
                 }
                 
                     

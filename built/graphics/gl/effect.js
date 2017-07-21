@@ -45,27 +45,29 @@ var renderPro;
                     var uniformDefaults = {};
                     for (var i = 0; i < vertexUniforms.length; i++) {
                         var uniform = vertexUniforms[i];
-                        this.uniforms[uniform.name] = new renderPro.graphics.gl.Uniform(uniform.name, uniform.type, gl);
-                        if (uniform.defaultValue != undefined)
-                            uniformDefaults[uniform.name] = uniform.defaultValue;
+                        var _uni = new renderPro.graphics.gl.Uniform(uniform.name, uniform.type, gl);
+                        _uni.init(this);
+                        if (_uni.location != -1 && _uni.location != null) {
+                            this.uniforms[uniform.name] = _uni;
+                            if (uniform.defaultValue != undefined) {
+                                uniformDefaults[uniform.name] = uniform.defaultValue;
+                                _uni.set(uniform.defaultValue);
+                            }
+                        }
                     }
                     /* Create uniform objects for fragment shader */
                     for (var i = 0; i < fragmentUniforms.length; i++) {
                         var uniform = fragmentUniforms[i];
-                        if (!this.uniforms[uniform.name]) {
-                            this.uniforms[uniform.name] = new renderPro.graphics.gl.Uniform(uniform.name, uniform.type, gl);
-                        }
-                        if (uniform.defaultValue != undefined)
-                            uniformDefaults[uniform.name] = uniform.defaultValue;
-                    }
-                    /* Initiate uniform objects and set defaults if available */
-                    for (var name_1 in this.uniforms) {
-                        // skip loop if the property is from prototype
-                        if (!this.uniforms.hasOwnProperty(name_1))
-                            continue;
-                        this.uniforms[name_1].init(this);
-                        if (uniformDefaults[name_1] != undefined) {
-                            this.uniforms[name_1].set(uniformDefaults[name_1]);
+                        var _uni = new renderPro.graphics.gl.Uniform(uniform.name, uniform.type, gl);
+                        _uni.init(this);
+                        if (_uni.location != -1 && _uni.location != null) {
+                            this.uniforms[uniform.name] = _uni;
+                            if (uniform.defaultValue != undefined)
+                                uniformDefaults[uniform.name] = uniform.defaultValue;
+                            if (uniform.defaultValue != undefined) {
+                                uniformDefaults[uniform.name] = uniform.defaultValue;
+                                _uni.set(uniform.defaultValue);
+                            }
                         }
                     }
                 };

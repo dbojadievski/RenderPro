@@ -394,5 +394,5 @@ function loadWexBim(effect, exportableScenes) {
     ;
     var xModelGeometry_Loaded = xModelGeometry_Loaded_OLD;
     newGeometry.onloaded = xModelGeometry_Loaded;
-    newGeometry.load("/assets/models/OneWall.wexbim");
+    newGeometry.load( "assets/models/OneWall.weBIM");
 }

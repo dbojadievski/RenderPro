@@ -56,38 +56,43 @@ namespace renderPro {
                 private loadUniforms ( vertexUniforms : Array<any>, fragmentUniforms : Array<any>, gl : WebGLRenderingContext = renderPro.graphics.gl.context) 
                 {
                     /* Create uniform objects for vertex shader */
-                    let uniformDefaults : any = {};
-                    for ( let i : number = 0; i < vertexUniforms.length; i++ )
+                    let uniformDefaults : any   = {};
+                    for ( let i : number        = 0; i < vertexUniforms.length; i++ )
                     {
-                        let uniform : any   = vertexUniforms[i];
-                        this.uniforms[ uniform.name ]               = new renderPro.graphics.gl.Uniform(uniform.name, uniform.type, gl );
-                        if ( uniform.defaultValue != undefined ) 
-                            uniformDefaults[ uniform.name ]         = uniform.defaultValue;
+                        let uniform : any       = vertexUniforms[i];
+                        const _uni              = new renderPro.graphics.gl.Uniform ( uniform.name, uniform.type, gl );
+                        _uni.init ( this );
+                        if ( _uni.location != -1 &&_uni.location != null )
+                        {
+                            this.uniforms[ uniform.name ]               = _uni;
+                            if ( uniform.defaultValue != undefined )
+                            {
+                                uniformDefaults[ uniform.name ]         = uniform.defaultValue;
+                                _uni.set( uniform.defaultValue );
+                            }
+                        }
                     }
 
                     /* Create uniform objects for fragment shader */
                     for ( let i : number = 0; i < fragmentUniforms.length; i++ )
                     {
-                        let uniform = fragmentUniforms[i];
-                        if(!this.uniforms[ uniform.name ]) 
+                        let uniform             = fragmentUniforms[i];
+                        const _uni              = new renderPro.graphics.gl.Uniform ( uniform.name, uniform.type, gl );
+                        _uni.init ( this );
+                        if ( _uni.location != -1 && _uni.location != null )
                         {
-                            this.uniforms[ uniform.name ]           = new renderPro.graphics.gl.Uniform(uniform.name, uniform.type, gl );
-                        }
-                        if ( uniform.defaultValue != undefined ) 
-                            uniformDefaults[ uniform.name ]         = uniform.defaultValue;
-                    }
-
-                    /* Initiate uniform objects and set defaults if available */
-                    for (let name in this.uniforms) {
-                        // skip loop if the property is from prototype
-                        if (!this.uniforms.hasOwnProperty(name)) continue;
-                        this.uniforms[name].init(this);
-                        if( uniformDefaults[ name ] != undefined ) {
-                            this.uniforms[name].set(uniformDefaults[ name ]);
+                            this.uniforms[ uniform.name ]           = _uni;
+                            if ( uniform.defaultValue != undefined )
+                                uniformDefaults[ uniform.name ]     = uniform.defaultValue;
+                            if ( uniform.defaultValue != undefined )
+                            {
+                                uniformDefaults[ uniform.name ]         = uniform.defaultValue;
+                                _uni.set( uniform.defaultValue );
+                            }
                         }
                     }
-
                 }
+                
                 private loadAttributes ( vertexAttribute : Array<any>, fragmentAttribute : Array<any>, gl : WebGLRenderingContext = renderPro.graphics.gl.context)
                 {
                     /* Create attribute objects for vertex shader */

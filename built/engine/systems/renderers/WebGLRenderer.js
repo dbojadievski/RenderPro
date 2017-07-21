@@ -227,32 +227,42 @@ var renderPro;
                     };
                     WebGLRenderer.prototype.setUniforms = function (renderable, transform, effect) {
                         var gl = this.m_glContext;
-                        // Update uniforms for normalFlatShader 
-                        if (effect.innerEffect.uniforms["uPMatrix"])
-                            effect.innerEffect.uniforms["uPMatrix"].updateValue(this.m_pMatrix);
-                        if (effect.innerEffect.uniforms["uVMatrix"])
-                            effect.innerEffect.uniforms["uVMatrix"].updateValue(this.m_viewMatrix);
-                        if (effect.innerEffect.uniforms["uMMatrix"])
-                            effect.innerEffect.uniforms["uMMatrix"].updateValue(transform);
-                        if (effect.innerEffect.uniforms["uMaterial.ambient"])
-                            effect.innerEffect.uniforms["uMaterial.ambient"].updateValue(renderable.material.ambient);
-                        if (effect.innerEffect.uniforms["uMaterial.diffuse"])
-                            effect.innerEffect.uniforms["uMaterial.diffuse"].updateValue(renderable.material.diffuse);
-                        if (effect.innerEffect.uniforms["uMaterial.specular"])
-                            effect.innerEffect.uniforms["uMaterial.specular"].updateValue(renderable.material.specular);
-                        if (effect.innerEffect.uniforms["uMaterial.shininess"])
-                            effect.innerEffect.uniforms["uMaterial.shininess"].updateValue(renderable.material.shininess);
+                        var uniform = false;
+                        // Update uniforms for normalFlatShader
+                        uniform = effect.innerEffect.uniforms["uPMatrix"];
+                        if (uniform)
+                            uniform.updateValue(this.m_pMatrix);
+                        uniform = effect.innerEffect.uniforms["uVMatrix"];
+                        if (uniform)
+                            uniform.updateValue(this.m_viewMatrix);
+                        uniform = effect.innerEffect.uniforms["uMMatrix"];
+                        if (uniform)
+                            uniform.updateValue(transform);
+                        uniform = effect.innerEffect.uniforms["uMaterial.ambient"];
+                        if (uniform)
+                            uniform.updateValue(renderable.material.ambient);
+                        uniform = effect.innerEffect.uniforms["uMaterial.diffuse"];
+                        if (uniform)
+                            uniform.updateValue(renderable.material.diffuse);
+                        uniform = effect.innerEffect.uniforms["uMaterial.specular"];
+                        if (uniform)
+                            uniform.updateValue(renderable.material.specular);
+                        uniform = effect.innerEffect.uniforms["uMaterial.shininess"];
+                        if (uniform)
+                            uniform.updateValue(renderable.material.shininess);
                         // Update uniforms for wexbimFlatShader
-                        if (effect.innerEffect.uniforms["uTMatrix"]) {
+                        uniform = effect.innerEffect.uniforms["uTMatrix"];
+                        if (uniform) {
                             var transformationMatrix = new Float32Array(16);
                             mat4.multiply(transformationMatrix, transform, this.m_viewMatrix);
                             mat4.multiply(transformationMatrix, transformationMatrix, this.m_pMatrix);
-                            effect.innerEffect.uniforms["uTMatrix"].updateValue(transformationMatrix);
+                            uniform.updateValue(transformationMatrix);
                         }
                         gl.activeTexture(gl.TEXTURE0);
                         gl.bindTexture(gl.TEXTURE_2D, renderable.texture.getTexPointer());
-                        if (effect.innerEffect.uniforms["uSampler"])
-                            effect.innerEffect.uniforms["uSampler"].updateValue(0);
+                        uniform = effect.innerEffect.uniforms["uSampler"];
+                        if (uniform)
+                            uniform.updateValue(0);
                     };
                     WebGLRenderer.prototype.init = function () {
                         var gl = this.m_glContext;
