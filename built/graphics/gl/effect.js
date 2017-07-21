@@ -50,13 +50,11 @@ var renderPro;
                             _uni.init(program);
                             if (_uni.location != -1 && _uni.location != null) {
                                 retVal[uniform.name] = _uni;
-                                if (uniform.defaultValue != undefined) {
+                                if (uniform.defaultValue != undefined)
                                     _uni.set(uniform.defaultValue);
-                                }
                             }
                         }
                     }
-                    /* Create uniform objects for vertex shader */
                     var uniforms = new Array();
                     var uniformDefaults = {};
                     loadUniformsInternal(vertexUniforms, uniforms, uniformDefaults, this);
@@ -74,9 +72,7 @@ var renderPro;
                     /* Create attribute objects for fragment shader */
                     for (var i = 0; i < fragmentAttribute.length; i++) {
                         var attribute = fragmentAttribute[i];
-                        if (!this.attributes[attribute.name]) {
-                            this.attributes[attribute.name] = new renderPro.graphics.gl.Attribute(attribute.name, attribute.type, gl);
-                        }
+                        this.attributes[attribute.name] = new renderPro.graphics.gl.Attribute(attribute.name, attribute.type, gl);
                     }
                     /* Initiate each attribute */
                     for (var attrName in this.attributes) {

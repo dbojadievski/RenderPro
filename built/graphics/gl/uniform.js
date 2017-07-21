@@ -246,17 +246,23 @@ var renderPro;
                         this.set.apply(this, args);
                     }
                 };
+                /*NOTE(Dino): Used for comparing uniform values internally. */
                 Uniform.prototype.compareSimpleValues = function (val1, val2) {
-                    return val1 === val2;
+                    var retVal = false;
+                    retVal = (val1 === val2);
+                    return retVal;
                 };
                 Uniform.prototype.compareArrays = function (arr1, arr2) {
-                    if (arr1.length != arr2.length) {
-                        return false;
-                    }
-                    for (var i = 0; i < arr1.length; i++) {
-                        if (arr1[i] != arr2[i]) {
-                            return false;
+                    var retVal = false;
+                    if (arr1.length == arr2.length) {
+                        var areEqual = true;
+                        for (var i = 0; i < arr1.length; i++) {
+                            if (arr1[i] != arr2[i]) {
+                                areEqual = false;
+                                break;
+                            }
                         }
+                        retVal = areEqual;
                     }
                     return true;
                 };

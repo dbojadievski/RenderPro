@@ -63,7 +63,7 @@ namespace renderPro
                                 fragmentShaderObject    = this.assets.shaders[ shaderScriptIdx ]
                             }
                         }
-                        if ( !vertexShaderObject || !fragmentShaderObject)
+                        if ( !vertexShaderObject || !fragmentShaderObject )
                             return null;
 
                         let coreEffect : renderPro.graphics.core.Effect     = new renderPro.graphics.core.Effect( effectObject.name );
