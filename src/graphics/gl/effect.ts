@@ -46,7 +46,6 @@ namespace renderPro {
 
                     this.effectID               = Effect.currentEffectIdx;
 
-
                 }
                 use ( gl : WebGLRenderingContext = renderPro.graphics.gl.context)
                 {
@@ -55,68 +54,57 @@ namespace renderPro {
                 /* NOTE(Martin): The following method requires the current program letiable on the gl context object to be set to this program */
                 private loadUniforms ( vertexUniforms : Array<any>, fragmentUniforms : Array<any>, gl : WebGLRenderingContext = renderPro.graphics.gl.context) 
                 {
-                    /* Create uniform objects for vertex shader */
-                    let uniformDefaults : any   = {};
-                    for ( let i : number        = 0; i < vertexUniforms.length; i++ )
+
+                    function loadUniformsInternal ( uniforms: Array<any>, retVal: Array<renderPro.graphics.gl.Uniform>, uniformDefaults: any, program: renderPro.graphics.gl.Effect, gl: WebGLRenderingContext = renderPro.graphics.gl.context )
                     {
-                        let uniform : any       = vertexUniforms[i];
-                        const _uni              = new renderPro.graphics.gl.Uniform ( uniform.name, uniform.type, gl );
-                        _uni.init ( this );
-                        if ( _uni.location != -1 &&_uni.location != null )
+                        Application.Debug.assert ( retVal != null );
+                        
+                        for ( let i: number             = 0; i < uniforms.length; i++ )
                         {
-                            this.uniforms[ uniform.name ]               = _uni;
-                            if ( uniform.defaultValue != undefined )
+                            let uniform: any            = uniforms[ i ];
+                            const _uni                  = new renderPro.graphics.gl.Uniform ( uniform.name, uniform.type, gl );
+                            _uni.init ( program );
+                            if ( _uni.location != -1 && _uni.location != null )
                             {
-                                uniformDefaults[ uniform.name ]         = uniform.defaultValue;
-                                _uni.set( uniform.defaultValue );
+                                retVal[ uniform.name ]  = _uni;
+                                if ( uniform.defaultValue != undefined )
+                                    _uni.set( uniform.defaultValue );
                             }
                         }
                     }
 
-                    /* Create uniform objects for fragment shader */
-                    for ( let i : number = 0; i < fragmentUniforms.length; i++ )
-                    {
-                        let uniform             = fragmentUniforms[i];
-                        const _uni              = new renderPro.graphics.gl.Uniform ( uniform.name, uniform.type, gl );
-                        _uni.init ( this );
-                        if ( _uni.location != -1 && _uni.location != null )
-                        {
-                            this.uniforms[ uniform.name ]           = _uni;
-                            if ( uniform.defaultValue != undefined )
-                                uniformDefaults[ uniform.name ]     = uniform.defaultValue;
-                            if ( uniform.defaultValue != undefined )
-                            {
-                                uniformDefaults[ uniform.name ]         = uniform.defaultValue;
-                                _uni.set( uniform.defaultValue );
-                            }
-                        }
-                    }
+                    var uniforms                        = new Array<renderPro.graphics.gl.Uniform> ( );
+                    let uniformDefaults : any           = {};
+                    loadUniformsInternal ( vertexUniforms, uniforms, uniformDefaults, this );
+                    loadUniformsInternal ( fragmentUniforms, uniforms, uniformDefaults, this );
+                    
+                    for ( var uniformName in uniforms )
+                        this.uniforms[ uniformName ]    = uniforms[ uniformName ];    
                 }
-                
+
                 private loadAttributes ( vertexAttribute : Array<any>, fragmentAttribute : Array<any>, gl : WebGLRenderingContext = renderPro.graphics.gl.context)
                 {
                     /* Create attribute objects for vertex shader */
                     for ( let i : number = 0; i < vertexAttribute.length; i++ )
                     {
-                        let attribute = vertexAttribute[i];
-                        this.attributes[ attribute.name ]             = new renderPro.graphics.gl.Attribute(attribute.name, attribute.type, gl);
+                        let attribute                           = vertexAttribute[i];
+                        this.attributes[ attribute.name ]       = new renderPro.graphics.gl.Attribute( attribute.name, attribute.type, gl );
                     }
 
                     /* Create attribute objects for fragment shader */
                     for ( let i : number = 0; i < fragmentAttribute.length; i++ )
                     {
-                        let attribute = fragmentAttribute[i];
-                        if(!this.attributes[ attribute.name ]) 
-                        {
-                            this.attributes[ attribute.name ]         = new renderPro.graphics.gl.Attribute(attribute.name, attribute.type, gl);
-                        }
+                        let attribute                           = fragmentAttribute[ i ];
+                        this.attributes[ attribute.name ]       = new renderPro.graphics.gl.Attribute( attribute.name, attribute.type, gl );
                     }
 
                     /* Initiate each attribute */
-                    for (let attrName in this.attributes) {
-                        if (this.attributes.hasOwnProperty(attrName)) {
-                            this.attributes[attrName].updateLocation(this);
-                            this.attributes[attrName].enable();
+                    for ( let attrName in this.attributes ) 
+                    {
+                        if ( this.attributes.hasOwnProperty( attrName ) ) 
+                        {
+                            this.attributes[ attrName ].updateLocation( this );
+                            this.attributes[ attrName ].enable( );
                         }
                     }
                 }

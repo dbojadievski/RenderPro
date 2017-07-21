@@ -17,9 +17,6 @@ var renderPro;
                         this.updateLocation(effect);
                     if (this.location != null) {
                         var self = this;
-                        if (this.name == "uMaterial.ambient" || this.type == "vec4") {
-                            console.log("Found me!");
-                        }
                         switch (renderPro.graphics.gl.Uniform.typeMapping[this.type]) {
                             case renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1F:
                                 this.compare = this.compareSimpleValues;

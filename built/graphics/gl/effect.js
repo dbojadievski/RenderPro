@@ -41,35 +41,28 @@ var renderPro;
                 /* NOTE(Martin): The following method requires the current program letiable on the gl context object to be set to this program */
                 Effect.prototype.loadUniforms = function (vertexUniforms, fragmentUniforms, gl) {
                     if (gl === void 0) { gl = renderPro.graphics.gl.context; }
+                    function loadUniformsInternal(uniforms, retVal, uniformDefaults, program, gl) {
+                        if (gl === void 0) { gl = renderPro.graphics.gl.context; }
+                        Application.Debug.assert(retVal != null);
+                        for (var i = 0; i < uniforms.length; i++) {
+                            var uniform = uniforms[i];
+                            var _uni = new renderPro.graphics.gl.Uniform(uniform.name, uniform.type, gl);
+                            _uni.init(program);
+                            if (_uni.location != -1 && _uni.location != null) {
+                                retVal[uniform.name] = _uni;
+                                if (uniform.defaultValue != undefined) {
+                                    _uni.set(uniform.defaultValue);
+                                }
+                            }
+                        }
+                    }
                     /* Create uniform objects for vertex shader */
+                    var uniforms = new Array();
                     var uniformDefaults = {};
-                    for (var i = 0; i < vertexUniforms.length; i++) {
-                        var uniform = vertexUniforms[i];
-                        var _uni = new renderPro.graphics.gl.Uniform(uniform.name, uniform.type, gl);
-                        _uni.init(this);
-                        if (_uni.location != -1 && _uni.location != null) {
-                            this.uniforms[uniform.name] = _uni;
-                            if (uniform.defaultValue != undefined) {
-                                uniformDefaults[uniform.name] = uniform.defaultValue;
-                                _uni.set(uniform.defaultValue);
-                            }
-                        }
-                    }
-                    /* Create uniform objects for fragment shader */
-                    for (var i = 0; i < fragmentUniforms.length; i++) {
-                        var uniform = fragmentUniforms[i];
-                        var _uni = new renderPro.graphics.gl.Uniform(uniform.name, uniform.type, gl);
-                        _uni.init(this);
-                        if (_uni.location != -1 && _uni.location != null) {
-                            this.uniforms[uniform.name] = _uni;
-                            if (uniform.defaultValue != undefined)
-                                uniformDefaults[uniform.name] = uniform.defaultValue;
-                            if (uniform.defaultValue != undefined) {
-                                uniformDefaults[uniform.name] = uniform.defaultValue;
-                                _uni.set(uniform.defaultValue);
-                            }
-                        }
-                    }
+                    loadUniformsInternal(vertexUniforms, uniforms, uniformDefaults, this);
+                    loadUniformsInternal(fragmentUniforms, uniforms, uniformDefaults, this);
+                    for (var uniformName in uniforms)
+                        this.uniforms[uniformName] = uniforms[uniformName];
                 };
                 Effect.prototype.loadAttributes = function (vertexAttribute, fragmentAttribute, gl) {
                     if (gl === void 0) { gl = renderPro.graphics.gl.context; }

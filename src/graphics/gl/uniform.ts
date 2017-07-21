@@ -6,10 +6,11 @@ namespace renderPro {
                 gl: WebGLRenderingContext
                 name: string
                 values: any[]
-                private type : string
-                private compare : Function
-                private setOnGPU : Function
-                static readonly typeMapping: any = {
+                private type: string
+                private compare: Function
+                private setOnGPU: Function
+                static readonly typeMapping: any = 
+                {
                     "int"       : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1I,
                     "float"     : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1F,
                     "vec2"      : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_2FV,
@@ -21,21 +22,25 @@ namespace renderPro {
                     "sampler2D" : renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1I
                 }
 
-                constructor ( name: string, type: string, gl: WebGLRenderingContext = renderPro.graphics.gl.context) {
+                constructor ( name: string, type: string, gl: WebGLRenderingContext = renderPro.graphics.gl.context)
+                {
                     this.gl         = gl;
                     this.name       = name;
                     this.type       = type;
                 }
-                init (effect : renderPro.graphics.gl.Effect = null) {
-                    if (effect != null)
-                        this.updateLocation(effect);
 
-                    if(this.location != null ) {
-                        var self = this;
-                        switch (renderPro.graphics.gl.Uniform.typeMapping[this.type]) {
+                init ( effect : renderPro.graphics.gl.Effect = null ) 
+                {
+                    if ( effect != null )
+                        this.updateLocation( effect );
+
+                    if ( this.location != null ) {
+                        var self    = this;
+                        switch ( renderPro.graphics.gl.Uniform.typeMapping[ this.type ] ) 
+                        {
                             case  renderPro.graphics.gl.enums.ShaderUpdateType.UNIFORM_1F: 
-                                this.compare = this.compareSimpleValues;
-                                this.setOnGPU = function setOnGPU ( ...args: any[] ) 
+                                this.compare    = this.compareSimpleValues;
+                                this.setOnGPU   = function setOnGPU ( ...args: any[] ) 
                                 {
                                     self.gl.uniform1f( self.location, args[0] );
                                 };
@@ -175,7 +180,7 @@ namespace renderPro {
                     this.setOnGPU.apply(this, args);
                 }
                 updateLocation ( effect : renderPro.graphics.gl.Effect ) : void {
-                    this.location   = this.gl.getUniformLocation(effect.programPointer, this.name);
+                    this.location   = this.gl.getUniformLocation( effect.programPointer, this.name );
                 }
                 updateValue ( ...args: any[] ) : void {
                     let needUpdate = false;
@@ -193,23 +198,39 @@ namespace renderPro {
                         }
                     }
 
-                    if ( needUpdate ) {
+                    if ( needUpdate ) 
+                    {
                         this.values  = args;
                         this.set.apply(this, args);
                     }
                 }
-                private compareSimpleValues ( val1, val2 ) : boolean {
-                    return val1 === val2;
+
+                /*NOTE(Dino): Used for comparing uniform values internally. */
+                private compareSimpleValues ( val1, val2 ) : boolean 
+                {
+                    let retVal: boolean     = false;
+                    retVal                  = ( val1 === val2 );
+
+                    return retVal;
                 }
-                private compareArrays ( arr1, arr2 ) : boolean {
-                    if( arr1.length != arr2.length ) {
-                        return false;
+                
+                private compareArrays ( arr1, arr2 ) : boolean 
+                {
+                    let retVal: boolean     = false;
+                    if ( arr1.length == arr2.length ) 
+                    {
+                        let areEqual        = true;
+                        for ( let i = 0; i < arr1.length; i++ ) 
+                        {
+                            if ( arr1[i] != arr2[i]) 
+                            {
+                                areEqual    = false;
+                                break;
+                            }   
+                        }
+                        retVal              = areEqual;
                     }
-                    for ( let i = 0; i < arr1.length; i++ ) {
-                        if ( arr1[i] != arr2[i]) {
-                            return false;
-                        }   
-                    }
+
                     return true;
                 }
             }
