@@ -20,7 +20,7 @@ namespace renderPro {
                     this.systems[systemIdx].init()
                 }
 
-                Application.Systems.eventSystem.on("wexBimLoaded", function ( ) 
+                Application.Systems.eventSystem.on("resourcesLoaded", function ( ) 
                 { 
                     self.renderer.init();
                     self.systems.push(self.renderer);
@@ -33,7 +33,7 @@ namespace renderPro {
             }
             start () {
                 let self = this;
-                Application.Systems.eventSystem.on("wexBimLoaded", function ( ) 
+                Application.Systems.eventSystem.on("resourcesLoaded", function ( ) 
                 { 
                     self.update();
                     (function animloop( )

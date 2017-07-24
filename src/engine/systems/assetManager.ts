@@ -275,7 +275,12 @@ namespace renderPro
                         for ( let currIdx : number = 0; currIdx < modelRenderables.length; currIdx++ )
                             this.exportableScenes.renderables.push ( modelRenderables[ currIdx ] );
 
-                        this.exportableScenes.models.push ( coreModel );  
+                        this.exportableScenes.models.push ( coreModel );
+
+                        Application.Systems.eventSystem.on ( 'wexBimLoaded', function ( )
+                        {
+                            Application.Systems.eventSystem.fire ( 'resourcesLoaded' );
+                        } );
                     }
 
                     /* Experimental WexBIM loading. */
