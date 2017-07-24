@@ -15,7 +15,7 @@ var renderPro;
                 for (var systemIdx = 0; systemIdx < this.systems.length; systemIdx++) {
                     this.systems[systemIdx].init();
                 }
-                Application.Systems.eventSystem.on("wexBimLoaded", function () {
+                Application.Systems.eventSystem.on("resourcesLoaded", function () {
                     self.renderer.init();
                     self.systems.push(self.renderer);
                 });
@@ -27,7 +27,7 @@ var renderPro;
             };
             Engine.prototype.start = function () {
                 var self = this;
-                Application.Systems.eventSystem.on("wexBimLoaded", function () {
+                Application.Systems.eventSystem.on("resourcesLoaded", function () {
                     self.update();
                     (function animloop() {
                         requestAnimationFrame(animloop);
