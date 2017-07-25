@@ -1,6 +1,6 @@
 namespace Application {
     export namespace Debug {
-        export const IS_DEBUGGING_ENABLED : boolean = false;
+        export const IS_DEBUGGING_ENABLED : boolean = true;
     }
     export namespace Environment {
         export namespace Path {

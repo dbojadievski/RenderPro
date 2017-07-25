@@ -717,7 +717,7 @@ var parseFloatExtended;
 
         var string                  = "newmtl crate_material\n Ka 1.0 1.0 1.0\n Kd 1.0 1.0 1.0\n Ks 1.0 1.0 1.0\n Ns 36.0\n map_Kd crate.gif\n";
         
-        var defaultColour           = { red: 1.0, green: 1.0, blue: 1.0 };
+        var defaultColour           = { 0: 1.0, 1: 1.0, 2: 1.0, 3: 1.0 };
         var material                = loadMaterialFromString ( string )[ 0 ];
         
         isTestSuccessful            &= ( material !== null );

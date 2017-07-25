@@ -13,7 +13,7 @@ namespace renderPro
                 texture: renderPro.graphics.core.Texture
                 material: renderPro.graphics.core.Material
                 state: renderPro.graphics.core.State
-                constructor ( wexHandle: any, texture : renderPro.graphics.core.Texture, material : renderPro.graphics.core.Material, state : renderPro.graphics.core.State, effect: renderPro.graphics.core.Effect )
+                constructor ( wexHandle: any, texture : renderPro.graphics.core.Texture, material : renderPro.graphics.core.Material, state : renderPro.graphics.core.State, effect: renderPro.graphics.core.Effect)
                 {
                     this.wexHandle                  = wexHandle;
                     this.effect                     = effect;
@@ -46,15 +46,27 @@ namespace renderPro
                     this.wexHandle._gl.deleteTexture( this.wexHandle.styleBuffer );
                     this.wexHandle._gl.deleteTexture( this.wexHandle.stateStyleTexture );
                 }
-
                 draw ( shaderProgram: renderPro.graphics.core.Effect, gl: WebGLRenderingContext ) : void
+                {
+                    this.drawWithStateChanges ( shaderProgram, gl );
+                }
+                drawWithStateChanges ( shaderProgram : renderPro.graphics.core.Effect, gl : WebGLRenderingContext ) :  void
                 {
                     this.wexHandle._gl              = gl;
                     shaderProgram.innerEffect.use ( gl );
-                    this.wexHandle.setActive( );
+
+                    // Get attribute pointers from effect
+                    let pointers : any = {}
+                    if ( shaderProgram.innerEffect.attributes["aNormal"]) pointers.normalAttrPointer = shaderProgram.innerEffect.attributes["aNormal"].location;
+                    if ( shaderProgram.innerEffect.attributes["aVertexIndex"]) pointers.indexlAttrPointer= shaderProgram.innerEffect.attributes["aVertexIndex"].location;
+                    if ( shaderProgram.innerEffect.attributes["aProduct"]) pointers.productAttrPointer = shaderProgram.innerEffect.attributes["aProduct"].location;
+                    if ( shaderProgram.innerEffect.attributes["aState"]) pointers.stateAttrPointer = shaderProgram.innerEffect.attributes["aState"].location;
+                    if ( shaderProgram.innerEffect.attributes["aStyleIndex"]) pointers.stateAttrPointer = shaderProgram.innerEffect.attributes["aStyleIndex"].location;
+                    if ( shaderProgram.innerEffect.attributes["aTransformationIndex"]) pointers.transformationAttrPointer = shaderProgram.innerEffect.attributes["aTransformationIndex"].location;
+
+                    this.wexHandle.setActive(pointers);
                     this.wexHandle.draw ( );
                 }
-
                 drawWithoutStateChanges ( shaderProgram: renderPro.graphics.core.Effect, gl: WebGLRenderingContext ) : void
                 {
                     //TODO(Dino): Update attributes. Found in the effect.

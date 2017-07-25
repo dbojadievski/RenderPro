@@ -45,6 +45,9 @@ var renderPro;
                     this.indexBuffer.bufferData(this.mesh.indices);
                 };
                 Renderable.prototype.draw = function (shaderProgram, gl) {
+                    this.drawWithoutStateChanges(shaderProgram, gl);
+                };
+                Renderable.prototype.drawWithStateChanges = function (shaderProgram, gl) {
                     var that = this;
                     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer.pointer);
                     gl.vertexAttribPointer(shaderProgram.innerEffect.attributes["aVertexPosition"].location, this.mesh.vertexSize, gl.FLOAT, false, 0, 0);

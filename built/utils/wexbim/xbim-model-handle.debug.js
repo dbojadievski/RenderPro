@@ -3,7 +3,7 @@
 //gl: WebGL context.
 //model: xModelGeometry.
 //fpt: bool (floating point texture support).
-function xModelHandle(gl, model, fpt) {
+function xModelHandle(gl, model, fpt, renderStats) {
     if (typeof (gl) == 'undefined' || typeof (model) == 'undefined' || typeof (fpt) == 'undefined')
         throw 'WebGL context and geometry model must be specified';
     this._gl = gl;
@@ -25,6 +25,7 @@ function xModelHandle(gl, model, fpt) {
     this.styleBuffer = gl.createBuffer();
     this.stateBuffer = gl.createBuffer();
     this.transformationBuffer = gl.createBuffer();
+    this.renderStats = renderStats;
     // A small texture which can be used to overwrite appearance of the products.
     this.stateStyle = new Uint8Array(15 * 15 * 4);
     this._feedCompleted = false;
@@ -71,18 +72,22 @@ xModelHandle.prototype.setActive = function (pointers) {
     if (this.vertexTextureSize > 0) {
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, this.vertexTexture);
+        this.renderStats.textureSwitches++;
     }
     if (this.matrixTextureSize > 0) {
         gl.activeTexture(gl.TEXTURE2);
         gl.bindTexture(gl.TEXTURE_2D, this.matrixTexture);
+        this.renderStats.textureSwitches++;
     }
     if (this.styleTextureSize > 0) {
         gl.activeTexture(gl.TEXTURE3);
         gl.bindTexture(gl.TEXTURE_2D, this.styleTexture);
+        this.renderStats.textureSwitches++;
     }
     // This texture has a constant size.
     gl.activeTexture(gl.TEXTURE4);
     gl.bindTexture(gl.TEXTURE_2D, this.stateStyleTexture);
+    this.renderStats.textureSwitches++;
     // Set attributes and uniforms.
     if (this.normalBuffer != null && pointers.normalAttrPointer != -1) {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
@@ -187,9 +192,9 @@ xModelHandle.prototype.feedGPU = function (effect) {
     if (effect.innerEffect.uniforms["uVertexTextureSize"])
         effect.innerEffect.uniforms["uVertexTextureSize"].updateValue(this.vertexTextureSize);
     if (effect.innerEffect.uniforms["uMatrixTextureSize"])
-        effect.innerEffect.uniforms["uMatrixTextureSize"].updateValue(this.vertexTextureSize);
+        effect.innerEffect.uniforms["uMatrixTextureSize"].updateValue(this.matrixTextureSize);
     if (effect.innerEffect.uniforms["uStyleTextureSize"])
-        effect.innerEffect.uniforms["uStyleTextureSize"].updateValue(this.vertexTextureSize);
+        effect.innerEffect.uniforms["uStyleTextureSize"].updateValue(this.styleTextureSize);
     this._bufferTexture(this.stateStyleTexture, this.stateStyle); // This has a constant size of 15, which is defined in vertex shader.
     /*
      * Forget everything except for states and styles (this should save some RAM).
