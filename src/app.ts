@@ -10,6 +10,7 @@ namespace Application {
         }
     }
     export namespace Systems {
-        export let eventSystem : Application.Infrastructure.ProEventSystem
+        export let eventSystem  = new Application.Infrastructure.ProEventSystem ( );
+        export let console      = new Application.Infrastructure.CommandConsole.Console ( eventSystem );
     }
 }
