@@ -13,6 +13,7 @@ namespace renderPro {
                 uvBuffer: renderPro.graphics.gl.ArrayBuffer
                 indexBuffer: renderPro.graphics.gl.ElementArrayBuffer 
                 normalBuffer: renderPro.graphics.gl.ArrayBuffer
+                renderStats: renderPro.core.systems.RenderStatistics
                 static _renderableIdentifier : number
                 constructor ( mesh : renderPro.graphics.core.Mesh, texture : renderPro.graphics.core.Texture, material : renderPro.graphics.core.Material, state : renderPro.graphics.core.State, effect : renderPro.graphics.core.Effect )
                 {
@@ -69,6 +70,10 @@ namespace renderPro {
                     this.indexBuffer.bufferData ( this.mesh.indices );
                 }
                 draw ( shaderProgram : renderPro.graphics.core.Effect, gl : WebGLRenderingContext ) : void
+                {
+                    this.drawWithoutStateChanges ( shaderProgram, gl )
+                }
+                drawWithStateChanges ( shaderProgram : renderPro.graphics.core.Effect, gl : WebGLRenderingContext ) : void
                 {
                     var that                    = this;
                     gl.bindBuffer ( gl.ARRAY_BUFFER, this.vertexBuffer.pointer );

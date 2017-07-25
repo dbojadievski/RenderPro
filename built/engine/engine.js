@@ -8,14 +8,20 @@ var renderPro;
             }
             Engine.prototype.init = function () {
                 var self = this;
-                // Application.Systems.eventSystem = new Application.Infrastructure.ProEventSystem();
-                // Application.Systems.console = new Application.Infrastructure.CommandConsole.Console ( Application.Systems.eventSystem );
-                this.assetManager = new renderPro.core.systems.AssetManager(this.assets);
-                this.renderer = new renderPro.core.systems.renderers.WebGLRenderer(this.assetManager, Application.Systems.eventSystem);
+                // let canvas : HTMLCanvasElement  = document.getElementById ( "canvas" ) as HTMLCanvasElement;
+                var statsElement = document.getElementById('lblPerformance');
+                var canvas = document.getElementById("canvas");
+                var glContext = canvas.getContext("experimental-webgl");
+                var viewportWidth = canvas.width;
+                var viewportHeight = canvas.height;
+                this.renderStats = new renderPro.core.systems.RenderStatistics(statsElement);
+                this.assetManager = new renderPro.core.systems.AssetManager(this.assets, this.renderStats);
+                this.renderer = new renderPro.core.systems.renderers.WebGLRenderer(glContext, viewportWidth, viewportHeight, this.assetManager, Application.Systems.eventSystem, this.renderStats);
                 this.systems = [Application.Systems.eventSystem, this.assetManager];
                 for (var systemIdx = 0; systemIdx < this.systems.length; systemIdx++) {
                     this.systems[systemIdx].init();
                 }
+                // Note(Martin): The renderer has to wait for all the resources to be loaded before initializing
                 Application.Systems.eventSystem.on("resourcesLoaded", function () {
                     self.renderer.init();
                     self.systems.push(self.renderer);

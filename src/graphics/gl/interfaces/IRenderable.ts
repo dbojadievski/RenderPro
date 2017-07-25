@@ -11,6 +11,7 @@ namespace renderPro {
                 bufferData ( gl: WebGLRenderingContext ) : void;
                 unload  ( ) : void;
                 draw ( shaderProgram : renderPro.graphics.core.Effect, gl : WebGLRenderingContext ) : void;
+                drawWithStateChanges ( shaderProgram : renderPro.graphics.core.Effect, gl : WebGLRenderingContext ) :  void;
                 drawWithoutStateChanges ( shaderProgram : renderPro.graphics.core.Effect, gl : WebGLRenderingContext ) :  void;
                 drawUnindexed ( shaderProgram : renderPro.graphics.core.Effect, gl : WebGLRenderingContext ) : void;
             }   

@@ -7,19 +7,17 @@ var renderPro;
             var renderers;
             (function (renderers) {
                 var WebGLRenderer = (function () {
-                    function WebGLRenderer(assetManager, eventSystem) {
+                    function WebGLRenderer(glContext, viewportWidth, viewportHeight, assetManager, eventSystem, renderStats) {
                         this.m_renderSet = new renderPro.graphics.rendering.SortedRenderSet();
                         this.FIELD_OF_VIEW = 45.0;
                         this.DISTANCE_NEAR = 0.1;
                         this.DISTANCE_FAR = 20000;
                         this.m_eventSystem = eventSystem;
                         this.m_assetManager = assetManager;
-                        var canvas = document.getElementById("canvas");
-                        this.m_lblPerformance = document.getElementById('lblPerformance');
-                        this.m_glContext = canvas.getContext("experimental-webgl");
-                        this.m_viewportWidth = canvas.width;
-                        this.m_viewportHeight = canvas.height;
-                        this.m_rendererName = "WebGLRenderer";
+                        this.m_renderStats = renderStats;
+                        this.m_glContext = glContext;
+                        this.m_viewportWidth = viewportWidth;
+                        this.m_viewportHeight = viewportHeight;
                         renderPro.graphics.gl.context = this.m_glContext;
                     }
                     WebGLRenderer.prototype.initScene = function () {
@@ -131,10 +129,6 @@ var renderPro;
                     };
                     WebGLRenderer.prototype.drawScene = function (renderSet) {
                         var gl = this.m_glContext;
-                        this.m_timer = Date.now();
-                        this.m_drawCalls = 0;
-                        this.m_programSwitches = 0;
-                        this.m_textureSwitches = 0;
                         gl.viewport(0, 0, this.m_viewportWidth, this.m_viewportHeight);
                         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                         /* Note(Dino):
@@ -167,7 +161,7 @@ var renderPro;
                                 var effect = byEffect.key;
                                 effect.innerEffect.use(gl);
                                 // currentEffect                           = effect;
-                                this.m_programSwitches++;
+                                this.m_renderStats.programSwitches++;
                                 for (var currTexIdx_1 = 0; currTexIdx_1 < byEffect.value.content.length; currTexIdx_1++) {
                                     var byTexture = byEffect.value.content[currTexIdx_1];
                                     if (byTexture.value.length > 0) {
@@ -176,13 +170,13 @@ var renderPro;
                                         gl.bindTexture(gl.TEXTURE_2D, byTexture.key.getTexPointer());
                                         if (effect.innerEffect.uniforms["uSampler"])
                                             effect.innerEffect.uniforms["uSampler"].updateValue(0);
-                                        this.m_textureSwitches++;
+                                        this.m_renderStats.textureSwitches++;
                                         for (var currRenderableIdx = 0; currRenderableIdx < byTexture.value.length; currRenderableIdx++) {
                                             var renderableInstance = byTexture.value[currRenderableIdx];
                                             var renderable = renderableInstance.renderable;
                                             this.setUniforms(renderable, renderableInstance.sceneNode.cachedTransform, effect);
-                                            renderable.drawWithoutStateChanges(effect, gl);
-                                            this.m_drawCalls;
+                                            renderable.draw(effect, gl);
+                                            this.m_renderStats.drawCalls++;
                                         }
                                     }
                                 }
@@ -197,7 +191,7 @@ var renderPro;
                                 var effect = byEffect.key;
                                 effect.innerEffect.use(gl);
                                 //currentEffect                           = effect;
-                                this.m_programSwitches++;
+                                this.m_renderStats.programSwitches++;
                                 for (var currTexIdx = 0; currTexIdx < byEffect.value.content.length; currTexIdx++) {
                                     var byTexture = byEffect.value.content[currTexIdx];
                                     if (byTexture.value.length > 0) {
@@ -206,24 +200,19 @@ var renderPro;
                                         gl.bindTexture(gl.TEXTURE_2D, byTexture.key.getTexPointer());
                                         if (effect.innerEffect.uniforms["uSampler"])
                                             effect.innerEffect.uniforms["uSampler"].updateValue(0);
-                                        this.m_textureSwitches++;
+                                        this.m_renderStats.textureSwitches++;
                                         for (var currRenderableIdx_1 = 0; currRenderableIdx_1 < byTexture.value.length; currRenderableIdx_1++) {
                                             var renderableInstance = byTexture.value[currRenderableIdx_1];
                                             var renderable = renderableInstance.renderable;
                                             this.setUniforms(renderable, renderableInstance.sceneNode.cachedTransform, effect);
-                                            renderable.drawWithoutStateChanges(effect, gl);
-                                            this.m_drawCalls;
+                                            renderable.draw(effect, gl);
+                                            this.m_renderStats.drawCalls++;
                                         }
                                     }
                                 }
                             }
                         }
-                        this.m_lastFrameTime = (Date.now() - this.m_timer);
-                        this.m_lblPerformance.innerHTML = this.m_lastFrameTime + " ms, "
-                            + this.m_programSwitches + " program switches, "
-                            + this.m_textureSwitches + " texture switches, "
-                            + this.m_drawCalls + " draw calls on "
-                            + this.m_rendererName;
+                        this.m_renderStats.update();
                     };
                     WebGLRenderer.prototype.setUniforms = function (renderable, transform, effect) {
                         var gl = this.m_glContext;
@@ -287,6 +276,7 @@ var renderPro;
                                 var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
                                 this.m_vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
                                 this.m_rendererName = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                                this.m_renderStats.rendererName = this.m_rendererName;
                             }
                             catch (e) {
                                 throw e.message;
@@ -294,6 +284,7 @@ var renderPro;
                         }
                         if (!gl)
                             alert("Could not initialise WebGL, sorry :-(");
+                        this.m_renderStats.init();
                         this.initScene();
                         this.m_renderSet = this.initBuffers(this.m_assetManager.exportableScenes.models, this.m_assetManager.exportableScenes.models);
                         gl.clearColor(1.0, 0.0, 0.0, 1.0);

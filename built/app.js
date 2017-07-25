@@ -2,7 +2,7 @@ var Application;
 (function (Application) {
     var Debug;
     (function (Debug) {
-        Debug.IS_DEBUGGING_ENABLED = false;
+        Debug.IS_DEBUGGING_ENABLED = true;
     })(Debug = Application.Debug || (Application.Debug = {}));
     var Environment;
     (function (Environment) {

@@ -34,9 +34,26 @@ var renderPro;
                     this.wexHandle._gl.deleteTexture(this.wexHandle.stateStyleTexture);
                 };
                 WexBIMRenderable.prototype.draw = function (shaderProgram, gl) {
+                    this.drawWithStateChanges(shaderProgram, gl);
+                };
+                WexBIMRenderable.prototype.drawWithStateChanges = function (shaderProgram, gl) {
                     this.wexHandle._gl = gl;
                     shaderProgram.innerEffect.use(gl);
-                    this.wexHandle.setActive();
+                    // Get attribute pointers from effect
+                    var pointers = {};
+                    if (shaderProgram.innerEffect.attributes["aNormal"])
+                        pointers.normalAttrPointer = shaderProgram.innerEffect.attributes["aNormal"].location;
+                    if (shaderProgram.innerEffect.attributes["aVertexIndex"])
+                        pointers.indexlAttrPointer = shaderProgram.innerEffect.attributes["aVertexIndex"].location;
+                    if (shaderProgram.innerEffect.attributes["aProduct"])
+                        pointers.productAttrPointer = shaderProgram.innerEffect.attributes["aProduct"].location;
+                    if (shaderProgram.innerEffect.attributes["aState"])
+                        pointers.stateAttrPointer = shaderProgram.innerEffect.attributes["aState"].location;
+                    if (shaderProgram.innerEffect.attributes["aStyleIndex"])
+                        pointers.stateAttrPointer = shaderProgram.innerEffect.attributes["aStyleIndex"].location;
+                    if (shaderProgram.innerEffect.attributes["aTransformationIndex"])
+                        pointers.transformationAttrPointer = shaderProgram.innerEffect.attributes["aTransformationIndex"].location;
+                    this.wexHandle.setActive(pointers);
                     this.wexHandle.draw();
                 };
                 WexBIMRenderable.prototype.drawWithoutStateChanges = function (shaderProgram, gl) {

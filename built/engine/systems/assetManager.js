@@ -5,8 +5,9 @@ var renderPro;
         var systems;
         (function (systems) {
             var AssetManager = (function () {
-                function AssetManager(assets) {
+                function AssetManager(assets, renderStats) {
                     this.assets = assets;
+                    this.renderStats = renderStats;
                 }
                 AssetManager.prototype.init = function () {
                     this.exportableScenes =
@@ -340,6 +341,7 @@ var renderPro;
                     return coreTex;
                 };
                 AssetManager.prototype.loadWexBim = function (effect, exportableScenes) {
+                    var _this = this;
                     var newGeometry = new xModelGeometry();
                     var blob = new Blob([newGeometry]);
                     var xModelGeometry_Loaded_OLD = function (shapes) {
@@ -403,7 +405,7 @@ var renderPro;
                         }
                     };
                     var xModelGeometry_Loaded_NEW = function (shapes) {
-                        var handle = new xModelHandle(renderPro.graphics.gl.context, newGeometry, true);
+                        var handle = new xModelHandle(renderPro.graphics.gl.context, newGeometry, true, _this.renderStats);
                         handle.stateStyle = new Uint8Array(15 * 15 * 4);
                         var texData = new Float32Array([
                             1.0, 0.0, 0.0, 1.0,
@@ -411,7 +413,7 @@ var renderPro;
                             0.0, 0.0, 0.0, 1.0
                         ]);
                         var coreTex = new renderPro.graphics.core.Texture();
-                        coreTex.load(texData, CoreType.FLOAT32, 3, 1);
+                        coreTex.load(texData, CoreType.FLOAT32, 4, 3);
                         var material = new renderPro.graphics.core.Material([1.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, 1.0], 1.0);
                         var renderable = new renderPro.graphics.gl.WexBIMRenderable(handle, coreTex, material, renderPro.graphics.core.State.NORMAL, effect);
                         var modelTransformMatrix = mat4.create();
