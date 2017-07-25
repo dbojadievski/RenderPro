@@ -12,7 +12,7 @@ commentStrings.append("")
 now 				= datetime.datetime.now()
 content 			= "var builtAt = \"" + now.strftime("%Y-%m-%d %H:%M:%S\"") + ";\n"
 log = "console.log(\"Running build \" + builtAt)"
-
+os.system ( "tsc" );
 path 				= os.path.join( "built", 'version.js');
 print path
 file_object 		= open( path, 'w')
@@ -24,7 +24,6 @@ file_object.flush()
 file_object.close
 
 print("Build Complete.")
-# webbrowser.open_new_tab("http://localhost:8082")
 os.system("python -m SimpleHTTPServer 8082" )
 
 
