@@ -32,8 +32,7 @@ namespace renderPro {
                                                         + this.rendererName;
                     this.textureSwitches    = 0;
                     this.programSwitches    = 0;
-                }
-                
+                }                
             }
         }
     }

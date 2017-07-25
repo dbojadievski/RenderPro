@@ -8,6 +8,8 @@ var renderPro;
                 function RenderSet(transparent, opaque) {
                     if (transparent === void 0) { transparent = []; }
                     if (opaque === void 0) { opaque = []; }
+                    Application.Debug.assert(isValidReference(opaque));
+                    Application.Debug.assert(isValidReference(transparent));
                     this.opaque = opaque;
                     this.transparent = transparent;
                 }

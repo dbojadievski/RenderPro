@@ -10,6 +10,7 @@ namespace renderPro {
                 programPointer: WebGLProgram
                 static currentEffectIdx: number
                 effectID: number
+
                 constructor () 
                 {
                     this.uniforms               = { };
@@ -18,14 +19,15 @@ namespace renderPro {
                     this.vertexShader           =  new renderPro.graphics.gl.Shader();
                     this.fragmentShader         =  new renderPro.graphics.gl.Shader();
                 }
+
                 load ( vertexShaderObject : any, fragmentShaderObject : any, gl : WebGLRenderingContext = renderPro.graphics.gl.context )
                 {
-                    Application.Debug.assert ( vertexShaderObject != null );
-                    Application.Debug.assert ( fragmentShaderObject != null );
-                    Application.Debug.assert ( gl != null );
+                    Application.Debug.assert ( isValidReference ( vertexShaderObject ) );
+                    Application.Debug.assert ( isValidReference ( fragmentShaderObject ) );
+                    Application.Debug.assert ( isValidReference ( gl ) );
 
                     let isLoaded: boolean       = false;
-                    if ( vertexShaderObject != null && fragmentShaderObject != null )
+                    if ( isValidReference ( vertexShaderObject ) && isValidReference ( fragmentShaderObject != null ) )
                     {
                         this.vertexShader.load ( vertexShaderObject.content, gl.VERTEX_SHADER);
                         this.fragmentShader.load ( fragmentShaderObject.content, gl.FRAGMENT_SHADER);
@@ -62,25 +64,25 @@ namespace renderPro {
 
                 use ( gl : WebGLRenderingContext = renderPro.graphics.gl.context)
                 {
-                    Application.Debug.assert ( gl != null );
+                    Application.Debug.assert ( isValidReference ( gl ) );
                     
                     if ( gl != null )
                         gl.useProgram ( this.programPointer );
                 }
 
-                /* NOTE(Martin): The following method requires the current program letiable on the gl context object to be set to this program */
                 private loadUniforms ( vertexUniforms : Array<any>, fragmentUniforms : Array<any>, gl : WebGLRenderingContext = renderPro.graphics.gl.context) 
                 {
-                    Application.Debug.assert ( gl != null );
-                    Application.Debug.assert ( vertexUniforms != null );
-                    Application.Debug.assert ( fragmentUniforms != null );
+                    Application.Debug.assert ( isValidReference ( gl ) );
+                    Application.Debug.assert ( isValidReference ( vertexUniforms ) );
+                    Application.Debug.assert ( isValidReference ( fragmentUniforms ) );
+                    
                     function loadUniformsInternal ( uniforms: Array<any>, retVal: Array<renderPro.graphics.gl.Uniform>, uniformDefaults: any, program: renderPro.graphics.gl.Effect, gl: WebGLRenderingContext = renderPro.graphics.gl.context )
                     {
-                        Application.Debug.assert ( gl != null );
-                        Application.Debug.assert ( retVal != null );
-                        Application.Debug.assert ( program != null );
-                        Application.Debug.assert ( uniforms != null );
-                        Application.Debug.assert ( uniformDefaults != null );
+                        Application.Debug.assert ( isValidReference ( gl ) );
+                        Application.Debug.assert ( isValidReference ( retVal ) );
+                        Application.Debug.assert ( isValidReference ( program ) );
+                        Application.Debug.assert ( isValidReference ( uniforms ) );
+                        Application.Debug.assert ( isValidReference ( uniformDefaults ) );
                         
                         if ( uniforms != null && retVal != null && program != null && gl != null )
                         {
@@ -106,9 +108,9 @@ namespace renderPro {
 
                 private loadAttributes ( vertexAttributes : Array<any>, gl : WebGLRenderingContext = renderPro.graphics.gl.context)
                 {
-                    Application.Debug.assert ( gl != null );
-                    Application.Debug.assert ( this.attributes != null );
-                    Application.Debug.assert ( vertexAttributes != null );
+                    Application.Debug.assert ( isValidReference ( gl ) );
+                    Application.Debug.assert ( isValidReference ( this.attributes ) );
+                    Application.Debug.assert ( isValidReference ( vertexAttributes ) );
 
                     for ( let i:number  = 0; i < vertexAttributes.length; i++ )
                     {

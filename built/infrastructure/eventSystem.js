@@ -45,9 +45,8 @@ var Application;
                 var handlers = this._events[event];
                 if (handlers) {
                     var index = handlers.indexOf(handler);
-                    if (index >= 0) {
+                    if (index >= 0)
                         handlers.splice(index, 1);
-                    }
                 }
             };
             ProEventSystem.prototype.init = function () { };

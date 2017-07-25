@@ -7,6 +7,7 @@ var renderPro;
             var Texture = (function () {
                 function Texture(gl) {
                     if (gl === void 0) { gl = renderPro.graphics.gl.context; }
+                    Application.Debug.assert(isValidReference(gl));
                     this.gl = gl;
                     this.texture = gl.createTexture();
                     if (Texture._currentTextureID == undefined)
@@ -14,6 +15,7 @@ var renderPro;
                     this.textureID = Texture._currentTextureID++;
                 }
                 Texture.prototype.load = function (image) {
+                    Application.Debug.assert(isValidReference(image));
                     var gl = this.gl;
                     gl.bindTexture(gl.TEXTURE_2D, this.texture);
                     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
@@ -23,6 +25,8 @@ var renderPro;
                     gl.bindTexture(gl.TEXTURE_2D, null);
                 };
                 Texture.prototype.loadFloatTexture = function (data, width, height) {
+                    Application.Debug.assert(isValidReference(data));
+                    Application.Debug.assert(width > 0 && height > 0);
                     var gl = this.gl;
                     gl.bindTexture(gl.TEXTURE_2D, this.texture);
                     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.FLOAT, data);
@@ -32,6 +36,8 @@ var renderPro;
                     gl.bindTexture(gl.TEXTURE_2D, null);
                 };
                 Texture.prototype.loadByteTexture = function (data, width, height) {
+                    Application.Debug.assert(isValidReference(data));
+                    Application.Debug.assert(width > 0 && height > 0);
                     var gl = this.gl;
                     gl.bindTexture(gl.TEXTURE_2D, this.texture);
                     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);

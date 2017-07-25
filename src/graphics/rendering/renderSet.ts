@@ -11,6 +11,9 @@ namespace renderPro
                 opaque: renderableInstanceList;
                 constructor ( transparent: renderableInstanceList = [ ], opaque: renderableInstanceList = [ ] )
                 {
+                    Application.Debug.assert ( isValidReference ( opaque ) );
+                    Application.Debug.assert ( isValidReference ( transparent ) );
+
                     this.opaque               = opaque;
                     this.transparent          = transparent;
                 }

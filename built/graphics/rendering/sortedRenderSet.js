@@ -8,6 +8,8 @@ var renderPro;
                 function SortedRenderSet(transparent, opaque) {
                     if (transparent === void 0) { transparent = new Dictionary(); }
                     if (opaque === void 0) { opaque = new Dictionary(); }
+                    Application.Debug.assert(isValidReference(opaque));
+                    Application.Debug.assert(isValidReference(transparent));
                     this.opaque = opaque;
                     this.transparent = transparent;
                 }

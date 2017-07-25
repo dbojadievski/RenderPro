@@ -24,6 +24,10 @@ namespace renderPro {
 
                 constructor ( name: string, type: string, gl: WebGLRenderingContext = renderPro.graphics.gl.context)
                 {
+                    Application.Debug.assert ( isValidReference ( name ) );
+                    Application.Debug.assert ( isValidReference ( type ) );
+                    Application.Debug.assert ( isValidReference ( gl ) );
+
                     this.gl         = gl;
                     this.name       = name;
                     this.type       = type;
@@ -173,16 +177,22 @@ namespace renderPro {
                                 break;
                         }
                     }
-
                 }
+
                 set (  ...args: any[]) {
+                    Application.Debug.assert ( isValidReference ( args ) );
+
                     this.values  = args;
                     this.setOnGPU.apply(this, args);
                 }
+
                 updateLocation ( effect : renderPro.graphics.gl.Effect ) : void {
+                    Application.Debug.assert ( isValidReference ( effect ) );
                     this.location   = this.gl.getUniformLocation( effect.programPointer, this.name );
                 }
+                
                 updateValue ( ...args: any[] ) : void {
+                    Application.Debug.assert ( isValidReference ( args ) );
                     let needUpdate = false;
 
                     // Check if new values are of a different length

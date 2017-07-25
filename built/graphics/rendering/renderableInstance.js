@@ -6,6 +6,8 @@ var renderPro;
         (function (rendering) {
             var RenderableInstance = (function () {
                 function RenderableInstance(renderable, sceneNode) {
+                    Application.Debug.assert(isValidReference(sceneNode));
+                    Application.Debug.assert(isValidReference(renderable));
                     this.renderable = renderable;
                     this.sceneNode = sceneNode;
                 }

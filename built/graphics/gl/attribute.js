@@ -12,6 +12,7 @@ var renderPro;
                     this.gl = gl;
                 }
                 Attribute.prototype.updateLocation = function (effect) {
+                    Application.Debug.assert(isValidReference(effect));
                     this.location = this.gl.getAttribLocation(effect.programPointer, this.name);
                 };
                 Attribute.prototype.enable = function () {

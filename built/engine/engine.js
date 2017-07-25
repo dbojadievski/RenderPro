@@ -8,7 +8,8 @@ var renderPro;
             }
             Engine.prototype.init = function () {
                 var self = this;
-                Application.Systems.eventSystem = new Application.Infrastructure.ProEventSystem();
+                // Application.Systems.eventSystem = new Application.Infrastructure.ProEventSystem();
+                // Application.Systems.console = new Application.Infrastructure.CommandConsole.Console ( Application.Systems.eventSystem );
                 this.assetManager = new renderPro.core.systems.AssetManager(this.assets);
                 this.renderer = new renderPro.core.systems.renderers.WebGLRenderer(this.assetManager, Application.Systems.eventSystem);
                 this.systems = [Application.Systems.eventSystem, this.assetManager];
@@ -28,6 +29,7 @@ var renderPro;
             Engine.prototype.start = function () {
                 var self = this;
                 Application.Systems.eventSystem.on("resourcesLoaded", function () {
+                    Application.Systems.console.parseCommand('addIntegers 2 3', true);
                     self.update();
                     (function animloop() {
                         requestAnimationFrame(animloop);

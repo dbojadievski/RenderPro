@@ -12,13 +12,17 @@ namespace renderPro {
                     this.gl = gl
                 }
                 updateLocation ( effect : renderPro.graphics.gl.Effect) {
-                    this.location = this.gl.getAttribLocation(effect.programPointer, this.name);
+                    Application.Debug.assert ( isValidReference ( effect ) );
+                    this.location = this.gl.getAttribLocation ( effect.programPointer, this.name );
                 }
+
                 enable () {
-                    this.gl.enableVertexAttribArray(this.location);
+                    this.gl.enableVertexAttribArray ( this.location );
                 }
-                disable () {
-                    this.gl.disableVertexAttribArray(this.location);
+
+                disable () 
+                {
+                    this.gl.disableVertexAttribArray ( this.location );
                 }
 
             }

@@ -6,11 +6,15 @@ namespace renderPro {
                 gl: WebGLRenderingContext
                 constructor ( gl : WebGLRenderingContext )
                 {
+                    Application.Debug.assert ( isValidReference ( gl ) );
                     this.pointer                        =  gl.createBuffer ( );
-                    this.gl = gl
+                    Application.Debug.assert ( this.pointer != -1 );
+                    this.gl                             = gl
                 }
                 bufferData ( indices : Array<number> ) : void
                 {
+                    Application.Debug.assert ( isValidReference ( indices ) );
+
                     let gl : WebGLRenderingContext                        = this.gl;
                     gl.bindBuffer ( gl.ELEMENT_ARRAY_BUFFER, this.pointer );
                     gl.bufferData ( gl.ELEMENT_ARRAY_BUFFER, new Uint16Array ( indices ), gl.STATIC_DRAW );

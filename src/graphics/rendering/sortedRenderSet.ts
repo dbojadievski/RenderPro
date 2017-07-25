@@ -11,6 +11,9 @@ namespace renderPro
                 opaque:  RenderInstanceDictionary
                 constructor ( transparent:  RenderInstanceDictionary = new Dictionary<renderPro.graphics.core.Effect, Dictionary<renderPro.graphics.core.Texture, Array<renderPro.graphics.rendering.RenderableInstance>>>(), opaque:  RenderInstanceDictionary = new Dictionary<renderPro.graphics.core.Effect, Dictionary<renderPro.graphics.core.Texture, Array<renderPro.graphics.rendering.RenderableInstance>>>() )
                 {
+                    Application.Debug.assert ( isValidReference ( opaque ) );
+                    Application.Debug.assert ( isValidReference ( transparent ) );
+                    
                     this.opaque               = opaque;
                     this.transparent          = transparent;
                 }

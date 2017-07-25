@@ -64,9 +64,7 @@ namespace Application
                 {
                     let index:number                = handlers.indexOf( handler );
                     if ( index >= 0 )
-                    {
                         handlers.splice( index, 1 );
-                    }
                 }
             }
 

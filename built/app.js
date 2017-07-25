@@ -15,5 +15,7 @@ var Application;
     })(Environment = Application.Environment || (Application.Environment = {}));
     var Systems;
     (function (Systems) {
+        Systems.eventSystem = new Application.Infrastructure.ProEventSystem();
+        Systems.console = new Application.Infrastructure.CommandConsole.Console(Systems.eventSystem);
     })(Systems = Application.Systems || (Application.Systems = {}));
 })(Application || (Application = {}));

@@ -7,6 +7,9 @@ var renderPro;
             var Uniform = (function () {
                 function Uniform(name, type, gl) {
                     if (gl === void 0) { gl = renderPro.graphics.gl.context; }
+                    Application.Debug.assert(isValidReference(name));
+                    Application.Debug.assert(isValidReference(type));
+                    Application.Debug.assert(isValidReference(gl));
                     this.gl = gl;
                     this.name = name;
                     this.type = type;
@@ -216,10 +219,12 @@ var renderPro;
                     for (var _i = 0; _i < arguments.length; _i++) {
                         args[_i] = arguments[_i];
                     }
+                    Application.Debug.assert(isValidReference(args));
                     this.values = args;
                     this.setOnGPU.apply(this, args);
                 };
                 Uniform.prototype.updateLocation = function (effect) {
+                    Application.Debug.assert(isValidReference(effect));
                     this.location = this.gl.getUniformLocation(effect.programPointer, this.name);
                 };
                 Uniform.prototype.updateValue = function () {
@@ -227,6 +232,7 @@ var renderPro;
                     for (var _i = 0; _i < arguments.length; _i++) {
                         args[_i] = arguments[_i];
                     }
+                    Application.Debug.assert(isValidReference(args));
                     var needUpdate = false;
                     // Check if new values are of a different length
                     if (this.values === undefined || this.values.length != args.length) {
