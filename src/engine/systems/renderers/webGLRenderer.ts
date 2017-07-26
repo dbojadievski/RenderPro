@@ -208,6 +208,8 @@ namespace renderPro
                     {
                         let gl : WebGLRenderingContext              = this.m_glContext;
 
+                        this.m_renderStats.resetValues();
+
                         gl.viewport ( 0, 0, this.m_viewportWidth, this.m_viewportHeight );
                         gl.clear ( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
 
@@ -306,7 +308,7 @@ namespace renderPro
                             }
                         }
 
-                        this.m_renderStats.update();
+                        this.m_renderStats.setValues();
                     }
                     private setUniforms ( renderable : renderPro.graphics.gl.IRenderable, transform : Float32Array, effect : renderPro.graphics.core.Effect ) : void
                     {

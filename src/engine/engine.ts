@@ -24,7 +24,7 @@ namespace renderPro {
                 this.assetManager   = new renderPro.core.systems.AssetManager(this.assets, this.renderStats);
                 this.renderer       = new renderPro.core.systems.renderers.WebGLRenderer(glContext, viewportWidth, viewportHeight, this.assetManager, Application.Systems.eventSystem, this.renderStats);
 
-                this.systems        = [ Application.Systems.eventSystem, this.assetManager ];
+                this.systems        = [ Application.Systems.eventSystem, this.assetManager, this.renderStats ];
 
                 for ( let systemIdx : number = 0; systemIdx < this.systems.length; systemIdx++ ) {
                     this.systems[systemIdx].init()

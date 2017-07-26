@@ -13,20 +13,24 @@ var renderPro;
                     this.programSwitches = 0;
                 }
                 RenderStatistics.prototype.init = function () {
-                    this.timeLastFrame = Date.now();
+                    this.resetValues();
                 };
                 RenderStatistics.prototype.update = function () {
+                    this.setHtml();
+                };
+                RenderStatistics.prototype.setValues = function () {
                     var currentTime = Date.now();
                     this.durationLastFrame = currentTime - this.timeLastFrame;
-                    this.fps = 1000 / this.durationLastFrame;
-                    this.setHtml();
+                };
+                RenderStatistics.prototype.resetValues = function () {
+                    this.timeLastFrame = Date.now();
                     this.drawCalls = 0;
                     this.textureSwitches = 0;
                     this.programSwitches = 0;
-                    this.timeLastFrame = currentTime;
                 };
                 RenderStatistics.prototype.setHtml = function () {
                     Application.Debug.assert(this.element != undefined);
+                    this.fps = Math.round(1000 / (Date.now() - this.timeLastFrame));
                     this.element.innerHTML = "" +
                         this.durationLastFrame + " ms, " +
                         Math.floor(this.fps) + " fps, " +

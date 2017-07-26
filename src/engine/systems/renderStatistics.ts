@@ -25,26 +25,27 @@ namespace renderPro
                     this.drawCalls          = 0;
                     this.textureSwitches    = 0;
                     this.programSwitches    = 0;
-
                 }
                 init () {
-                    this.timeLastFrame      = Date.now ( );
+                    this.resetValues ();
                 }
                 update () {
+                    this.setHtml();
+                }
+                setValues () {
                     const currentTime       = Date.now ( );
                     this.durationLastFrame  = currentTime - this.timeLastFrame;
-                    this.fps                = 1000 / this.durationLastFrame;
-                    
-                    this.setHtml();
 
+                }
+                resetValues () {
+                    this.timeLastFrame     = Date.now();
                     this.drawCalls          = 0;
                     this.textureSwitches    = 0;
                     this.programSwitches    = 0;
-
-                    this.timeLastFrame      = currentTime;
                 }
                 private setHtml ( ) {
                     Application.Debug.assert( this.element != undefined );
+                    this.fps                = Math.round(1000 / ( Date.now() - this.timeLastFrame ) );
                     this.element.innerHTML = "" +
                         this.durationLastFrame + " ms, " +
                         Math.floor(this.fps) + " fps, " + 

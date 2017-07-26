@@ -129,6 +129,7 @@ var renderPro;
                     };
                     WebGLRenderer.prototype.drawScene = function (renderSet) {
                         var gl = this.m_glContext;
+                        this.m_renderStats.resetValues();
                         gl.viewport(0, 0, this.m_viewportWidth, this.m_viewportHeight);
                         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                         /* Note(Dino):
@@ -212,7 +213,7 @@ var renderPro;
                                 }
                             }
                         }
-                        this.m_renderStats.update();
+                        this.m_renderStats.setValues();
                     };
                     WebGLRenderer.prototype.setUniforms = function (renderable, transform, effect) {
                         var gl = this.m_glContext;
