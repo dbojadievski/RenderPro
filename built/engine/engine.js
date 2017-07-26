@@ -17,7 +17,8 @@ var renderPro;
                 this.renderStats = new renderPro.core.systems.RenderStatistics(statsElement, Application.Systems.eventSystem);
                 this.assetManager = new renderPro.core.systems.AssetManager(this.assets, this.renderStats);
                 this.renderer = new renderPro.core.systems.renderers.WebGLRenderer(glContext, viewportWidth, viewportHeight, this.assetManager, Application.Systems.eventSystem);
-                this.systems = [Application.Systems.eventSystem, this.assetManager, this.renderStats];
+                this.entitySystem = new renderPro.core.systems.EntitySystem(Application.Systems.eventSystem);
+                this.systems = [Application.Systems.eventSystem, this.assetManager, this.renderStats, this.entitySystem];
                 for (var systemIdx = 0; systemIdx < this.systems.length; systemIdx++) {
                     this.systems[systemIdx].init();
                 }

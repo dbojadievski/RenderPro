@@ -11,31 +11,34 @@
                 private eventSystem:    ProEventSystem
                 constructor ( eventSystem: ProEventSystem )
                 {
-                    // Application.Debug.assert ( isValidReference ( eventSystem ) );
                     this.commands       = new Array<Command> ( );
                     this.eventSystem    = eventSystem;
                     this.queue          = new Array<CommandData> ( );
                     
-                    /* This is a test command added. */
-                    let commandString   = "addIntegers";
-                    let commparams      = new Array<CommandParameter> ( );
-                    commparams.push ( new CommandParameter ( "param1", CommandParameterType.INTEGER ) );
-                    commparams.push ( new CommandParameter ( "param2", CommandParameterType.INTEGER ) );
-                    let handler         = function ( args )
+                    let self: Console           = this;
+                    
+                    this.commands.push ( new Command ( "create_entity", [ new CommandParameter ( 'tag', CommandParameterType.STRING ) ], function ( args ) 
                     {
-                        let parsedParameters = this.parseParameters ( args, this.parameters, this.parameters.length );
-                        const paramA: number = parsedParameters[ 0 ];
-                        const paramB: number = parsedParameters[ 1 ];
+                        const parsedParameters  = this.parseParameters ( args, this.parameters, this.parameters.length );
+                        if ( parsedParameters != null )
+                            self.eventSystem.fire ( 'shouldCreateEntity', parsedParameters[ 0 ] );
+                    } ) );
 
-                        const result: number = ( paramA + paramB );
-                        console.log ( "Executed command addIntegers from new console!" );
-                    };
+                    Application.Systems.eventSystem.on ( 'commandQueued',  function ( args ) 
+                    { 
+                        if ( self.shouldKickstart ( ) )
+                            self.executeNextCommand ( );
+                    } );
 
-                    let command         = new Command ( commandString, commparams, handler );
-                    this.commands.push ( command );
+                    Application.Systems.eventSystem.on( 'commandExecuted', function ( )
+                    {
+                        Application.Systems.console.cleanUpAfterExecution ( );
+                        if ( self.hasCommandsQueued ( ) )
+                            self.executeNextCommand ( );
+                    } );
                 }
 
-                hasCommandQueued ( ) : boolean
+                hasCommandsQueued ( ) : boolean
                 {
                     const retVal                = ( this.queue.length != 0 );
                     return retVal;
@@ -47,6 +50,12 @@
                     return retVal;
                 }
 
+                executeNextCommand ( ) : void
+                {
+                    const commandData           = this.queue[ 0 ];
+                    this.executeCommand( commandData.command, commandData.doNotPropagate );
+                }
+
                 cleanUpAfterExecution ( ) : void
                 {
                     this.queue                  = this.queue.slice ( 1 );
@@ -54,9 +63,6 @@
 
                 executeCommand ( commandString: string, noPropagation: boolean = true )
                 {
-                    // Application.Debug.assert ( isValidReference ( commandString ) );
-                    // Application.Debug.assert ( commandString.length != 0 );
-
                     const tokens                = commandString.split ( ' ' );
                     if ( tokens.length > 0 )
                     {
@@ -81,8 +87,9 @@
                             if ( !noPropagation )
                                  this.eventSystem.fire( 'commandExecutedOnHost' , commandString );
 
-                            this.eventSystem.fire ( 'commandExecuted' );
                         }
+                        
+                        this.eventSystem.fire ( 'commandExecuted' );
                     }
                 }
 

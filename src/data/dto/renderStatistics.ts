@@ -12,7 +12,7 @@ namespace renderPro
                 m_numProgramSwitches:     number
                 m_rendererName:           string
                 
-                constructor ( frameTime: number = 0, numDrawCalls: number = 0, numTextureSwitches: number = 0, numProgramSwitches: number = 0, rendererName: string )
+                constructor ( frameTime: number = 0, numDrawCalls: number = 0, numTextureSwitches: number = 0, numProgramSwitches: number = 0, rendererName: string = "" )
                 {
                     Application.Debug.assert ( frameTime >= 0 );
                     Application.Debug.assert ( numDrawCalls >= 0 );

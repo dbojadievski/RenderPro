@@ -10,6 +10,7 @@ var renderPro;
                     if (numDrawCalls === void 0) { numDrawCalls = 0; }
                     if (numTextureSwitches === void 0) { numTextureSwitches = 0; }
                     if (numProgramSwitches === void 0) { numProgramSwitches = 0; }
+                    if (rendererName === void 0) { rendererName = ""; }
                     Application.Debug.assert(frameTime >= 0);
                     Application.Debug.assert(numDrawCalls >= 0);
                     Application.Debug.assert(numTextureSwitches >= 0);

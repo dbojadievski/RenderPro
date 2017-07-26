@@ -32,9 +32,6 @@ var Application;
             CommandConsole.CommandData = CommandData;
             var CommandParameter = (function () {
                 function CommandParameter(name, type) {
-                    // Application.Debug.assert ( isValidReference ( name ) );
-                    // Application.Debug.assert ( name.length != 0 );
-                    // Application.Debug.assert ( isValidReference ( type ) );
                     this.name = name;
                     this.type = type;
                 }
@@ -53,10 +50,6 @@ var Application;
             CommandConsole.CommandParameterV = CommandParameterV;
             var Command = (function () {
                 function Command(name, parameters, handler) {
-                    // Application.Debug.assert ( isValidReference ( name ) );
-                    // Application.Debug.assert ( name.length != 0 );
-                    // Application.Debug.assert ( isValidReference ( handler ) );
-                    // Application.Debug.assert ( isValidReference ( parameters ) );
                     this.name = name;
                     this.parameters = parameters;
                     this.handler = handler;
@@ -89,6 +82,9 @@ var Application;
                         case CommandParameterType.ARRAY:
                             parsedValue = string.split(',');
                             break;
+                        case CommandParameterType.STRING:
+                            parsedValue = string;
+                            break;
                         default:
                             isParamValid = false;
                             break;
@@ -98,9 +94,6 @@ var Application;
                     return retVal;
                 };
                 Command.prototype.parseParameters = function (parameters, commandParameters, commandParamsLen) {
-                    // Application.Debug.assert ( isValidReference ( parameters ) );
-                    // Application.Debug.assert ( isValidReference ( commandParameters ) );
-                    // Application.Debug.assert ( commandParamsLen >= 0 );
                     var parsedParameters = null;
                     if (parameters.length == this.parameters.length) {
                         parsedParameters = new Array();

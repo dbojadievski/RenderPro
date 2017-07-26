@@ -6,26 +6,26 @@ var Application;
         (function (CommandConsole) {
             var Console = (function () {
                 function Console(eventSystem) {
-                    // Application.Debug.assert ( isValidReference ( eventSystem ) );
                     this.commands = new Array();
                     this.eventSystem = eventSystem;
                     this.queue = new Array();
-                    /* This is a test command added. */
-                    var commandString = "addIntegers";
-                    var commparams = new Array();
-                    commparams.push(new CommandConsole.CommandParameter("param1", CommandConsole.CommandParameterType.INTEGER));
-                    commparams.push(new CommandConsole.CommandParameter("param2", CommandConsole.CommandParameterType.INTEGER));
-                    var handler = function (args) {
+                    var self = this;
+                    this.commands.push(new CommandConsole.Command("create_entity", [new CommandConsole.CommandParameter('tag', CommandConsole.CommandParameterType.STRING)], function (args) {
                         var parsedParameters = this.parseParameters(args, this.parameters, this.parameters.length);
-                        var paramA = parsedParameters[0];
-                        var paramB = parsedParameters[1];
-                        var result = (paramA + paramB);
-                        console.log("Executed command addIntegers from new console!");
-                    };
-                    var command = new CommandConsole.Command(commandString, commparams, handler);
-                    this.commands.push(command);
+                        if (parsedParameters != null)
+                            self.eventSystem.fire('shouldCreateEntity', parsedParameters[0]);
+                    }));
+                    Application.Systems.eventSystem.on('commandQueued', function (args) {
+                        if (self.shouldKickstart())
+                            self.executeNextCommand();
+                    });
+                    Application.Systems.eventSystem.on('commandExecuted', function () {
+                        Application.Systems.console.cleanUpAfterExecution();
+                        if (self.hasCommandsQueued())
+                            self.executeNextCommand();
+                    });
                 }
-                Console.prototype.hasCommandQueued = function () {
+                Console.prototype.hasCommandsQueued = function () {
                     var retVal = (this.queue.length != 0);
                     return retVal;
                 };
@@ -33,12 +33,14 @@ var Application;
                     var retVal = (this.queue.length === 1);
                     return retVal;
                 };
+                Console.prototype.executeNextCommand = function () {
+                    var commandData = this.queue[0];
+                    this.executeCommand(commandData.command, commandData.doNotPropagate);
+                };
                 Console.prototype.cleanUpAfterExecution = function () {
                     this.queue = this.queue.slice(1);
                 };
                 Console.prototype.executeCommand = function (commandString, noPropagation) {
-                    // Application.Debug.assert ( isValidReference ( commandString ) );
-                    // Application.Debug.assert ( commandString.length != 0 );
                     if (noPropagation === void 0) { noPropagation = true; }
                     var tokens = commandString.split(' ');
                     if (tokens.length > 0) {
@@ -57,8 +59,8 @@ var Application;
                                 command.execute(tokens.slice(1));
                             if (!noPropagation)
                                 this.eventSystem.fire('commandExecutedOnHost', commandString);
-                            this.eventSystem.fire('commandExecuted');
                         }
+                        this.eventSystem.fire('commandExecuted');
                     }
                 };
                 Console.prototype.parseCommand = function (commandString, noPropagation) {

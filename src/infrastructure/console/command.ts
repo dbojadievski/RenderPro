@@ -32,10 +32,6 @@
 
                 constructor ( name: string, type: CommandParameterType )
                 {
-                    // Application.Debug.assert ( isValidReference ( name ) );
-                    // Application.Debug.assert ( name.length != 0 );
-                    // Application.Debug.assert ( isValidReference ( type ) );
-
                     this.name       = name;
                     this.type       = type;
                 }
@@ -60,11 +56,6 @@
 
                 constructor ( name: string, parameters: Array<CommandParameter>, handler: Function )
                 {
-                    // Application.Debug.assert ( isValidReference ( name ) );
-                    // Application.Debug.assert ( name.length != 0 );
-                    // Application.Debug.assert ( isValidReference ( handler ) );
-                    // Application.Debug.assert ( isValidReference ( parameters ) );
-
                     this.name       = name;
                     this.parameters = parameters;
                     this.handler    = handler;
@@ -104,6 +95,9 @@
                         case CommandParameterType.ARRAY:
                             parsedValue             = string.split ( ',' );
                             break;
+                        case CommandParameterType.STRING:
+                            parsedValue             = string;
+                            break;
                         default:
                             isParamValid            = false;
                             break;
@@ -118,10 +112,6 @@
 
                 parseParameters ( parameters: Array<string>, commandParameters: Array<CommandParameter>, commandParamsLen: number )
                 {
-                    // Application.Debug.assert ( isValidReference ( parameters ) );
-                    // Application.Debug.assert ( isValidReference ( commandParameters ) );
-                    // Application.Debug.assert ( commandParamsLen >= 0 );
-                    
                     let parsedParameters: Array<CommandParameterV>  = null;
 
                     if ( parameters.length == this.parameters.length )
