@@ -11,7 +11,6 @@ namespace renderPro
                     m_glContext:        WebGLRenderingContext
                     m_eventSystem:      Application.Infrastructure.ProEventSystem
                     m_assetManager:     renderPro.core.systems.AssetManager
-                    m_renderStats:      renderPro.core.systems.RenderStatistics
 
                     m_scene:            renderPro.data.scene.Scene;
                     m_scenes:           any;
@@ -24,15 +23,9 @@ namespace renderPro
                     m_viewportWidth:    number;
                     m_viewportHeight:   number; 
 
-                    m_renderSet:        renderPro.graphics.rendering.SortedRenderSet = new renderPro.graphics.rendering.SortedRenderSet ( );
-
-                    // Variables used for statistics
-                    // m_timer:            number
-                    // m_drawCalls:        number;
-                    // m_programSwitches:  number;
-                    // m_textureSwitches:  number;
-                    // m_lastFrameTime:    number;
-                    // m_lblPerformance:   HTMLElement;
+                    m_renderSet         = new renderPro.graphics.rendering.SortedRenderSet ( );
+                    
+                    m_renderStatistics: renderPro.data.dto.RenderStatisticsDTO;
                     m_rendererName:     string;
                     m_vendor:           string;
 
@@ -45,18 +38,17 @@ namespace renderPro
                         viewportWidth : number,
                         viewportHeight: number,
                         assetManager : renderPro.core.systems.AssetManager, 
-                        eventSystem: Application.Infrastructure.ProEventSystem, 
-                        renderStats: renderPro.core.systems.RenderStatistics
+                        eventSystem: Application.Infrastructure.ProEventSystem
                         )
                     {
                         this.m_eventSystem              = eventSystem;
                         this.m_assetManager             = assetManager;
-                        this.m_renderStats              = renderStats;
 
                         this.m_glContext                = glContext;
                         this.m_viewportWidth            = viewportWidth;
                         this.m_viewportHeight           = viewportHeight;
-                        renderPro.graphics.gl.context = this.m_glContext;
+                        renderPro.graphics.gl.context   = this.m_glContext;
+                        this.m_renderStatistics         = new renderPro.data.dto.RenderStatisticsDTO ( );
                     }
 
                     private initScene ( ) : void
@@ -207,6 +199,7 @@ namespace renderPro
                     private drawScene ( renderSet : renderPro.graphics.rendering.SortedRenderSet ) : void
                     {
                         let gl : WebGLRenderingContext              = this.m_glContext;
+                        this.m_renderStatistics.clear ( );
 
                         gl.viewport ( 0, 0, this.m_viewportWidth, this.m_viewportHeight );
                         gl.clear ( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
@@ -243,8 +236,7 @@ namespace renderPro
                                 /* Switch GPGPU program state. */
                                 let effect : renderPro.graphics.core.Effect     = byEffect.key;
                                 effect.innerEffect.use ( gl );
-                                // currentEffect                           = effect;
-                                this.m_renderStats.programSwitches++;
+                                this.m_renderStatistics.m_numProgramSwitches++;
 
                                 for ( let currTexIdx : number = 0; currTexIdx < byEffect.value.content.length; currTexIdx++ )
                                 {
@@ -254,8 +246,9 @@ namespace renderPro
                                         /* Switch GPGPU texture state. */
                                         gl.activeTexture ( gl.TEXTURE0 );
                                         gl.bindTexture ( gl.TEXTURE_2D, byTexture.key.getTexPointer ( ) );
-                                        if ( effect.innerEffect.uniforms[ "uSampler" ] ) effect.innerEffect.uniforms[ "uSampler" ].updateValue(0);
-                                        this.m_renderStats.textureSwitches++;
+                                        if ( effect.innerEffect.uniforms[ "uSampler" ] ) 
+                                            effect.innerEffect.uniforms[ "uSampler" ].updateValue(0);
+                                        this.m_renderStatistics.m_numTextureSwitches++;
 
                                         for ( var currRenderableIdx : number = 0; currRenderableIdx < byTexture.value.length; currRenderableIdx++ )
                                         {
@@ -263,7 +256,7 @@ namespace renderPro
                                             var renderable : renderPro.graphics.gl.IRenderable                  = renderableInstance.renderable;
                                             this.setUniforms( renderable, renderableInstance.sceneNode.cachedTransform, effect);
                                             renderable.draw ( effect, gl );
-                                            this.m_renderStats.drawCalls++;
+                                            this.m_renderStatistics.m_numDrawCalls++;
                                         }
                                     }
                                 }
@@ -279,8 +272,7 @@ namespace renderPro
                                 /* Switch GPGPU program state. */
                                 let effect : renderPro.graphics.core.Effect     = byEffect.key;
                                 effect.innerEffect.use ( gl );
-                                //currentEffect                           = effect;
-                                this.m_renderStats.programSwitches++;
+                                this.m_renderStatistics.m_numProgramSwitches++;
 
                                 for ( var currTexIdx : number = 0; currTexIdx < byEffect.value.content.length; currTexIdx++ )
                                 {
@@ -291,7 +283,7 @@ namespace renderPro
                                         gl.activeTexture ( gl.TEXTURE0 );
                                         gl.bindTexture ( gl.TEXTURE_2D, byTexture.key.getTexPointer ( ) );
                                         if ( effect.innerEffect.uniforms[ "uSampler" ] ) effect.innerEffect.uniforms[ "uSampler" ].updateValue(0);
-                                        this.m_renderStats.textureSwitches++;
+                                        this.m_renderStatistics.m_numTextureSwitches++;
 
                                         for ( let currRenderableIdx: number = 0; currRenderableIdx < byTexture.value.length; currRenderableIdx++ )
                                         {
@@ -299,15 +291,17 @@ namespace renderPro
                                             var renderable : renderPro.graphics.gl.IRenderable                          = renderableInstance.renderable;
                                             this.setUniforms( renderable, renderableInstance.sceneNode.cachedTransform, effect);
                                             renderable.draw ( effect, gl );
-                                            this.m_renderStats.drawCalls++;
+                                            this.m_renderStatistics.m_numDrawCalls++;
                                         }
                                     }
                                 }
                             }
                         }
 
-                        this.m_renderStats.update();
+                        this.m_renderStatistics.m_rendererName  = this.m_rendererName;
+                        this.m_eventSystem.fire ( 'frameRendered', this.m_renderStatistics );
                     }
+
                     private setUniforms ( renderable : renderPro.graphics.gl.IRenderable, transform : Float32Array, effect : renderPro.graphics.core.Effect ) : void
                     {
                         let gl : WebGLRenderingContext              = this.m_glContext;
@@ -388,7 +382,6 @@ namespace renderPro
                                 let debugInfo                       = gl.getExtension('WEBGL_debug_renderer_info');
                                 this.m_vendor                       = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
                                 this.m_rendererName                 = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-                                this.m_renderStats.rendererName     = this.m_rendererName;
                                 
                             } catch ( e )
                             {
@@ -398,7 +391,6 @@ namespace renderPro
 
                         if ( !gl )
                             alert ( "Could not initialise WebGL, sorry :-(" );
-                        this.m_renderStats.init();
                         this.initScene();
                         this.m_renderSet                        = this.initBuffers(this.m_assetManager.exportableScenes.models, this.m_assetManager.exportableScenes.models);
 

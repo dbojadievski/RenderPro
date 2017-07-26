@@ -16,6 +16,7 @@ class Dictionary<T,U>
     {
         this.content = new Array<KeyValuePair<T,U>>();
     }
+
     hasKey ( key : T ) : boolean
     {
         let isKeyFound : boolean        = false;
@@ -30,6 +31,7 @@ class Dictionary<T,U>
 
         return isKeyFound;
     }
+
     hasValue ( value : U ) : boolean
     {
         let isValueFound : boolean      = false;
@@ -44,6 +46,7 @@ class Dictionary<T,U>
 
         return isValueFound;
     }
+
     getByKey ( key : T ) : U
     {
         let value : U                   = null;
@@ -58,18 +61,40 @@ class Dictionary<T,U>
 
         return value;
     }
+
     push ( kvp : KeyValuePair<T,U> ) : void
     {
         this.content.push ( kvp );
     }
+
     add ( key : T, value : U ) : void
     {
         this.content.push ( new KeyValuePair<T,U> ( key, value ) );
     }
+
+    set ( kvp: KeyValuePair<T, U> ) : void
+    {
+        let isSet               = false;
+        for ( let currIdx       = 0; currIdx < this.content.length; currIdx++ )
+        {
+            let item            = this.content[ currIdx ];
+            if ( item.key == kvp.key )
+            {
+                item.value      = kvp.value ;
+                isSet           = true;
+                break;
+            }
+        }
+        
+        if ( !isSet )
+            this.push ( kvp );
+    }
+
     length ( ) : number
     {
         return this.content.length;
     }
+
     iterate ( callback : Function ) : void
     { 
         for ( let currIdx : number = 0; currIdx < this.content.length; currIdx++ )

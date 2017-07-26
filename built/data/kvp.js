@@ -45,6 +45,19 @@ var Dictionary = (function () {
     Dictionary.prototype.add = function (key, value) {
         this.content.push(new KeyValuePair(key, value));
     };
+    Dictionary.prototype.set = function (kvp) {
+        var isSet = false;
+        for (var currIdx = 0; currIdx < this.content.length; currIdx++) {
+            var item = this.content[currIdx];
+            if (item.key == kvp.key) {
+                item.value = kvp.value;
+                isSet = true;
+                break;
+            }
+        }
+        if (!isSet)
+            this.push(kvp);
+    };
     Dictionary.prototype.length = function () {
         return this.content.length;
     };

@@ -14,10 +14,10 @@ var renderPro;
                 var glContext = canvas.getContext("experimental-webgl");
                 var viewportWidth = canvas.width;
                 var viewportHeight = canvas.height;
-                this.renderStats = new renderPro.core.systems.RenderStatistics(statsElement);
+                this.renderStats = new renderPro.core.systems.RenderStatistics(statsElement, Application.Systems.eventSystem);
                 this.assetManager = new renderPro.core.systems.AssetManager(this.assets, this.renderStats);
-                this.renderer = new renderPro.core.systems.renderers.WebGLRenderer(glContext, viewportWidth, viewportHeight, this.assetManager, Application.Systems.eventSystem, this.renderStats);
-                this.systems = [Application.Systems.eventSystem, this.assetManager];
+                this.renderer = new renderPro.core.systems.renderers.WebGLRenderer(glContext, viewportWidth, viewportHeight, this.assetManager, Application.Systems.eventSystem);
+                this.systems = [Application.Systems.eventSystem, this.assetManager, this.renderStats];
                 for (var systemIdx = 0; systemIdx < this.systems.length; systemIdx++) {
                     this.systems[systemIdx].init();
                 }
